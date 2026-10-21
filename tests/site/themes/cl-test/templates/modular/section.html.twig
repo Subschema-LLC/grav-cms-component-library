@@ -1,0 +1,22 @@
+{#
+    Pattern: page-type/modular-page — a general-purpose module
+
+    Copy to your theme as templates/modular/section.html.twig (a module
+    template's own markup belongs to the theme), or include it from one:
+        {% include 'patterns/page-type/modular-page/section.html.twig' %}
+
+    Renders the module's heading, its Markdown content, then its tiles and CTA
+    rows. Inside a module template, `page` is the module.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set heading = page.header.section_heading|default(page.title) %}
+<div class="cl-section">
+    {% if heading and not page.header.hide_heading|default(false) %}
+        <h2 class="cl-section__heading">{{ heading|e }}</h2>
+    {% endif %}
+    {% if page.content|striptags|trim is not empty %}
+        <div class="cl-section__body">{{ page.content|raw }}</div>
+    {% endif %}
+    {% include 'patterns/page/tiles/tiles.html.twig' with { heading_level: 3 } %}
+    {% include 'patterns/page/cta-rows/cta-rows.html.twig' with { heading_level: 3 } %}
+</div>

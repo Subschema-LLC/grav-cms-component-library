@@ -1,0 +1,24 @@
+# Pattern: system/twig-in-content — user/config/security.yaml
+# Grav 2.2 defaults shown. Since Grav 2.0.19 Twig in page content is ON by
+# default and always runs inside the sandbox.
+
+twig_content:
+  process_enabled: true    # master gate; false = Twig in page content never runs
+  editor_enabled: false    # false = only admin.pages_twig users can switch process.twig per page
+  config_access: false     # false = `config` is empty inside page content
+
+twig_sandbox:
+  enabled: true            # keep on: it is the only SSTI protection for editor-written Twig
+  # Additive: these WIDEN the built-in allowlists (they never replace them).
+  allowed_functions: []    # e.g. [my_safe_function]
+  allowed_filters: []
+  allowed_tags: []
+  allowed_methods: []      # rows: - { class: 'Grav\Plugin\MyGallery\Gallery', methods: 'render, thumbnail' }
+  allowed_properties: []
+  # Tighten below the defaults with denied_* (wins over everything above).
+  denied_functions: []
+  denied_filters: []
+  denied_tags: []
+  denied_methods: []
+  denied_properties: []
+  config_denied_paths: []  # extra config prefixes to redact when config_access is true

@@ -1,0 +1,52 @@
+id: theme/head-scripts
+name: Head and body-end scripts
+version: 1.0.0
+level: theme
+status: stable
+summary: Two trusted-HTML theme settings for vendor snippets (analytics, tag managers, chat widgets), rendered in the right place, with a per-page off switch.
+use_when:
+  - Non-developers need to add or change tracking or widget snippets without editing templates.
+avoid_when:
+  - A dedicated plugin exists for the service (it can respect consent, Do Not Track and Admin users; see system/frontend-output-guards).
+  - The snippet only belongs on one page; use page/embed-block.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+data:
+  scope: theme
+  keys:
+    tracking_tags: { type: trusted html }
+    body_end_scripts: { type: trusted html }
+    page.header.head_scripts: { type: bool, description: Set false on a page to skip both snippets there., frontmatter_only: true }
+files:
+  blueprint: blueprint.yaml
+  template: head-scripts.html.twig
+apply:
+  blueprint: |
+    scripts_section:
+      type: section
+      title: Tracking & Scripts
+      underline: true
+      import@:
+        type: theme/head-scripts/blueprint
+        context: 'plugin://component-library/patterns'
+  template: |
+    {# in <head>, after assets.css() and assets.js() #}
+    {% include 'patterns/theme/head-scripts/head-scripts.html.twig' with { slot: 'head' } %}
+    {# just before </body> #}
+    {% include 'patterns/theme/head-scripts/head-scripts.html.twig' with { slot: 'body_end' } %}
+solves:
+  - problem: Tracking code was pasted into templates per site, so changing a tag ID meant a theme release.
+    fix: Theme settings fields, rendered by one partial.
+    seen_in: community-guide and Gantry-based themes
+  - problem: Tag-manager events fired before the data layer existed because the data layer script loaded at the bottom of the page.
+    fix: Render the head slot after assets.js() in the head, and load theme/datalayer in the head group so it is defined first.
+    seen_in: community-guide theme, data layer fixes
+  - problem: Reading the snippets with theme_var() let any page's front matter override them (theme_var checks page.header first), so a page editor could inject a script into the raw-output slot.
+    fix: Trusted fields are read with grav.config.get('theme.<key>') only.
+    seen_in: library review of the community-guide footer and head templates
+  - problem: There was no way to keep tracking off a single page.
+    fix: head_scripts false in a page's front matter.
+verify:
+  - The head snippet appears once, inside <head>, after the asset tags.
+  - A page with head_scripts false has neither snippet.

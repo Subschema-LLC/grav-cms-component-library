@@ -1,0 +1,12 @@
+{#
+    Pattern: page-type/job-listing — theme template scaffold for one posting
+    Copy to your theme as templates/job.html.twig; adjust extends/blocks.
+#}
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <article class="job-page">
+        <h1>{{ page.header.jobtitle|default(page.title)|e }}</h1>
+        {% include 'patterns/page-type/job-listing/job-posting.html.twig' %}
+    </article>
+{% endblock %}

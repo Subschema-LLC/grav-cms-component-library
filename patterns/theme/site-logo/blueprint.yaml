@@ -1,0 +1,38 @@
+# Pattern: theme/site-logo — theme blueprint fragment
+# Import on a section in the theme's blueprints.yaml:
+#   branding:
+#     type: section
+#     title: Branding
+#     underline: true
+#     import@:
+#       type: theme/site-logo/blueprint
+#       context: 'plugin://component-library/patterns'
+form:
+  fields:
+    site_logo:
+      type: file
+      label: Site Logo
+      help: SVG, PNG, WebP or JPEG, up to 2 MB. Saved in user/assets/site-logo, so a theme update never removes it.
+      destination: 'user://assets/site-logo'
+      multiple: false
+      limit: 1
+      filesize: 2
+      accept:
+        - image/svg+xml
+        - image/png
+        - image/webp
+        - image/jpeg
+
+    site_logo_alt:
+      type: text
+      label: Logo Alt Text
+      help: What the logo says, usually the organization's name. Leave empty to use the site title.
+
+    site_logo_width:
+      type: number
+      label: Logo Display Width (px)
+      help: Optional. Sets the width attribute so the header does not shift while the logo loads. Height scales to match.
+      validate:
+        type: int
+        min: 16
+        max: 1200

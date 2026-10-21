@@ -1,0 +1,59 @@
+{#
+    Pattern: page-type/job-listing — the list of open positions
+
+    {% include 'patterns/page-type/job-listing/job-listing.html.twig' with {
+        heading_level: 2,
+        job_template: 'job'
+    } %}
+
+    Lists child pages using `job_template`, open ones only, newest first. Falls
+    back to the older hand-written jobdetails list when there are no child
+    postings. Slots for `classes`: root, item, heading, summary, empty.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', item: '', heading: '', summary: '', empty: '' }|merge(classes|default({})) %}
+{% set h = heading_level|default(2) %}
+{% set settings = page.header.jobs|default({}) %}
+{% set show_summary = settings.show_summary is not defined or settings.show_summary %}
+{% set tpl = job_template|default('job') %}
+{% set now = 'now'|date('U') %}
+
+{% set open = [] %}
+{% for p in page.children.published %}
+    {% if p.template == tpl %}
+        {% set closes = p.header.job.valid_through|default('') %}
+        {% if closes is empty or closes|date('U') >= now %}
+            {% set open = open|merge([{ page: p, posted: p.header.job.date_posted|default(p.date)|date('U') }]) %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+{% set open = open|sort((a, b) => b.posted - a.posted)|merge([]) %}
+
+<div class="{{ cl.cls('cl-jobs', c.root) }}">
+    {% if open|length %}
+        <ul class="cl-jobs__list">
+            {% for item in open %}
+                {% set p = item.page %}
+                <li class="{{ cl.cls('cl-jobs__item', c.item) }}">
+                    <h{{ h }} class="{{ cl.cls('cl-jobs__heading', c.heading) }}"><a href="{{ p.url|e }}">{{ p.header.jobtitle|default(p.title)|e }}</a></h{{ h }}>
+                    {% if show_summary %}
+                        {% set summary = p.header.metadata.description|default((p.header.jobdescription|default('')|markdown|striptags|trim)|truncate(160, true, ' ', '…')) %}
+                        {% if summary|trim %}<p class="{{ cl.cls('cl-jobs__summary', c.summary) }}">{{ summary|e }}</p>{% endif %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% elseif page.header.jobdetails|default([])|length %}
+        {# Legacy: the hand-written list from the Gantry job-list page. #}
+        <ul class="cl-jobs__list">
+            {% for j in page.header.jobdetails %}
+                <li class="{{ cl.cls('cl-jobs__item', c.item) }}">
+                    <h{{ h }} class="{{ cl.cls('cl-jobs__heading', c.heading) }}">{% if j.link %}<a href="{{ j.link|e }}">{{ j.detailtitle|e }}</a>{% else %}{{ j.detailtitle|e }}{% endif %}</h{{ h }}>
+                    {% if j.content and show_summary %}<div class="{{ cl.cls('cl-jobs__summary', c.summary) }}">{{ j.content|markdown }}</div>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="{{ cl.cls('cl-jobs__empty', c.empty) }}">{{ settings.empty_message|default('There are no openings right now.')|e }}</p>
+    {% endif %}
+</div>

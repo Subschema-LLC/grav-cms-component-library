@@ -1,0 +1,14 @@
+# Pattern: system/admin2-plugin-forms — the matching blueprint fields
+form:
+  validation: loose
+  fields:
+    api_token:
+      type: password
+      label: API Token
+      help: Stored in user/config/plugins/example.yaml. Admin2 shows it masked.
+
+    site_id:
+      type: text
+      label: Site ID
+      help: Derived from the token. Shown for reference; it cannot be edited.
+      disabled: true

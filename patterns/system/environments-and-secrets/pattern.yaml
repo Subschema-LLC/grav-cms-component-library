@@ -1,0 +1,42 @@
+id: system/environments-and-secrets
+name: Environments and secrets
+version: 1.0.0
+level: system
+status: stable
+summary: Use Grav's per-host environment folders for production, staging and local settings, keep salts, keys and accounts out of the repository, and never let local copies talk to live services.
+use_when:
+  - A site is developed locally and deployed to one or more hosts.
+  - A theme or site repository is about to be made public.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11']
+files:
+  snippets: [environment-example.yaml, gitignore-snippet.txt]
+apply:
+  config: |
+    # user/env/staging.example.com/config/themes/mytheme.yaml
+    datalayer:
+      env: staging
+  php: |
+    # Run locally with production's environment config:
+    GRAV_ENVIRONMENT=www.example.com php -S 127.0.0.1:8765 system/router.php
+solves:
+  - problem: A site repository contained user/config/security.yaml (the site's salt) and environment folders, which is fine while private but cannot be published as-is.
+    fix: Ignore security.yaml, accounts and API private keys; publish reusable parts as a separate, generalized repository (this library).
+    seen_in: Gantry particle base repository
+  - problem: A local checkout used the live site's environment configuration, including form endpoints and third-party integrations, so testing a form could reach real services.
+    fix: A localhost environment folder that overrides integrations with test values, and a README warning before the first form submit.
+    seen_in: community-guide theme README
+  - problem: Staging traffic was reported as production analytics.
+    fix: Per-environment theme config (for example datalayer.env staging in user/env/staging.example.com/config/themes/<theme>.yaml).
+    seen_in: community-guide theme data layer
+  - problem: Environment folders were kept at the older user/<host>/ location; adding a user/env/ folder (the Grav 1.7+ default) would silently switch every environment there and drop those overrides.
+    fix: Pick one layout per site; the example documents both and the rule Grav uses to choose (checked in Grav 2.2's Setup).
+    seen_in: community-guide site checkout (user/<host>/config)
+  - problem: The maps API key has to appear in page source, which reads like a leaked secret and invites copying it into server-side config too.
+    fix: Treat browser keys as public by design and restrict them by domain in the provider's console; keep server keys and tokens only in untracked environment config.
+    seen_in: community-guide theme, HERE Maps key
+verify:
+  - git ls-files | grep -E 'security.yaml|accounts/|api-private' returns nothing.
+  - Visiting the site on localhost shows the debugger and uncached pages; production does not.
+  - Exactly one of user/env/ or user/<host>/ is used for environment folders.

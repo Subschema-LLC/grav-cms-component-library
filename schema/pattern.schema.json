@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Subschema-LLC/grav-cms-component-library/schema/pattern.schema.json",
+  "title": "Grav pattern manifest (pattern.yaml)",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "version",
+    "level",
+    "status",
+    "summary",
+    "use_when",
+    "compatibility",
+    "files",
+    "apply",
+    "solves",
+    "verify"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(theme|page|page-type|system)/[a-z0-9][a-z0-9-]*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "level": {
+      "enum": [
+        "theme",
+        "page",
+        "page-type",
+        "system"
+      ]
+    },
+    "touches": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "theme",
+          "page",
+          "page-type",
+          "system"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "status": {
+      "enum": [
+        "stable",
+        "beta"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 10
+    },
+    "use_when": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "avoid_when": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "required": [
+        "grav",
+        "tested"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "grav": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "1.7",
+              "2.0"
+            ]
+          },
+          "minItems": 1
+        },
+        "tested": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "requires": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "plugins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "php": {
+          "type": "boolean"
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "scope",
+        "keys"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "scope": {
+          "enum": [
+            "page.header",
+            "theme",
+            "plugin",
+            "system"
+          ]
+        },
+        "keys": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "item": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "frontmatter_only": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "legacy_keys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "handling"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "handling": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "files": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "blueprint": {
+          "type": "string"
+        },
+        "template": {
+          "type": "string"
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "type": "string"
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "snippets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "apply": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "classes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "markup": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "solves": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "problem",
+          "fix"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "problem": {
+            "type": "string"
+          },
+          "fix": {
+            "type": "string"
+          },
+          "seen_in": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "verify": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  }
+}

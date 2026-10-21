@@ -1,0 +1,42 @@
+# Pattern: page/map-location — page blueprint fragment
+#   import@:
+#     type: page/map-location/blueprint
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header_map_location_section:
+      type: section
+      title: Map Location
+      text: Give this page coordinates to show it as a linked pin on every Map page, and as a Place in structured data. In most map apps, right-click (or long-press) a spot to copy its latitude and longitude.
+      underline: true
+
+    header.map_marker.latitude:
+      type: text
+      label: Latitude
+      help: Decimal degrees, for example 44.9812.
+      validate:
+        type: number
+        min: -90
+        max: 90
+
+    header.map_marker.longitude:
+      type: text
+      label: Longitude
+      help: Decimal degrees, negative for west, for example -93.2689.
+      validate:
+        type: number
+        min: -180
+        max: 180
+
+    header.map_marker.title:
+      type: text
+      label: Pin Title
+      help: Optional. Defaults to the page's menu title.
+
+    header.map_marker.summary:
+      type: textarea
+      rows: 2
+      label: Pin Summary
+      help: Optional, one sentence for the pin's popup and the list under the map. Defaults to the meta description.
+      validate:
+        max: 200

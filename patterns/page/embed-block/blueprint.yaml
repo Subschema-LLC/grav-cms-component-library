@@ -1,0 +1,76 @@
+# Pattern: page/embed-block — page blueprint fragment
+#   import@:
+#     type: page/embed-block/blueprint
+#     context: 'plugin://component-library/patterns'
+#
+# Who can save what: Grav checks every field for XSS on save and blocks
+# <script>, <iframe> and similar markup unless the user is on
+# security.xss_whitelist (super admins by default). "Embed by URL" stores a
+# URL, not markup, so any editor can use it; "HTML snippet" and Page Scripts
+# need a super admin.
+form:
+  fields:
+    header_embeds_section:
+      type: section
+      title: Embeds
+      text: Booking calendars, videos, forms and other third-party widgets. Use these fields instead of putting embed code or Twig in the page content.
+      underline: true
+
+    header.embeds:
+      type: list
+      style: vertical
+      label: Embeds
+      collapsed: true
+      fields:
+        .title:
+          type: text
+          label: Title
+          help: Describes the embed for screen readers, for example "Tour booking calendar". Required for embeds by URL.
+          validate:
+            max: 120
+        .kind:
+          type: select
+          label: Kind
+          default: iframe
+          options:
+            iframe: Embed by URL (iframe)
+            html: HTML snippet (super admins only)
+        .src:
+          type: text
+          label: Embed URL
+          help: The https:// address from the provider's embed code (the iframe's src value).
+          placeholder: https://
+          validate:
+            pattern: '^(https://.+)?$'
+            message: Use a full https:// URL.
+        .aspect:
+          type: select
+          label: Shape
+          default: '16:9'
+          options:
+            '16:9': Wide (16:9), for videos
+            '4:3': Standard (4:3)
+            '1:1': Square
+            fixed: Fixed height
+        .height:
+          type: number
+          label: Fixed Height (px)
+          help: Used when Shape is Fixed height, for calendars and forms.
+          validate:
+            type: int
+            min: 100
+            max: 3000
+        .html:
+          type: textarea
+          label: HTML Snippet
+          help: Pasted exactly as the provider gives it. Only for widgets that cannot be embedded by URL.
+          rows: 5
+        .caption:
+          type: text
+          label: Caption
+
+    header.page_scripts:
+      type: textarea
+      label: Page Scripts (super admins only)
+      help: Scripts added before </body> on this page only.
+      rows: 4

@@ -1,0 +1,41 @@
+{#
+    Pattern: page/embed-block
+
+    Where the embeds should appear:
+        {% include 'patterns/page/embed-block/embed-block.html.twig' %}
+
+    Before </body> (page-only scripts):
+        {% include 'patterns/page/embed-block/embed-block.html.twig' with { slot: 'scripts' } %}
+
+    Slots for `classes`: root, item, caption.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', item: '', caption: '' }|merge(classes|default({})) %}
+
+{% if slot|default('embeds') == 'scripts' %}
+    {# Trusted: Grav's save-time XSS check limits <script> here to security.xss_whitelist users. #}
+    {% if page.header.page_scripts|default('') is not empty %}{{ page.header.page_scripts|raw }}{% endif %}
+{% else %}
+    {% set embeds = (embeds|default(page.header.embeds|default([])))|filter(e =>
+        (e.kind|default('iframe') == 'iframe' and e.src|default('') starts with 'https://') or
+        (e.kind|default('') == 'html' and e.html|default('') is not empty)) %}
+    {% if embeds|length %}
+    <div class="{{ cl.cls('cl-embeds', c.root) }}">
+        {% for e in embeds %}
+            {# Shape is a class, not a style attribute, so a strict Content-Security-Policy needs no 'unsafe-inline'. #}
+            {% set shape = { '16:9': '16x9', '4:3': '4x3', '1:1': '1x1', 'fixed': 'fixed' }[e.aspect|default('16:9')] ?? '16x9' %}
+            <figure class="{{ cl.cls('cl-embeds__item cl-embeds__item--' ~ (e.kind|default('iframe')), c.item) }}">
+                {% if e.kind|default('iframe') == 'iframe' %}
+                    <div class="cl-embeds__frame cl-embeds__frame--{{ shape }}">
+                        <iframe src="{{ e.src|e }}" title="{{ e.title|default('Embedded content')|e }}"{% if shape == 'fixed' %} height="{{ (e.height|default(600))|int }}"{% endif %} loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    </div>
+                {% else %}
+                    {# Trusted HTML: only security.xss_whitelist users can save script or iframe markup. #}
+                    <div class="cl-embeds__html">{{ e.html|raw }}</div>
+                {% endif %}
+                {% if e.caption %}<figcaption class="{{ cl.cls('cl-embeds__caption', c.caption) }}">{{ e.caption|e }}</figcaption>{% endif %}
+            </figure>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endif %}

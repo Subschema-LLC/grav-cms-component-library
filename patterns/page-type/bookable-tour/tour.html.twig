@@ -1,0 +1,134 @@
+{#
+    Pattern: page-type/bookable-tour — tour facts, schedule, stops, booking and TouristTrip JSON-LD
+
+    {% include 'patterns/page-type/bookable-tour/tour.html.twig' with {
+        heading_level: 2,
+        booking_heading: 'Book this tour'
+    } %}
+
+    Booking widgets come from page/embed-block (header.embeds) and render under
+    the booking heading. Older Gantry tour pages (tourname, tourofferprice,
+    stops, stopdetails ...) still render; see pattern.yaml legacy_keys.
+    Slots for `classes`: root, facts, schedule, stops, stop, booking.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', facts: '', schedule: '', stops: '', stop: '', booking: '' }|merge(classes|default({})) %}
+{% set h = heading_level|default(2) %}
+{% set hd = page.header %}
+{% set tour = hd.tour|default({}) %}
+{% set defaults = grav.config.get('theme.schema_defaults')|default({}) %}
+
+{% set name = tour.name|default(hd.tourname|default(page.title)) %}
+{% set summary = tour.summary|default(hd.tourdescription|default(hd.metadata.description|default(''))) %}
+{% set price = tour.price|default(hd.tourofferprice|default('')) %}
+{% set currency = tour.currency|default('USD') %}
+{% set valid_until = tour.price_valid_until|default(hd.tourofferenddate|default('')) %}
+{% set sku = tour.sku|default(hd.tourproductid|default('')) %}
+{% set availability = tour.availability|default('InStock') %}
+
+{# Image: tour.image, else header image, else the legacy image URL. #}
+{% set image_file = tour.image|default(hd.header_image_file|default('')) %}
+{% set image_url = image_file and page.media[image_file] ? url(page.media[image_file].url, true) : (hd.tourimageurl|default('') starts with 'https://' ? hd.tourimageurl : '') %}
+
+{# Schedule: structured rows, else the legacy day + time strings. #}
+{% set schedule = tour.schedule|default([])|filter(s => s.start|default('') is not empty) %}
+{% set legacy_when = schedule|length == 0 and hd.tourdayofweek|default('') ? (hd.tourdayofweek ~ (hd.tourtime|default('') ? ', ' ~ hd.tourtime : '')) : '' %}
+
+{# Stops: tour.stops, else legacy stopdetails (with text) or stops (titles only). #}
+{% set stops = tour.stops|default([]) %}
+{% if stops is empty and hd.stopdetails|default([])|length %}
+    {% set stops = hd.stopdetails|map(s => { title: s.detailtitle|default(''), content: s.content|default(''), image: s.image|default('') }) %}
+{% elseif stops is empty and hd.stops|default([])|length %}
+    {% set stops = hd.stops|map(s => { title: s.description|default('') }) %}
+{% endif %}
+{% set stops = stops|filter(s => s.title|default('') is not empty)|merge([]) %}
+
+<div class="{{ cl.cls('cl-tour', c.root) }}">
+    {% if summary %}<p class="cl-tour__summary">{{ summary|e }}</p>{% endif %}
+
+    <dl class="{{ cl.cls('cl-tour__facts', c.facts) }}">
+        {% if price is not empty %}
+            <dt>Price</dt>
+            <dd>{{ (currency == 'USD' ? '$' : currency ~ ' ')|e }}{{ price|number_format((price ~ '') matches '/\\.\\d*[1-9]/' ? 2 : 0) }} per person{% if availability == 'SoldOut' %} (sold out){% elseif availability == 'LimitedAvailability' %} (limited spots){% endif %}</dd>
+        {% endif %}
+        {% if tour.duration_minutes|default('') %}
+            {% set mins = tour.duration_minutes|int %}
+            <dt>Duration</dt>
+            <dd>{{ mins >= 60 ? (mins // 60) ~ ' hr' : '' }}{{ mins >= 60 and mins % 60 ? ' ' : '' }}{{ mins % 60 ? (mins % 60) ~ ' min' : '' }}</dd>
+        {% endif %}
+        {% if legacy_when %}<dt>When</dt><dd>{{ legacy_when|e }}</dd>{% endif %}
+    </dl>
+
+    {% if schedule|length %}
+        <h{{ h }} class="cl-tour__heading">Schedule</h{{ h }}>
+        <ul class="{{ cl.cls('cl-tour__schedule', c.schedule) }}">
+            {% for s in schedule %}
+                <li>{{ s.day|e }}, <time>{{ ('2000-01-01 ' ~ s.start)|date('g:i a') }}</time>{% if s.end %}–<time>{{ ('2000-01-01 ' ~ s.end)|date('g:i a') }}</time>{% endif %}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if stops|length %}
+        <h{{ h }} class="cl-tour__heading">Stops</h{{ h }}>
+        <ol class="{{ cl.cls('cl-tour__stops', c.stops) }}">
+            {% for s in stops %}
+                {% set media = s.image|default('') and page.media[s.image] ? page.media[s.image] : null %}
+                <li class="{{ cl.cls('cl-tour__stop' ~ (media ? ' cl-tour__stop--media'), c.stop) }}">
+                    <div class="cl-tour__stop-text">
+                        <p class="cl-tour__stop-title">{% if s.url|default('') %}<a href="{{ s.url|e }}">{{ s.title|e }}</a>{% else %}{{ s.title|e }}{% endif %}</p>
+                        {% if s.content|default('') %}<div class="cl-tour__stop-body">{{ s.content|markdown }}</div>{% endif %}
+                    </div>
+                    {% if media %}
+                        {% set alt = s.image_alt is defined and s.image_alt is not null ? s.image_alt : s.title %}
+                        <div class="cl-tour__stop-media">{{ media.loading('lazy').html('', alt)|raw }}</div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+
+    {% if hd.embeds|default([])|length %}
+        <section class="{{ cl.cls('cl-tour__booking', c.booking) }}" aria-labelledby="cl-tour-booking">
+            <h{{ h }} id="cl-tour-booking" class="cl-tour__heading">{{ booking_heading|default('Book this tour')|e }}</h{{ h }}>
+            {% include 'patterns/page/embed-block/embed-block.html.twig' %}
+        </section>
+    {% endif %}
+</div>
+
+{# TouristTrip with an Offer and an itinerary, linked to the site's Organization
+   and to the page entity from theme/schema-graph. #}
+{% set site_url = (base_url_absolute|default(''))|trim('/', 'right') %}
+{% set page_url = page.canonical(true)|default(page.url(true)) %}
+{% set trip = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristTrip',
+    '@id': page_url ~ '#tour',
+    'mainEntityOfPage': { '@id': page_url ~ '#webpage' },
+    'name': name,
+    'url': page_url,
+    'provider': { '@id': site_url ~ '/#organization' }
+} %}
+{% if summary %}{% set trip = trip|merge({ 'description': summary }) %}{% endif %}
+{% if image_url %}{% set trip = trip|merge({ 'image': image_url }) %}{% endif %}
+{% if tour.duration_minutes|default('') %}{% set trip = trip|merge({ 'duration': 'PT' ~ tour.duration_minutes|int ~ 'M' }) %}{% endif %}
+{% if stops|length %}
+    {% set legs = [] %}
+    {% for s in stops %}
+        {% set legs = legs|merge([{ '@type': 'ListItem', 'position': loop.index, 'item': { '@type': 'TouristAttraction', 'name': s.title } }]) %}
+    {% endfor %}
+    {% set trip = trip|merge({ 'itinerary': { '@type': 'ItemList', 'numberOfItems': stops|length, 'itemListElement': legs } }) %}
+{% endif %}
+{% if price is not empty %}
+    {% set offer = {
+        '@type': 'Offer',
+        'price': (price|float)|number_format(2, '.', ''),
+        'priceCurrency': currency,
+        'availability': 'https://schema.org/' ~ availability,
+        'url': page_url,
+        'seller': { '@id': site_url ~ '/#organization' }
+    } %}
+    {% if valid_until %}{% set offer = offer|merge({ 'priceValidUntil': valid_until|date('Y-m-d') }) %}{% endif %}
+    {% if sku %}{% set offer = offer|merge({ 'sku': sku ~ '' }) %}{% endif %}
+    {% set trip = trip|merge({ 'offers': offer }) %}
+{% endif %}
+<script type="application/ld+json">{{ trip|json_encode(321)|raw }}</script>

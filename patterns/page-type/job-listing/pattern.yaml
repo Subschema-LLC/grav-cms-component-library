@@ -1,0 +1,69 @@
+id: page-type/job-listing
+name: Job listing and postings
+version: 1.0.0
+level: page-type
+touches: [page]
+status: stable
+summary: Two page types, a jobs page that lists its open child postings automatically and a job posting with employment type, location, pay, closing date and JobPosting structured data.
+use_when:
+  - An organization posts openings on its site and wants them found by job search engines.
+  - Replacing the Gantry job-list and job-details particles.
+avoid_when:
+  - Jobs live in an applicant tracking system; link to it or embed its widget with page/embed-block.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [theme/schema-graph, page/page-heading, _shared/macros]
+data:
+  scope: page.header
+  keys:
+    jobtitle: { type: string }
+    jobdescription: { type: markdown }
+    job:
+      type: map
+      item:
+        employment_type: "list of FULL_TIME | PART_TIME | CONTRACTOR | TEMPORARY | INTERN | VOLUNTEER | PER_DIEM | OTHER"
+        date_posted: datetime
+        valid_through: datetime
+        remote: bool
+        location: "{ street, locality, region, postal_code, country }"
+        salary: "{ min, max, unit: HOUR | DAY | WEEK | MONTH | YEAR, currency }"
+        apply_url: path or URL
+    jobs: { type: map, description: "On the list page: empty_message, show_summary" }
+legacy_keys:
+  - key: jobdetails (list page; detailtitle, content, link)
+    handling: Rendered when the list page has no child postings. Create one child page per job to get structured data and automatic closing.
+files:
+  blueprint: fields-posting.yaml
+  template: job-posting.html.twig
+  templates: [job-listing.html.twig, job.html.twig, jobs.html.twig]
+  snippets: [fields-listing.yaml, page-blueprint-job.yaml, page-blueprint-jobs.yaml]
+  example: example.md
+apply:
+  blueprint: |
+    # Copy page-blueprint-job.yaml  -> user/themes/<theme>/blueprints/job.yaml
+    # Copy page-blueprint-jobs.yaml -> user/themes/<theme>/blueprints/jobs.yaml
+  template: |
+    # Copy job.html.twig and jobs.html.twig to user/themes/<theme>/templates/
+    # and adjust their extends/blocks. Then create /jobs (template jobs) with one
+    # child page per opening (template job).
+classes:
+  markup: [cl-job, cl-job__closed, cl-job__facts, cl-job__body, cl-job__action, cl-job__apply, cl-jobs, cl-jobs__list, cl-jobs__item, cl-jobs__heading, cl-jobs__summary, cl-jobs__empty]
+  slots: [root, facts, body, apply, closed, item, heading, summary, empty]
+solves:
+  - problem: The job list was typed by hand on the list page, separately from the job pages, so titles and links drifted and filled positions stayed listed.
+    fix: The list is built from child pages; postings past their closing date drop off by themselves.
+    seen_in: Gantry job-list particle
+  - problem: Job pages had only a title and a description, so job search engines had nothing structured to read.
+    fix: Employment type, location (or remote), pay range, posting and closing dates, and a JobPosting JSON-LD block linked to the site's Organization.
+    seen_in: Gantry job-details particle
+  - problem: A closed position's page kept saying "Apply".
+    fix: After the closing date the apply link is replaced by "This position is closed" and validThrough tells search engines.
+  - problem: The job pages depended on a Gantry outline to render.
+    fix: Plain page types; any theme includes the partials.
+    seen_in: Gantry child theme
+verify:
+  - A child job page with a past valid_through is not listed and shows the closed notice.
+  - The posting's JSON-LD has title, description, datePosted, hiringOrganization and jobLocation (or jobLocationType TELECOMMUTE).
+  - Run a posting through Google's Rich Results Test.

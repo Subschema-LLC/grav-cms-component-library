@@ -1,0 +1,150 @@
+# Pattern: page-type/bookable-tour — fields for a tour or experience page (template: tour)
+# Booking widgets go in page/embed-block's Embeds tab.
+form:
+  fields:
+    header_tour_section:
+      type: section
+      title: Tour
+      underline: true
+
+    header.tour.name:
+      type: text
+      label: Tour Name
+      help: Defaults to the page title.
+
+    header.tour.summary:
+      type: textarea
+      rows: 3
+      label: Short Description
+      help: One or two sentences for the tour card and search engines.
+      validate:
+        max: 300
+
+    header.tour.image:
+      type: filepicker
+      label: Tour Image
+      help: From this page's media. Defaults to the header image.
+      preview_images: true
+      accept:
+        - .jpg
+        - .jpeg
+        - .png
+        - .webp
+
+    header.tour.duration_minutes:
+      type: number
+      label: Duration (minutes)
+      validate:
+        type: int
+        min: 15
+        max: 10080
+
+    header_tour_schedule_section:
+      type: section
+      title: Schedule
+      text: Regular departures. Add one row per weekday and start time.
+      underline: true
+
+    header.tour.schedule:
+      type: list
+      style: vertical
+      label: Departures
+      fields:
+        .day:
+          type: select
+          label: Day
+          default: Saturday
+          options:
+            Monday: Monday
+            Tuesday: Tuesday
+            Wednesday: Wednesday
+            Thursday: Thursday
+            Friday: Friday
+            Saturday: Saturday
+            Sunday: Sunday
+        .start:
+          type: text
+          label: Starts (24-hour)
+          placeholder: '14:00'
+          validate:
+            required: true
+            pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+            message: Use 24-hour time, such as 09:30 or 14:00.
+        .end:
+          type: text
+          label: Ends (24-hour)
+          placeholder: '17:00'
+          validate:
+            pattern: '^(([01]\d|2[0-3]):[0-5]\d)?$'
+            message: Use 24-hour time, such as 17:00.
+
+    header_tour_offer_section:
+      type: section
+      title: Price
+      underline: true
+
+    header.tour.price:
+      type: text
+      label: Price per Person
+      validate:
+        type: number
+        min: 0
+
+    header.tour.currency:
+      type: text
+      label: Currency
+      default: USD
+      validate:
+        pattern: '^[A-Z]{3}$'
+
+    header.tour.availability:
+      type: select
+      label: Availability
+      default: InStock
+      options:
+        InStock: Available
+        LimitedAvailability: Limited
+        SoldOut: Sold out
+        PreOrder: Not yet open for booking
+
+    header.tour.price_valid_until:
+      type: date
+      label: Price Valid Until
+      help: Optional.
+
+    header.tour.sku:
+      type: text
+      label: Product ID
+      help: The booking system's product code, if any.
+
+    header_tour_stops_section:
+      type: section
+      title: Stops
+      underline: true
+
+    header.tour.stops:
+      type: list
+      style: vertical
+      label: Stops
+      help: In order. Shown on the page and as the tour's itinerary in structured data.
+      collapsed: true
+      fields:
+        .title:
+          type: text
+          label: Stop
+          validate:
+            required: true
+        .content:
+          type: markdown
+          label: Details
+        .image:
+          type: filepicker
+          label: Image
+          preview_images: true
+        .image_alt:
+          type: text
+          label: Image Alt Text
+        .url:
+          type: text
+          label: Link
+          help: Optional page or website for this stop.

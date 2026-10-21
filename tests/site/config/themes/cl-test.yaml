@@ -1,0 +1,49 @@
+enabled: true
+site_logo_alt: 'River & Trails Association'
+site_logo_width: 180
+authors:
+  - authorid: jd
+    authorname: Jane Doe
+    jobtitle: Editor
+    bio: Jane writes about trails, history and the people who keep both going.
+    authorpageurl: /about/jane-doe
+    socialmedia:
+      - { socialurl: 'https://www.linkedin.com/in/example', label: 'Jane Doe on LinkedIn', icon: 'fa-brands fa-linkedin' }
+      - { socialurl: 'https://example.org/jane' }
+  - { authorid: rk, authorname: Rae Kim }
+footer_columns:
+  - title: Explore
+    links:
+      - { label: Trails, url: /trails }
+      - { label: Events, url: /events }
+  - title: Resources
+    links:
+      - { label: Trail conditions, url: 'https://example.com/conditions', target: _blank }
+      - { label: '', url: /missing-label }
+footer_embed: '<p class="footer-embed-fixture">Newsletter</p>'
+footer_note: '© {year} {site}. An independent community resource.'
+tracking_tags: '<script>/*HEAD-TAG*/</script>'
+body_end_scripts: '<script>/*BODY-END*/</script>'
+datalayer:
+  enabled: true
+  env: development
+  collection_method: tms-lite
+here_map:
+  api_key: test-browser-key
+  latitude: 44.98
+  longitude: -93.27
+  zoom: 12
+  label: Interactive map of the river valley
+schema_defaults:
+  organization_type: NGO
+  address_locality: Riverton
+  address_region: MN
+  postal_code: '55000'
+  address_country: US
+  home_about:
+    name: The River Valley
+    latitude: 44.98
+    longitude: -93.27
+categories:
+  - { id: outdoors, label: Outdoors }
+  - { id: history, label: History }

@@ -1,0 +1,33 @@
+id: system/compatibility-flag
+name: Compatibility flag
+version: 1.0.0
+level: system
+status: stable
+summary: Declare the Grav generations a plugin or theme was tested on with compatibility.grav, record the exact versions in a comment, and keep dependencies for minimum versions.
+use_when:
+  - Releasing or updating any plugin or theme for Grav 2.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11']
+files:
+  snippets: [blueprints-snippet.yaml]
+apply:
+  blueprint: |
+    # blueprints.yaml
+    # Tested on Grav 2.2.11 (Twig 3, twig3_compat off) and Grav 1.7.53.
+    compatibility:
+      grav: ['1.7', '2.0']
+    dependencies:
+      - { name: grav, version: '>=1.7.0' }
+solves:
+  - problem: Without a compatibility block, Grav 2 infers support from dependencies, so a package that requires grav >=1.7.0 is treated as 1.7-only and held back by the migration tool and by GPM's strict mode.
+    fix: An explicit compatibility.grav list that includes '2.0' once the package is tested on 2.x.
+    seen_in: theme and plugin releases for Grav 2
+  - problem: compatibility says which generations, not which releases, so it was unclear what "tested" meant.
+    fix: A comment above the block with the exact versions and the Twig compatibility setting used in testing, matching what the README says.
+    seen_in: community-guide theme and AGGREGATE plugin
+  - problem: Raising dependencies to grav >=2.0.0 to "mark" 2.0 support dropped 1.7 sites from updates.
+    fix: dependencies keeps the true minimum; compatibility carries the tested generations.
+verify:
+  - blueprints.yaml has compatibility.grav with every generation you tested on, and no others.
+  - On a Grav 2 site, the package installs and updates through GPM without a compatibility warning.

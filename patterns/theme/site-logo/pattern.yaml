@@ -1,0 +1,68 @@
+id: theme/site-logo
+name: Site logo
+version: 1.0.0
+level: theme
+status: stable
+summary: One upload field for the site logo, stored outside the theme folder, with a home-link partial and a URL helper shared with Schema.org output.
+use_when:
+  - Editors should be able to change the logo from the theme settings.
+  - The logo URL is also needed elsewhere (Organization schema, social cards).
+avoid_when:
+  - The logo is part of the theme's design and never changes; reference it from the theme's own images folder.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [_shared/macros]
+data:
+  scope: theme
+  keys:
+    site_logo: { type: file map, description: "Grav file field value: { 'user/assets/site-logo/logo.svg': { name, path, type, size } }" }
+    site_logo_alt: { type: string }
+    site_logo_width: { type: int }
+legacy_keys:
+  - key: picked_site_logo_image
+    handling: Read when site_logo is empty, from theme://assets/images/global/<file>. Upload the logo again with the new field to move it out of the theme folder, then clear the old value.
+files:
+  blueprint: blueprint.yaml
+  template: site-logo.html.twig
+  templates: [logo.macros.twig]
+  example: example.yaml
+apply:
+  blueprint: |
+    # theme blueprints.yaml, under form.fields:
+    branding_section:
+      type: section
+      title: Branding
+      underline: true
+      import@:
+        type: theme/site-logo/blueprint
+        context: 'plugin://component-library/patterns'
+  template: |
+    {% include 'patterns/theme/site-logo/site-logo.html.twig' with { classes: { root: 'navbar-item' } } %}
+
+    {# Anywhere else that needs the URL: #}
+    {% import 'patterns/theme/site-logo/logo.macros.twig' as logo %}
+    {% set logo_url = logo.src(true)|trim %}
+classes:
+  markup: [cl-site-logo, cl-site-logo__image, cl-site-logo__text]
+  slots: [root, image, text]
+solves:
+  - problem: The logo was uploaded into the theme's own folder (theme://assets/images/global), so updating or reinstalling the theme deleted it.
+    fix: The upload destination is user://assets/site-logo.
+    seen_in: community-guide and Gantry-based themes
+  - problem: Two fields for one image (an upload field plus a file picker), so a freshly uploaded logo did not show until an editor also picked it.
+    fix: A single file field; the template reads its stored path.
+    seen_in: community-guide and Gantry-based themes
+  - problem: A blueprint copied between themes left the logo picker pointed at the authors' image folder, so it listed staff photos.
+    fix: No picker, no folder to drift.
+    seen_in: Gantry child theme
+  - problem: Schema.org Organization output rebuilt the logo URL by hand and broke when the storage path changed.
+    fix: logo.src(true) returns the absolute URL for both the new and the legacy field.
+    seen_in: community-guide theme, structured-data work
+  - problem: The header shifted when the logo loaded (layout shift).
+    fix: Optional display width written as the width attribute.
+verify:
+  - Theme settings show Site Logo, Logo Alt Text and Logo Display Width.
+  - With no logo set, the partial renders the site title inside a.cl-site-logo.
+  - After an upload, the file is in user/assets/site-logo/ and the img src points there.

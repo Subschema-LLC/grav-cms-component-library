@@ -1,0 +1,22 @@
+{#
+    Pattern: theme/site-logo
+
+    {% include 'patterns/theme/site-logo/site-logo.html.twig' with {
+        classes: { root: 'navbar-item' }
+    } %}
+
+    A link to the home page holding the logo image, or the site title as text
+    when no logo is set. Slots for `classes`: root, image, text.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% import 'patterns/theme/site-logo/logo.macros.twig' as logo %}
+{% set c = { root: '', image: '', text: '' }|merge(classes|default({})) %}
+{% set src = logo.src(false)|trim %}
+{% set width = theme_var('site_logo_width') %}
+<a class="{{ cl.cls('cl-site-logo', c.root) }}" href="{{ (home_url|default(base_url_relative ~ '/'))|e }}" rel="home">
+    {%- if src is not empty -%}
+        <img class="{{ cl.cls('cl-site-logo__image', c.image) }}" src="{{ src }}" alt="{{ logo.alt()|trim }}"{% if width %} width="{{ width|int }}"{% endif %} decoding="async">
+    {%- else -%}
+        <span class="{{ cl.cls('cl-site-logo__text', c.text) }}">{{ grav.config.get('site.title')|e }}</span>
+    {%- endif -%}
+</a>

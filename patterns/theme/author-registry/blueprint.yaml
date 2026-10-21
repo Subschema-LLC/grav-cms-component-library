@@ -1,0 +1,72 @@
+# Pattern: theme/author-registry — theme blueprint fragment (the registry)
+# Import on a section in the theme's blueprints.yaml:
+#   authors_section:
+#     type: section
+#     title: Authors
+#     underline: true
+#     import@:
+#       type: theme/author-registry/blueprint
+#       context: 'plugin://component-library/patterns'
+# Pages pick an author with the companion fragment page.yaml.
+form:
+  fields:
+    authors:
+      type: list
+      style: vertical
+      label: Authors
+      help: People who can be credited on pages. A page stores the author's ID, so keep IDs stable.
+      collapsed: true
+      fields:
+        .authorid:
+          type: text
+          label: Author ID
+          help: Short, lowercase and unique, such as initials (jd) or a slug (jane-doe). Pages store this ID; changing it unlinks their author.
+          placeholder: jd
+          validate:
+            required: true
+            pattern: '^[a-z0-9][a-z0-9-]*$'
+            message: Use lowercase letters, numbers and hyphens.
+        .authorname:
+          type: text
+          label: Name
+          validate:
+            required: true
+        .jobtitle:
+          type: text
+          label: Role or Job Title
+        .bio:
+          type: markdown
+          label: Bio
+          help: Two or three sentences. Markdown.
+        .image:
+          type: file
+          label: Photo
+          help: Square images work best. Saved in user/assets/authors, so theme updates never remove it.
+          destination: 'user://assets/authors'
+          multiple: false
+          limit: 1
+          filesize: 2
+          accept:
+            - image/jpeg
+            - image/png
+            - image/webp
+        .authorpageurl:
+          type: text
+          label: Profile Page
+          help: A site path such as /about/jane-doe, or a full URL. Links the name and becomes the author URL in structured data.
+        .socialmedia:
+          type: list
+          style: vertical
+          label: Profiles Elsewhere
+          fields:
+            .socialurl:
+              type: text
+              label: Profile URL
+              placeholder: https://
+            .label:
+              type: text
+              label: Link Text for Screen Readers
+              help: For example "Jane on LinkedIn". Icon-only links need it to be announced.
+            .icon:
+              type: iconpicker
+              label: Icon

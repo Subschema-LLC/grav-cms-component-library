@@ -1,0 +1,44 @@
+id: page/map-location
+name: Map location
+version: 1.0.0
+level: page
+status: stable
+summary: Coordinates, a pin title and a summary on any page, so the page appears on Map pages and gets a Place entity in structured data, with no extra markup of its own.
+use_when:
+  - Pages describe physical places (businesses, parks, landmarks) that should appear on a map.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+data:
+  scope: page.header
+  keys:
+    map_marker:
+      type: map
+      item:
+        latitude: number
+        longitude: number
+        title: string
+        summary: string
+files:
+  blueprint: blueprint.yaml
+  example: example.md
+apply:
+  blueprint: |
+    page_info:
+      type: tab
+      title: Page Info
+      import@:
+        type: page/map-location/blueprint
+        context: 'plugin://component-library/patterns'
+  template: |
+    {# No template of its own. Read by: #}
+    {#   page-type/map-page    (a pin per page with a location) #}
+    {#   theme/schema-graph    (a Place with GeoCoordinates)   #}
+solves:
+  - problem: Each place had to be entered twice, once on its own page and again as a marker on the map page, and the two copies drifted.
+    fix: The coordinates live on the place's page; every Map page collects them.
+    seen_in: community-guide theme, Map page
+  - problem: Coordinates were typed as free text, and a swapped or out-of-range value silently dropped the pin.
+    fix: Number validation with latitude ±90 and longitude ±180.
+verify:
+  - A page with both coordinates appears as a pin on a Map page and as a Place (#place) in its JSON-LD.

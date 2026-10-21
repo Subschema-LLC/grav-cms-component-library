@@ -1,0 +1,50 @@
+{#
+    Pattern: page/cta-rows
+
+    {% include 'patterns/page/cta-rows/cta-rows.html.twig' with {
+        rows: page.header.info_cta_section,   -- the default
+        heading_level: 2,                     -- 3 when the rows sit under an h2
+        classes: { button: 'button is-primary is-large' }
+    } %}
+
+    Slots for `classes`: root, row, heading, body, button, media.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set rows = rows|default(page.header.info_cta_section|default([])) %}
+{% set h = heading_level|default(2) %}
+{% set c = { root: '', row: '', heading: '', body: '', button: '', media: '' }|merge(classes|default({})) %}
+
+{% if rows is iterable and rows|length %}
+<div class="{{ cl.cls('cl-cta-rows', c.root) }}">
+    {% for row in rows %}
+        {# Legacy pages carry a cta_section_image toggle; an explicit "off" still hides the image. #}
+        {% set show_image = row.cta_section_image is not defined or row.cta_section_image in [1, '1', true] %}
+        {% set media = show_image and row.cta_section_image_file ? page.media[row.cta_section_image_file] : null %}
+        {% set has_button = row.button_text and row.button_link %}
+
+        {% if row.title or row.content or media or has_button %}
+        <div class="{{ cl.cls('cl-cta-rows__row' ~ (media ? ' cl-cta-rows__row--media') ~ (loop.length == 1 ? ' cl-cta-rows__row--single'), c.row) }}">
+            <div class="cl-cta-rows__text">
+                {% if row.title %}
+                    <h{{ h }} class="{{ cl.cls('cl-cta-rows__heading', c.heading) }}">{{ row.title|e }}</h{{ h }}>
+                {% endif %}
+                {% if row.content %}
+                    <div class="{{ cl.cls('cl-cta-rows__body', c.body) }}">{{ row.content|markdown }}</div>
+                {% endif %}
+                {% if has_button %}
+                    <p class="cl-cta-rows__action">
+                        <a class="{{ cl.cls('cl-cta-rows__button', c.button) }}" {{ cl.link_attrs(row.button_link, row.button_new_tab) }} data-tracking-info="cta_{{ row.button_text|e }}">{{ row.button_text|e }}</a>
+                    </p>
+                {% endif %}
+            </div>
+            {% if media %}
+                {% set alt = row.cta_section_image_alt is defined and row.cta_section_image_alt is not null ? row.cta_section_image_alt : row.title|default('') %}
+                <div class="{{ cl.cls('cl-cta-rows__media', c.media) }}">
+                    {{ media.loading('lazy').html('', alt)|raw }}
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}

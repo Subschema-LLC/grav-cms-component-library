@@ -1,0 +1,17 @@
+{#
+    Pattern: page-type/map-page — theme template scaffold
+    Copy to your theme as templates/map.html.twig and change the extends and
+    block names to match your base template. Include theme/map-here's loader in
+    the base template so the HERE scripts load on this template.
+#}
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <article class="map-page">
+        {% include 'patterns/page/page-heading/page-heading.html.twig' %}
+        {% if page.content|striptags|trim is not empty %}
+            <div class="map-page__intro">{{ page.content|raw }}</div>
+        {% endif %}
+        {% include 'patterns/page-type/map-page/map-page.html.twig' with { heading_level: 2 } %}
+    </article>
+{% endblock %}

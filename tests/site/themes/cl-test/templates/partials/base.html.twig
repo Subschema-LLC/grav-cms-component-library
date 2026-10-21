@@ -1,0 +1,35 @@
+{# Fixture base template: wires every theme-level pattern. #}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% include 'patterns/page/page-heading/title-tag.html.twig' %}
+    {% block javascripts %}
+        {% include 'patterns/theme/datalayer/datalayer.html.twig' %}
+        {% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}
+    {% endblock %}
+    {% include 'patterns/theme/schema-graph/schema-graph.html.twig' with { page_types: { contact: 'ContactPage', jobs: 'CollectionPage' } } %}
+    {% block assets deferred %}
+        {{ assets.css()|raw }}
+        {{ assets.js()|raw }}
+        {% include 'patterns/theme/head-scripts/head-scripts.html.twig' with { slot: 'head' } %}
+    {% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        {% include 'patterns/theme/site-logo/site-logo.html.twig' %}
+    </header>
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        {% include 'patterns/theme/footer-columns/footer-columns.html.twig' %}
+    </footer>
+    {% block bottom %}
+        {{ assets.js('bottom')|raw }}
+    {% endblock %}
+    {% include 'patterns/page/embed-block/embed-block.html.twig' with { slot: 'scripts' } %}
+    {% include 'patterns/theme/head-scripts/head-scripts.html.twig' with { slot: 'body_end' } %}
+</body>
+</html>

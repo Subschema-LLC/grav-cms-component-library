@@ -1,0 +1,9 @@
+title: 'River & Trails Association'
+default_lang: en
+author:
+  name: Site Author
+metadata:
+  description: 'Fixture site for the Grav CMS Component Library.'
+social:
+  - { title: Facebook, url: 'https://facebook.com/example', icon: 'fa-brands fa-facebook' }
+  - { title: Mastodon, url: 'https://mastodon.example/@example' }

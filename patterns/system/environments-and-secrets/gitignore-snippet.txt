@@ -1,0 +1,22 @@
+# Pattern: system/environments-and-secrets — .gitignore for a Grav site repository
+# (the repository root is the Grav root; adjust paths if you version only user/)
+
+# Runtime
+/cache/*
+/logs/*
+/tmp/*
+/images/*
+/backup/*
+/assets/*
+!/cache/.gitkeep
+!/logs/.gitkeep
+
+# Accounts and secrets
+/user/accounts/*
+!/user/accounts/.gitkeep
+/user/config/security.yaml
+/user/config/plugins/api-private.php
+/user/*/config/security.yaml
+
+# Per-environment secrets: keep keys and tokens in an untracked file per host
+/user/*/config/plugins/*.secret.yaml

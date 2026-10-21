@@ -1,0 +1,24 @@
+{#
+    Pattern: page/hero-actions
+
+    {% include 'patterns/page/hero-actions/hero-actions.html.twig' with {
+        classes: { primary: 'button is-primary is-large', secondary: 'button is-light is-large' }
+    } %}
+
+    Slots for `classes`: root, primary, secondary.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', primary: '', secondary: '' }|merge(classes|default({})) %}
+{% set h = page.header %}
+{% set actions = [
+    { text: h.primary_cta_text|default(''), link: h.primary_cta_link|default(''), kind: 'primary' },
+    { text: h.secondary_cta_text|default(''), link: h.secondary_cta_link|default(''), kind: 'secondary' }
+]|filter(a => a.text is not empty and a.link is not empty) %}
+
+{% if actions|length %}
+<p class="{{ cl.cls('cl-hero-actions', c.root) }}">
+    {% for a in actions %}
+        <a class="{{ cl.cls('cl-hero-actions__button cl-hero-actions__button--' ~ a.kind, c[a.kind]) }}" href="{{ a.link|e }}" data-tracking-info="hero-{{ a.kind }}_{{ a.text|e }}">{{ a.text|e }}</a>
+    {% endfor %}
+</p>
+{% endif %}

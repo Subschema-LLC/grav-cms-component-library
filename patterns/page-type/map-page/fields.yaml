@@ -1,0 +1,72 @@
+# Pattern: page-type/map-page — fields for the Map tab
+# Used by page-blueprint.yaml; importable on its own too:
+#   import@:
+#     type: page-type/map-page/fields
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header_map_page_section:
+      type: section
+      title: Map Pins
+      text: Every published page with a Map Location (Page Info tab) appears on this map automatically, linked to that page. Use Additional Pins for anything else.
+      underline: true
+
+    header.map_page.include_pages:
+      type: toggle
+      label: Pin Pages That Have a Map Location
+      help: Turn off to show only the Additional Pins below.
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    header.map_page.list_title:
+      type: text
+      label: Places List Heading
+      help: The heading of the list under the map, which also serves keyboard and screen-reader users.
+      placeholder: Places on the map
+
+    header.map_markers:
+      type: list
+      style: vertical
+      label: Additional Pins
+      help: Pins that link to an existing page from a spot other than that page's own Map Location (a second trailhead, for example), or pins with no page at all.
+      collapsed: true
+      fields:
+        .link:
+          type: pages
+          label: Linked Page
+          help: The page this pin opens. Leave empty for a pin with no link.
+          show_all: true
+          show_modular: false
+          show_root: false
+          show_slug: true
+        .title:
+          type: text
+          label: Pin Title
+          help: Required without a linked page; otherwise defaults to that page's menu title.
+        .latitude:
+          type: text
+          label: Latitude
+          validate:
+            required: true
+            type: number
+            min: -90
+            max: 90
+        .longitude:
+          type: text
+          label: Longitude
+          validate:
+            required: true
+            type: number
+            min: -180
+            max: 180
+        .summary:
+          type: textarea
+          rows: 2
+          label: Summary
+          validate:
+            max: 200

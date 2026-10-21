@@ -1,0 +1,23 @@
+{#
+    Pattern: page-type/modular-page — renders a modular page's intro and modules
+
+    In the theme's templates/modular.html.twig content block:
+        {% include 'patterns/page-type/modular-page/modular-page.html.twig' %}
+
+    Each module is wrapped in an element whose id is the module's folder slug
+    without its leading underscore (_features -> #features), so menus can link
+    to sections. Slots for `classes`: root, intro, module.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', intro: '', module: '' }|merge(classes|default({})) %}
+<div class="{{ cl.cls('cl-modular', c.root) }}">
+    {% if page.content|striptags|trim is not empty %}
+        <div class="{{ cl.cls('cl-modular__intro', c.intro) }}">{{ page.content|raw }}</div>
+    {% endif %}
+    {% for module in page.collection() %}
+        {% set kind = module.template|replace({ 'modular/': '' }) %}
+        <section id="{{ module.slug|trim('_', 'left')|e }}" class="{{ cl.cls('cl-modular__module cl-modular__module--' ~ kind|e, c.module) }}">
+            {{ module.content|raw }}
+        </section>
+    {% endfor %}
+</div>

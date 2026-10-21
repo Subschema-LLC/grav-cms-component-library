@@ -1,0 +1,21 @@
+# Pattern: page-type/bookable-tour — page blueprint scaffold
+# Copy to your theme as blueprints/tour.yaml.
+title: Tour
+extends@: default
+
+form:
+  fields:
+    tabs:
+      fields:
+        tour:
+          type: tab
+          title: Tour
+          import@:
+            type: page-type/bookable-tour/fields
+            context: 'plugin://component-library/patterns'
+        embeds_tab:
+          type: tab
+          title: Booking & Embeds
+          import@:
+            type: page/embed-block/blueprint
+            context: 'plugin://component-library/patterns'

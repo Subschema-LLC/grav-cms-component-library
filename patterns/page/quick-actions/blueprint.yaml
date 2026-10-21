@@ -1,0 +1,59 @@
+# Pattern: page/quick-actions — page blueprint fragment
+# Import on the tab or section that should hold the shortcuts:
+#   import@:
+#     type: page/quick-actions/blueprint
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header_quick_actions_section:
+      type: section
+      title: Quick Actions
+      text: Shortcuts to common tasks. Drag them into the order visitors should see.
+      underline: true
+
+    header.quick_actions_title:
+      type: text
+      label: Heading
+      help: Shown above the shortcuts. Leave empty for no visible heading.
+      placeholder: Plan your visit
+
+    header.quick_actions_columns:
+      type: select
+      label: Columns on Wide Screens
+      default: 3
+      options:
+        2: Two
+        3: Three
+        4: Four
+      validate:
+        type: int
+
+    header.quick_actions:
+      type: list
+      style: vertical
+      label: Shortcuts
+      collapsed: true
+      fields:
+        .label:
+          type: text
+          label: Label
+          help: Short and task-focused, such as "Things to do".
+          validate:
+            required: true
+            max: 60
+        .link:
+          type: text
+          label: Link
+          help: A site path such as /explore, or a full https:// URL.
+          validate:
+            required: true
+        .icon:
+          type: iconpicker
+          label: Icon
+        .description:
+          type: textarea
+          label: Description
+          help: Optional, one sentence.
+          rows: 2
+          validate:
+            max: 160

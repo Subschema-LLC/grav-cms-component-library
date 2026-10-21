@@ -1,0 +1,175 @@
+/*
+ * Grav CMS Component Library — optional base styles for the cl-* classes.
+ *
+ * Framework-neutral and deliberately light: layout, spacing and the behaviour
+ * the markup relies on (the stretched card link, embed shapes, hidden locate
+ * buttons). Colours and fonts inherit from the theme. Turn this file off in
+ * the plugin settings when the theme styles the patterns itself.
+ *
+ * Theme with custom properties, for example:
+ *   :root { --cl-gap: 1.5rem; --cl-radius: 0; --cl-accent: #0b6e4f; }
+ */
+:where(.cl-tiles, .cl-cta-rows, .cl-quick-actions, .cl-footer, .cl-author, .cl-embeds, .cl-map-page, .cl-hero-actions, .cl-page-heading, .cl-job, .cl-jobs, .cl-tour, .cl-modular, .cl-section) {
+    --_gap: var(--cl-gap, 1.25rem);
+    --_radius: var(--cl-radius, 0.5rem);
+    --_border: var(--cl-border, 1px solid color-mix(in srgb, currentColor 18%, transparent));
+    --_muted: var(--cl-muted, color-mix(in srgb, currentColor 70%, transparent));
+    --_surface: var(--cl-surface, color-mix(in srgb, currentColor 4%, transparent));
+    --_accent: var(--cl-accent, LinkText);
+}
+
+/* Shared ------------------------------------------------------------------ */
+.cl-cta-rows__button, .cl-tiles__button, .cl-hero-actions__button, .cl-job__apply {
+    display: inline-block;
+    padding: 0.6em 1.2em;
+    border-radius: var(--_radius);
+    border: 2px solid var(--_accent);
+    color: var(--_accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+.cl-hero-actions__button--primary, .cl-cta-rows__button, .cl-job__apply {
+    background: var(--_accent);
+    color: var(--cl-on-accent, Canvas);
+}
+:where(.cl-cta-rows__button, .cl-tiles__button, .cl-hero-actions__button, .cl-job__apply):focus-visible,
+:where(.cl-tiles__card-link, .cl-quick-actions__item, .cl-map-page__locate):focus-visible {
+    outline: 3px solid var(--_accent);
+    outline-offset: 3px;
+}
+:where(.cl-tiles, .cl-cta-rows, .cl-tour) img { max-width: 100%; height: auto; }
+
+/* Page heading and hero ---------------------------------------------------- */
+.cl-page-heading { margin-block-end: var(--_gap); }
+.cl-page-heading__title { margin: 0; }
+.cl-page-heading__subtitle { margin: 0.25em 0 0; font-size: 1.25em; }
+.cl-page-heading__byline { margin: 0.5em 0 0; color: var(--_muted); }
+.cl-hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block: var(--_gap); }
+
+.cl-header-image { margin: 0 0 var(--_gap); }
+.cl-header-image__img { display: block; width: 100%; height: auto; }
+
+/* Tiles: a 12-column grid; phones always single column ---------------------- */
+.cl-tiles {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_gap);
+    margin-block: var(--_gap);
+}
+.cl-tiles__item { grid-column: span 12; display: flex; }
+@media (min-width: 48em) {
+    .cl-tiles__item--quarter { grid-column: span 3; }
+    .cl-tiles__item--third { grid-column: span 4; }
+    .cl-tiles__item--half { grid-column: span 6; }
+    .cl-tiles__item--two-thirds { grid-column: span 8; }
+    .cl-tiles__item--full { grid-column: span 12; }
+}
+.cl-tiles__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    padding: var(--_gap);
+    border: var(--_border);
+    border-radius: var(--_radius);
+    background: var(--_surface);
+}
+.cl-tiles__heading { margin: 0; display: flex; gap: 0.5em; align-items: baseline; }
+.cl-tiles__icon { flex: none; }
+.cl-tiles__body > :first-child { margin-top: 0; }
+.cl-tiles__body > :last-child { margin-bottom: 0; }
+.cl-tiles__media { margin-top: auto; }
+.cl-tiles__media--cover img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: calc(var(--_radius) / 2); }
+.cl-tiles__action { margin: 0; }
+/* Whole-card link: the title link covers the card; other links sit above it. */
+.cl-tiles__card--linked .cl-tiles__card-link { color: inherit; text-decoration: none; }
+.cl-tiles__card--linked .cl-tiles__card-link::after { content: ""; position: absolute; inset: 0; border-radius: var(--_radius); }
+.cl-tiles__card--linked :where(a, button):not(.cl-tiles__card-link) { position: relative; z-index: 1; }
+.cl-tiles__card--linked:hover { border-color: var(--_accent); }
+
+/* CTA rows ---------------------------------------------------------------- */
+.cl-cta-rows { display: grid; gap: calc(var(--_gap) * 2); margin-block: calc(var(--_gap) * 2); }
+.cl-cta-rows__row { display: grid; gap: var(--_gap); align-items: center; }
+@media (min-width: 48em) {
+    .cl-cta-rows__row--media { grid-template-columns: 2fr 1fr; }
+}
+.cl-cta-rows__row--single { text-align: center; justify-items: center; }
+.cl-cta-rows__heading { margin-top: 0; }
+.cl-cta-rows__action { margin-bottom: 0; }
+
+/* Quick actions ----------------------------------------------------------- */
+.cl-quick-actions { margin-block: var(--_gap); }
+.cl-quick-actions__grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--_gap); grid-template-columns: 1fr; }
+@media (min-width: 40em) { .cl-quick-actions__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64em) {
+    .cl-quick-actions__grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .cl-quick-actions__grid--4 { grid-template-columns: repeat(4, 1fr); }
+}
+.cl-quick-actions__item {
+    display: flex; gap: 0.75rem; align-items: flex-start; height: 100%;
+    padding: var(--_gap); border: var(--_border); border-radius: var(--_radius);
+    color: inherit; text-decoration: none; background: var(--_surface);
+}
+.cl-quick-actions__item:hover { border-color: var(--_accent); }
+.cl-quick-actions__icon { font-size: 1.5em; color: var(--_accent); }
+.cl-quick-actions__text { display: grid; gap: 0.25em; }
+.cl-quick-actions__label { font-weight: 600; }
+.cl-quick-actions__description { color: var(--_muted); font-size: 0.925em; }
+
+/* Footer ------------------------------------------------------------------ */
+.cl-footer__columns { display: grid; gap: var(--_gap); grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+.cl-footer__heading { font-size: 1rem; margin: 0 0 0.5em; }
+.cl-footer__links { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4em; }
+.cl-footer__social { list-style: none; display: flex; flex-wrap: wrap; gap: 1rem; padding: 0; margin: var(--_gap) 0 0; font-size: 1.25em; }
+.cl-footer__note { margin: var(--_gap) 0 0; color: var(--_muted); font-size: 0.875em; text-align: center; }
+
+/* Author ------------------------------------------------------------------ */
+.cl-author { display: flex; gap: var(--_gap); align-items: flex-start; flex-wrap: wrap; padding: var(--_gap); border: var(--_border); border-radius: var(--_radius); margin-block: var(--_gap); }
+.cl-author__heading { flex-basis: 100%; margin: 0; }
+.cl-author__image { border-radius: 50%; object-fit: cover; flex: none; }
+.cl-author__text { flex: 1 1 16rem; }
+.cl-author__name { font-weight: 600; margin: 0; }
+.cl-author__role { margin: 0 0 0.5em; color: var(--_muted); }
+.cl-author__social { list-style: none; display: flex; gap: 0.75rem; padding: 0; margin: 0.5em 0 0; }
+
+/* Embeds: shapes as classes so a strict CSP needs no inline styles ---------- */
+.cl-embeds { display: grid; gap: var(--_gap); margin-block: var(--_gap); }
+.cl-embeds__item { margin: 0; }
+.cl-embeds__frame { position: relative; width: 100%; }
+.cl-embeds__frame iframe { display: block; width: 100%; border: 0; }
+.cl-embeds__frame--16x9 { aspect-ratio: 16 / 9; }
+.cl-embeds__frame--4x3 { aspect-ratio: 4 / 3; }
+.cl-embeds__frame--1x1 { aspect-ratio: 1 / 1; }
+:where(.cl-embeds__frame--16x9, .cl-embeds__frame--4x3, .cl-embeds__frame--1x1) iframe { height: 100%; }
+.cl-embeds__caption { margin-top: 0.5em; color: var(--_muted); font-size: 0.875em; }
+
+/* Map page ---------------------------------------------------------------- */
+.cl-map-page__map, #map { width: 100%; min-height: 24rem; aspect-ratio: 16 / 10; border-radius: var(--_radius); }
+.cl-map-page__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
+.cl-map-page__place { display: flex; justify-content: space-between; gap: var(--_gap); align-items: flex-start; padding-block: 0.75rem; border-bottom: var(--_border); }
+.cl-map-page__place-summary { margin: 0.25em 0 0; color: var(--_muted); }
+.cl-map-page__locate { flex: none; cursor: pointer; }
+.cl-map-page [hidden] { display: none !important; } /* framework display rules (e.g. .button) must not reveal hidden locate buttons */
+.cl-map-bubble__title { font-weight: 600; }
+.cl-map-bubble__summary { margin: 0.25em 0 0; }
+
+/* Jobs and tours ---------------------------------------------------------- */
+:where(.cl-job__facts, .cl-tour__facts) { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; margin: var(--_gap) 0; }
+:where(.cl-job__facts, .cl-tour__facts) dt { font-weight: 600; }
+:where(.cl-job__facts, .cl-tour__facts) dd { margin: 0; }
+.cl-job__closed { padding: 0.75rem 1rem; border: var(--_border); border-radius: var(--_radius); font-weight: 600; }
+.cl-jobs__list { list-style: none; padding: 0; display: grid; gap: var(--_gap); }
+.cl-jobs__heading { margin: 0; }
+.cl-jobs__summary { margin: 0.25em 0 0; color: var(--_muted); }
+.cl-tour__stops { display: grid; gap: var(--_gap); padding-inline-start: 1.25em; }
+.cl-tour__stop--media { display: grid; gap: var(--_gap); }
+@media (min-width: 48em) { .cl-tour__stop--media { grid-template-columns: 2fr 1fr; } }
+.cl-tour__stop-title { font-weight: 600; margin: 0; }
+
+/* Modular ----------------------------------------------------------------- */
+.cl-modular__module { scroll-margin-top: var(--cl-scroll-offset, 5rem); margin-block: calc(var(--_gap) * 2); }
+
+@media (prefers-reduced-motion: reduce) {
+    :where(.cl-tiles, .cl-quick-actions, .cl-map-page) * { transition: none !important; scroll-behavior: auto !important; }
+}

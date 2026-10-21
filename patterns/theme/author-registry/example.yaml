@@ -1,0 +1,20 @@
+# user/config/themes/<your-theme>.yaml
+authors:
+  - authorid: jd
+    authorname: Jane Doe
+    jobtitle: Editor
+    bio: Jane writes about trails, history and the people who keep both going.
+    authorpageurl: /about/jane-doe
+    socialmedia:
+      - socialurl: https://www.linkedin.com/in/example
+        label: Jane Doe on LinkedIn
+        icon: fa-brands fa-linkedin
+  - authorid: rk
+    authorname: Rae Kim
+    jobtitle: Photographer
+
+# A page then stores:
+# ---
+# title: Spring on the river
+# author: jd
+# ---

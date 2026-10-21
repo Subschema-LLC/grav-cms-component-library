@@ -1,0 +1,9 @@
+# user/config/themes/<your-theme>.yaml (what Admin saves)
+site_logo:
+  user/assets/site-logo/logo.svg:
+    name: logo.svg
+    type: image/svg+xml
+    size: 4210
+    path: user/assets/site-logo/logo.svg
+site_logo_alt: Example Trails Association
+site_logo_width: 180

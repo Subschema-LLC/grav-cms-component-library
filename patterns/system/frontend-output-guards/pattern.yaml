@@ -1,0 +1,45 @@
+id: system/frontend-output-guards
+name: Front-end output guards for injecting plugins
+version: 1.0.0
+level: system
+status: stable
+summary: The checks a plugin should pass before injecting scripts into rendered pages, HTML responses only, privacy signals, and staff accounts in both Grav 1.7 and Grav 2 permission models.
+use_when:
+  - A plugin adds analytics, consent, chat or other scripts to every page.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11']
+requires:
+  php: true
+files:
+  snippets: [OutputGuards.php]
+apply:
+  php: |
+    // HTML only
+    $page = $this->grav['page'] ?? null;
+    if (!$page || !method_exists($page, 'templateFormat') || $page->templateFormat() !== 'html') { return false; }
+    // Privacy signals
+    if (($_SERVER['HTTP_DNT'] ?? '') === '1' || in_array($_SERVER['HTTP_SEC_GPC'] ?? '', ['1', '?1'], true)) { return false; }
+    // Staff (Grav 1.7 admin.* and Grav 2 api.*)
+    if ($user->authenticated && ($user->authorize('admin.login') || $user->authorize('admin.super')
+        || $user->authorize('api.access') || $user->authorize('api.super'))) { return false; }
+solves:
+  - problem: The tracker was injected into non-HTML responses (JSON, XML, Markdown) that happened to contain a closing </body> in their data.
+    fix: Inject only when the page's template format is html.
+    seen_in: AGGREGATE plugin v1.1.2
+  - problem: Staff visits were counted on Grav 2 sites, because Grav 2 admin accounts can hold only api.access / api.super and no admin.* permissions.
+    fix: Check both permission families.
+    seen_in: AGGREGATE plugin v1.1.2
+  - problem: Global Privacy Control was ignored while Do Not Track was honored.
+    fix: Treat Sec-GPC 1 (and ?1) like DNT 1.
+    seen_in: AGGREGATE plugin v1.1.2
+  - problem: Excluding "logged-in admins" by checking only that a user was logged in also excluded ordinary front-end members.
+    fix: Exclude by permission, not by login state.
+    seen_in: a public plugin's GPM review for Grav 2
+  - problem: Inline tracker configuration blocked a strict Content-Security-Policy.
+    fix: A single external script tag with defer and referrerpolicy, configured by URL parameters or data attributes, with no inline JavaScript.
+    seen_in: AGGREGATE plugin v1.0.0
+verify:
+  - curl a .json or .xml route of the site; the response has no injected script.
+  - "curl -H 'Sec-GPC: 1' on the home page returns no tracker script."
+  - Logged in as an Admin2-only account, the public pages have no tracker script.

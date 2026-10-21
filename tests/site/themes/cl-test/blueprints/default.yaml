@@ -1,0 +1,57 @@
+extends@: default
+
+form:
+  fields:
+    tabs:
+      fields:
+        page_info:
+          type: tab
+          title: Page Info
+          fields:
+            header.category:
+              type: select
+              label: Category
+              default: ''
+              data-options@: '\Grav\Theme\ClTest::categoryOptions'
+          import@1:
+            type: page/page-heading/blueprint
+            context: 'plugin://component-library/patterns'
+          import@2:
+            type: page/header-image/blueprint
+            context: 'plugin://component-library/patterns'
+          import@3:
+            type: theme/author-registry/page
+            context: 'plugin://component-library/patterns'
+          import@4:
+            type: page/map-location/blueprint
+            context: 'plugin://component-library/patterns'
+          import@5:
+            type: theme/map-here/page
+            context: 'plugin://component-library/patterns'
+        blocks:
+          type: tab
+          title: Content Blocks
+          import@1:
+            type: page/hero-actions/blueprint
+            context: 'plugin://component-library/patterns'
+          import@2:
+            type: page/quick-actions/blueprint
+            context: 'plugin://component-library/patterns'
+          import@3:
+            type: page/tiles/blueprint
+            context: 'plugin://component-library/patterns'
+          import@4:
+            type: page/cta-rows/blueprint
+            context: 'plugin://component-library/patterns'
+        embeds_tab:
+          type: tab
+          title: Embeds
+          import@:
+            type: page/embed-block/blueprint
+            context: 'plugin://component-library/patterns'
+        schema:
+          type: tab
+          title: Schema.org
+          import@:
+            type: theme/schema-graph/page
+            context: 'plugin://component-library/patterns'

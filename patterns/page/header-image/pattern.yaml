@@ -1,0 +1,50 @@
+id: page/header-image
+name: Header image
+version: 1.0.0
+level: page
+status: stable
+summary: A per-page header image with alt text and a show/hide switch, rendered as a responsive, eagerly loaded, high-priority image.
+use_when:
+  - Pages open with a large photo chosen per page.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [_shared/macros]
+data:
+  scope: page.header
+  keys:
+    header_image: { type: bool, description: Show the image. The file still feeds structured data when hidden. }
+    header_image_file: { type: page media filename }
+    header_image_alt: { type: string, description: Empty means decorative. }
+files:
+  blueprint: blueprint.yaml
+  template: header-image.html.twig
+  example: example.md
+apply:
+  blueprint: |
+    page_info:
+      type: tab
+      title: Page Info
+      import@:
+        type: page/header-image/blueprint
+        context: 'plugin://component-library/patterns'
+  template: |
+    {% include 'patterns/page/header-image/header-image.html.twig' with { sizes: '100vw' } %}
+classes:
+  markup: [cl-header-image, cl-header-image__img]
+  slots: [root, image]
+solves:
+  - problem: The header image was lazy-loaded like every other image, which delays the page's largest above-the-fold element (Largest Contentful Paint).
+    fix: loading="eager", fetchpriority="high" and decoding="async".
+  - problem: One full-size file was sent to phones and desktops alike.
+    fix: Grav's derivatives() builds a srcset (640–1920 px by default) with a sizes attribute.
+  - problem: A header image whose file was deleted left an empty wrapper or a broken image.
+    fix: The partial renders only when the file exists in page.media.
+    seen_in: community-guide theme, v0.2.0
+  - problem: The header-image fields only rendered when a Gantry particle was placed in the page's layout.
+    fix: A plain partial any template includes.
+    seen_in: Gantry header-image particle
+verify:
+  - The rendered <img> has loading="eager", fetchpriority="high" and a srcset (for raster images).
+  - With header_image false, nothing renders, and theme/schema-graph still uses the file as the page image.

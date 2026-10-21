@@ -1,0 +1,9 @@
+# Pattern: system/compatibility-flag
+# In a plugin's or theme's blueprints.yaml, next to name/version/dependencies.
+
+# Tested on Grav 2.2.11 (Twig 3, twig3_compat off) and Grav 1.7.53.
+compatibility:
+  grav: ['1.7', '2.0']
+
+dependencies:
+  - { name: grav, version: '>=1.7.0' }

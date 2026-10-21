@@ -1,0 +1,34 @@
+{#
+    Pattern: theme/head-scripts
+
+    In the theme's base template:
+
+        <head>
+            ...
+            {% block assets deferred %}
+                {{ assets.css()|raw }}
+                {{ assets.js()|raw }}
+                {% include 'patterns/theme/head-scripts/head-scripts.html.twig' with { slot: 'head' } %}
+            {% endblock %}
+        </head>
+        <body>
+            ...
+            {{ assets.js('bottom')|raw }}
+            {% include 'patterns/theme/head-scripts/head-scripts.html.twig' with { slot: 'body_end' } %}
+        </body>
+
+    A page can turn the snippets off with `head_scripts: false` in its front
+    matter (a consent or privacy page, for example).
+
+    Trusted HTML by design: these fields come from theme settings, which only
+    administrators can edit, and vendor snippets must run unmodified.
+#}
+{% set enabled = page.header.head_scripts is not defined or page.header.head_scripts %}
+{% if enabled %}
+    {# grav.config, not theme_var(): theme_var() lets page front matter override
+       the value, which would let anyone who can edit a page inject scripts. #}
+    {% set code = (slot|default('head')) == 'body_end' ? grav.config.get('theme.body_end_scripts') : grav.config.get('theme.tracking_tags') %}
+    {% if code is not empty %}
+        {{ code|raw }}
+    {% endif %}
+{% endif %}

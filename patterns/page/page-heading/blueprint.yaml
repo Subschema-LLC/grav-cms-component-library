@@ -1,0 +1,36 @@
+# Pattern: page/page-heading — page blueprint fragment
+# Import on the tab or section that holds page info:
+#   import@:
+#     type: page/page-heading/blueprint
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header_page_heading_section:
+      type: section
+      title: Heading & Titles
+      underline: true
+
+    header.seo_page_title:
+      type: text
+      label: SEO Title
+      help: The browser-tab and search-result title. Defaults to the page title. Around 60 characters shows in full in search results.
+      validate:
+        max: 120
+
+    header.page_name:
+      type: text
+      label: Visible Heading (H1)
+      help: The large heading on the page. Defaults to the page title.
+
+    header.page_name_subtitle:
+      type: text
+      label: Subtitle
+      help: A short line under the heading. It is not a heading itself, so screen readers do not treat it as a new section.
+
+    header.page_byline:
+      type: textarea
+      label: Byline
+      help: One supporting sentence under the subtitle.
+      rows: 2
+      validate:
+        max: 300

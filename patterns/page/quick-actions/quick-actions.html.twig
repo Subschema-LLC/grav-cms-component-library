@@ -1,0 +1,41 @@
+{#
+    Pattern: page/quick-actions
+
+    {% include 'patterns/page/quick-actions/quick-actions.html.twig' with {
+        heading_level: 2,
+        id: 'quick-actions',      -- base for the heading id; must be unique on the page
+        classes: { root: 'section' }
+    } %}
+
+    A <nav> of shortcut cards. Items without a label or link are skipped.
+    Slots for `classes`: root, heading, grid, item.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set items = (items|default(page.header.quick_actions|default([])))|filter(a => a.label|default('') is not empty and a.link|default('') is not empty) %}
+{% set title = title|default(page.header.quick_actions_title|default('')) %}
+{% set cols = (columns|default(page.header.quick_actions_columns|default(3)))|int %}
+{% set cols = cols in [2, 3, 4] ? cols : 3 %}
+{% set h = heading_level|default(2) %}
+{% set base_id = (id|default('quick-actions'))|e('html_attr') %}
+{% set c = { root: '', heading: '', grid: '', item: '' }|merge(classes|default({})) %}
+
+{% if items|length %}
+<nav class="{{ cl.cls('cl-quick-actions', c.root) }}" {% if title %}aria-labelledby="{{ base_id }}-title"{% else %}aria-label="Quick links"{% endif %}>
+    {% if title %}
+        <h{{ h }} id="{{ base_id }}-title" class="{{ cl.cls('cl-quick-actions__heading', c.heading) }}">{{ title|e }}</h{{ h }}>
+    {% endif %}
+    <ul class="{{ cl.cls('cl-quick-actions__grid cl-quick-actions__grid--' ~ cols, c.grid) }}">
+        {% for a in items %}
+            <li>
+                <a class="{{ cl.cls('cl-quick-actions__item', c.item) }}" href="{{ a.link|e }}">
+                    {%- if a.icon -%}<span class="cl-quick-actions__icon">{{ cl.icon(a.icon) }}</span>{%- endif -%}
+                    <span class="cl-quick-actions__text">
+                        <span class="cl-quick-actions__label">{{ a.label|e }}</span>
+                        {%- if a.description -%}<span class="cl-quick-actions__description">{{ a.description|e }}</span>{%- endif -%}
+                    </span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}

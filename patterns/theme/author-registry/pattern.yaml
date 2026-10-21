@@ -1,0 +1,100 @@
+id: theme/author-registry
+name: Author registry
+version: 1.0.0
+level: theme
+touches: [page]
+status: stable
+summary: A list of authors kept once in the theme settings, a page field that picks one by ID with options read live from that list, and an author card partial.
+use_when:
+  - Several people write for the site and pages credit one of them.
+  - Author details feed both a visible bio and Schema.org author data.
+avoid_when:
+  - Authors need their own login accounts and profile pages; use Grav user accounts or Flex Objects instead.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [_shared/macros]
+  plugins: [component-library]
+  php: true
+data:
+  scope: theme
+  keys:
+    authors:
+      type: list
+      item:
+        authorid: "lowercase id, stable"
+        authorname: string
+        jobtitle: string
+        bio: markdown
+        image: file map (user://assets/authors)
+        authorpageurl: path or URL
+        socialmedia: "list of { socialurl, label, icon }"
+    page.header.author: { type: string, description: An authorid from the registry, set by the page fragment page.yaml. }
+legacy_keys:
+  - key: authors.*.picked_image
+    handling: Read when image is empty, from theme://assets/images/authors/<file>.
+  - key: authors.*.title
+    handling: Ignored. It only set an image tooltip, which repeated the name.
+files:
+  blueprint: blueprint.yaml
+  template: author-bio.html.twig
+  snippets: [page.yaml]
+  example: example.yaml
+apply:
+  blueprint: |
+    # theme blueprints.yaml, under form.fields:
+    authors_section:
+      type: section
+      title: Authors
+      underline: true
+      import@:
+        type: theme/author-registry/blueprint
+        context: 'plugin://component-library/patterns'
+
+    # page blueprint, on the tab that holds page info:
+    page_info:
+      type: tab
+      title: Page Info
+      import@:
+        type: theme/author-registry/page
+        context: 'plugin://component-library/patterns'
+  template: |
+    {% include 'patterns/theme/author-registry/author-bio.html.twig' with { heading: 'About the author', heading_level: 2 } %}
+  php: |
+    // Only needed WITHOUT the component-library plugin. In your theme class:
+    public static function getSubscribedEvents(): array
+    {
+        return ['onThemeInitialized' => ['onThemeInitialized', 0]];
+    }
+    public function onThemeInitialized(): void
+    {
+        if (method_exists(\Grav\Common\Data\Blueprint::class, 'addAllowedDynamicCallable')) {
+            \Grav\Common\Data\Blueprint::addAllowedDynamicCallable(self::class . '::authorOptions');
+        }
+    }
+    // ...then copy authorOptions() from component-library.php and change page.yaml's
+    // data-options@ to '\Grav\Theme\YourTheme::authorOptions'.
+classes:
+  markup: [cl-author, cl-author__heading, cl-author__image, cl-author__text, cl-author__name, cl-author__role, cl-author__bio, cl-author__social]
+  slots: [root, image, name, role, bio, social]
+solves:
+  - problem: Page blueprints hard-coded the author dropdown ("Jane Doe (Author ID: jd)"), so every new author meant editing a YAML file in each theme, and the list drifted from the registry.
+    fix: data-options@ builds the options from the theme's authors list when the form opens, in both Admins.
+    seen_in: community-guide theme and Gantry child theme
+  - problem: The author select's default was a person's full name while the option keys were initials, so the default never matched any option and new pages showed a blank, unsaved author.
+    fix: Default is '' (None); the provider always includes a None option.
+    seen_in: Gantry child theme page blueprint
+  - problem: Author photos were uploaded into the theme folder and disappeared on theme updates.
+    fix: Uploads go to user://assets/authors.
+    seen_in: community-guide and Gantry-based themes
+  - problem: Changing an author's ID silently unlinked every page that used it.
+    fix: The ID field is validated (lowercase pattern, required) and its help text says pages store it.
+  - problem: Icon-only social links had no accessible name.
+    fix: A per-link label, with a "Name on host" fallback, used as aria-label.
+  - problem: Grav 2.0.11+ refuses a data-options@ Class::method provider that is not on its allowlist whenever the blueprint is not treated as a trusted file, and registering it behind isAdmin() misses Admin2, whose requests go through the API where isAdmin() is false.
+    fix: The plugin registers the provider with Blueprint::addAllowedDynamicCallable() in onPluginsInitialized, for every request type.
+    seen_in: Grav 2 Admin2 migration
+verify:
+  - GET /api/v1/blueprints/pages/<template> returns header.author with one option per registry entry plus None.
+  - A page whose author is in the registry renders aside.cl-author with the name; an unknown ID renders nothing.

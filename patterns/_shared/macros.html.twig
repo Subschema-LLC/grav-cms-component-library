@@ -1,0 +1,65 @@
+{#
+    Shared helpers for pattern templates.
+    Import with:  {% import 'patterns/_shared/macros.html.twig' as cl %}
+
+    Every macro escapes what it prints, so callers never add |raw around
+    user-entered values.
+#}
+
+{#
+    icon_class(value, base)
+
+    Grav 2's Admin icon picker (Font Awesome 7) saves solid icons as a bare
+    "fa-house" and other families as "fa-brands fa-github". Grav 1.7's Admin
+    saved Font Awesome 4 names such as "fa-home". A bare value renders nothing
+    until it has a family class, so `base` (default: the plugin's
+    icon_base_class, else "fa-solid") is added when the value has none.
+#}
+{% macro icon_class(value, base) -%}
+    {%- set v = value|default('')|trim -%}
+    {%- if v is not empty -%}
+        {%- if v matches '/(^|\\s)(fa|fas|far|fab|fa-solid|fa-regular|fa-brands|fa-light|fa-thin|fa-duotone|fa-sharp)(\\s|$)/' -%}
+            {{- v|e -}}
+        {%- else -%}
+            {%- set b = base|default(grav.config.get('plugins.component-library.icon_base_class'))|default('fa-solid') -%}
+            {{- (b ~ ' ' ~ v)|e -}}
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro %}
+
+{# icon(value, base): a decorative <i> element, or nothing when value is empty. #}
+{% macro icon(value, base, extra_class) -%}
+    {%- set cls = _self.icon_class(value, base)|trim -%}
+    {%- if cls is not empty -%}
+        <i class="{{ cls }}{{ extra_class ? ' ' ~ extra_class|e }}" aria-hidden="true"></i>
+    {%- endif -%}
+{%- endmacro %}
+
+{#
+    link_attrs(url, target)
+
+    href plus target. A new tab always gets rel="noopener noreferrer" so the
+    opened page cannot reach window.opener.
+#}
+{% macro link_attrs(url, target) -%}
+    href="{{ url|e }}"
+    {%- if target == '_blank' %} target="_blank" rel="noopener noreferrer"{% endif -%}
+{%- endmacro %}
+
+{#
+    Alt text is not a macro on purpose. Media .html(title, alt) escapes its
+    attributes itself, and a macro's output is already escaped, so routing alt
+    text through one would double-escape it ("&amp;amp;"). Templates use:
+
+        {% set alt = item.image_alt is defined and item.image_alt is not null ? item.image_alt : fallback %}
+        {{ media.html('', alt)|raw }}
+
+    `is defined` rather than |default: an editor who clears the alt field on
+    purpose (a decorative image) keeps alt="", instead of the fallback being
+    read aloud. The empty title argument stops alt text repeating as a tooltip.
+#}
+
+{# cls(base, extra): base class plus any extra classes a theme passed in. #}
+{% macro cls(base, extra) -%}
+    {{- base|e }}{% if extra %} {{ extra|e }}{% endif -%}
+{%- endmacro %}

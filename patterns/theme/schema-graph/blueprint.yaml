@@ -1,0 +1,89 @@
+# Pattern: theme/schema-graph — theme blueprint fragment (site-wide defaults)
+# Import on a section in the theme's blueprints.yaml:
+#   schema_section:
+#     type: section
+#     title: Structured Data
+#     underline: true
+#     import@:
+#       type: theme/schema-graph/blueprint
+#       context: 'plugin://component-library/patterns'
+# Pages get their own Schema.org tab from the companion fragment page.yaml.
+form:
+  fields:
+    schema_defaults.organization_type:
+      type: select
+      label: Publisher Type
+      help: The Schema.org type of the organization behind the site.
+      default: Organization
+      options:
+        Organization: Organization
+        LocalBusiness: Local business
+        NGO: Non-profit (NGO)
+        GovernmentOrganization: Government organization
+        EducationalOrganization: Educational organization
+        Corporation: Corporation
+        Person: A person (personal site)
+
+    schema_defaults.organization_name:
+      type: text
+      label: Publisher Name
+      help: Leave empty to use the site title.
+
+    schema_defaults.telephone:
+      type: text
+      label: Publisher Phone
+      placeholder: '+1-555-555-0100'
+
+    schema_defaults.address_locality:
+      type: text
+      label: Default City or Town
+      help: Filled into a page's address when the page gives a street but no city.
+
+    schema_defaults.address_region:
+      type: text
+      label: Default State or Region
+      placeholder: MN
+
+    schema_defaults.postal_code:
+      type: text
+      label: Default Postal Code
+
+    schema_defaults.address_country:
+      type: text
+      label: Default Country Code
+      help: Two-letter ISO code.
+      default: US
+      validate:
+        pattern: '^[A-Z]{2}$'
+        message: Two capital letters, such as US or CA.
+
+    schema_home_section:
+      type: section
+      title: Home Page Subject
+      text: Optional. The place the site is about, added to the home page as WebPage "about".
+      underline: false
+
+    schema_defaults.home_about.name:
+      type: text
+      label: Place Name
+
+    schema_defaults.home_about.description:
+      type: textarea
+      rows: 2
+      label: Place Description
+
+    schema_defaults.home_about.latitude:
+      type: text
+      label: Latitude
+      validate:
+        type: number
+        min: -90
+        max: 90
+
+    schema_defaults.home_about.longitude:
+      type: text
+      label: Longitude
+      validate:
+        type: number
+        min: -180
+        max: 180

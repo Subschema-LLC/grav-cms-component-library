@@ -1,0 +1,162 @@
+# Pattern: theme/schema-graph — page blueprint fragment (per-page overrides)
+# Usually its own tab:
+#   schema:
+#     type: tab
+#     title: Schema.org
+#     import@:
+#       type: theme/schema-graph/page
+#       context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header_schema_general:
+      type: section
+      title: Structured Data
+      text: Schema.org JSON-LD for search engines. Every field is optional; empty fields fall back to the page's own title, description and images.
+      underline: true
+
+    header.schema.enabled:
+      type: toggle
+      label: Output Structured Data
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    header.schema.type:
+      type: select
+      label: Page Type
+      help: Auto picks a type from the page template.
+      default: auto
+      options:
+        auto: Auto (from the template)
+        WebPage: WebPage
+        AboutPage: AboutPage
+        ContactPage: ContactPage
+        CollectionPage: CollectionPage (a listing)
+        ItemPage: ItemPage (one item)
+        FAQPage: FAQPage
+        BlogPosting: BlogPosting (an article or story)
+
+    header.schema.name:
+      type: text
+      label: Name or Headline
+      help: Defaults to the SEO title, then the page title.
+
+    header.schema.description:
+      type: textarea
+      rows: 2
+      label: Description
+      help: Defaults to the meta description, then the page summary.
+
+    header.schema.image:
+      type: text
+      label: Image
+      help: A page media filename, a site path or a full URL. Defaults to the header image.
+
+    header_schema_place:
+      type: section
+      title: Place
+      text: When the page describes a place. Coordinates fall back to the page's Map Location.
+      underline: true
+
+    header.schema.place_type:
+      type: select
+      label: Place Type
+      default: Place
+      options:
+        Place: Place
+        LocalBusiness: Local business
+        Restaurant: Restaurant or bar
+        Store: Store
+        LodgingBusiness: Lodging
+        Campground: Campground
+        Park: Park
+        TouristAttraction: Tourist attraction
+        TouristDestination: Tourist destination
+        CivicStructure: Civic or community building
+        PlaceOfWorship: Place of worship
+        Museum: Museum
+        GasStation: Gas station
+
+    header.schema.place_name:
+      type: text
+      label: Place Name
+      help: Defaults to the Map Location title, then the page title.
+
+    header.schema.place_description:
+      type: textarea
+      rows: 2
+      label: Place Description
+
+    header.schema.latitude:
+      type: text
+      label: Latitude
+      validate:
+        type: number
+        min: -90
+        max: 90
+
+    header.schema.longitude:
+      type: text
+      label: Longitude
+      validate:
+        type: number
+        min: -180
+        max: 180
+
+    header.schema.telephone:
+      type: text
+      label: Phone
+      placeholder: '+1-555-555-0100'
+
+    header.schema.street_address:
+      type: text
+      label: Street Address
+
+    header.schema.address_locality:
+      type: text
+      label: City or Town
+      help: Defaults to the theme's default city.
+
+    header.schema.address_region:
+      type: text
+      label: State or Region
+
+    header.schema.postal_code:
+      type: text
+      label: Postal Code
+
+    header_schema_article:
+      type: section
+      title: Article
+      text: When the page is a story or article.
+      underline: true
+
+    header.schema.author_name:
+      type: text
+      label: Author Name
+      help: Defaults to the page's author from the author registry, then the site author.
+
+    header.schema.author_url:
+      type: text
+      label: Author URL
+
+    header.schema.date_published:
+      type: datetime
+      label: Date Published
+      help: Defaults to the page date.
+
+    header_schema_advanced:
+      type: section
+      title: Custom JSON-LD
+      underline: true
+
+    header.schema.custom_json:
+      type: textarea
+      rows: 5
+      label: Extra JSON
+      help: "A JSON object. With an @type it is added to the graph as its own entity; without one its properties are merged into the page entity. Invalid JSON is ignored."
+      placeholder: '{"sameAs": ["https://example.com/profile"]}'

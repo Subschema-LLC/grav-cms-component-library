@@ -1,0 +1,51 @@
+id: page-type/modular-page
+name: Modular page with a general-purpose section
+version: 1.0.0
+level: page-type
+touches: [page]
+status: stable
+summary: A modular parent template that renders its intro and every module with a linkable id, and a general-purpose "section" module built from page/tiles and page/cta-rows.
+use_when:
+  - Landing pages are assembled from stacked sections.
+  - A theme ships no module templates yet and modular pages should work immediately.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [page/tiles, page/cta-rows, _shared/macros]
+data:
+  scope: page.header
+  keys:
+    content.items: { type: string, description: "'@self.modular' on the parent page", frontmatter_only: true }
+    section_heading: { type: string, description: On a modular/section module }
+    hide_heading: { type: bool }
+files:
+  blueprint: section-blueprint.yaml
+  template: modular-page.html.twig
+  templates: [section.html.twig, modular.html.twig]
+  example: example.md
+apply:
+  blueprint: |
+    # Copy section-blueprint.yaml -> user/themes/<theme>/blueprints/modular/section.yaml
+  template: |
+    # Copy modular.html.twig -> user/themes/<theme>/templates/modular.html.twig
+    # Copy section.html.twig -> user/themes/<theme>/templates/modular/section.html.twig
+    # Parent page (modular.md):
+    #   content:
+    #     items: '@self.modular'
+    # Modules: child folders starting with _ (for example _intro/section.md).
+classes:
+  markup: [cl-modular, cl-modular__intro, cl-modular__module, cl-section, cl-section__heading, cl-section__body]
+  slots: [root, intro, module]
+solves:
+  - problem: The modular template's content block had been commented out, so modular pages rendered an empty body.
+    fix: A tested modular partial; the scaffold template only includes it.
+    seen_in: community-guide theme, v0.2.0
+  - problem: The theme shipped no module templates, so every new modular page needed template work first.
+    fix: A general-purpose section module (heading, content, tiles, CTA rows).
+    seen_in: community-guide theme, v0.2.0
+  - problem: Sections had no ids, so a menu could not link to one.
+    fix: Each module's wrapper gets its folder slug as the id.
+verify:
+  - A modular page with two modules renders two <section> elements whose ids are the module slugs without underscores.
+  - Tiles and CTA rows in a module render with h3 headings under the section's h2.

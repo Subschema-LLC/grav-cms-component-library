@@ -1,0 +1,55 @@
+name: Component Library
+slug: component-library
+type: plugin
+version: 1.0.0
+description: "Tested, reusable blueprint and Twig patterns for Grav themes, pages and plugins. Each pattern records the real problems it solves, and the catalog is machine-readable for AI agents."
+icon: puzzle-piece
+author:
+  name: Subschema LLC
+  url: https://subschema.io
+homepage: https://github.com/Subschema-LLC/grav-cms-component-library
+docs: https://github.com/Subschema-LLC/grav-cms-component-library/blob/main/README.md
+bugs: https://github.com/Subschema-LLC/grav-cms-component-library/issues
+readme: https://github.com/Subschema-LLC/grav-cms-component-library/blob/main/README.md
+keywords: blueprints, patterns, components, schema.org, accessibility, admin2, ai
+license: MIT
+
+# Tested on Grav 2.2.11 (Twig 3, twig3_compat off) and Grav 1.7.53. See TESTING.md.
+compatibility:
+  grav: ['1.7', '2.0']
+
+dependencies:
+  - { name: grav, version: '>=1.7.0' }
+
+form:
+  validation: loose
+  fields:
+    enabled:
+      type: toggle
+      label: PLUGIN_ADMIN.ENABLED
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    load_css:
+      type: toggle
+      label: Load the pattern stylesheet
+      help: A small, framework-neutral stylesheet for the cl-* classes. Turn it off when your theme styles the patterns itself.
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    icon_base_class:
+      type: text
+      label: Icon family class
+      help: "Added to icons that were saved without a family class. Grav 2's Admin saves solid Font Awesome icons as a bare 'fa-house', which renders only with a family class such as fa-solid (Font Awesome 6 or 7). Use 'fa' for a theme that loads Font Awesome 4."
+      default: fa-solid
+      placeholder: fa-solid

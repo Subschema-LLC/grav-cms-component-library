@@ -1,0 +1,18 @@
+home:
+  alias: '/home'
+pages:
+  theme: cl-test
+  markdown:
+    extra: true
+cache:
+  enabled: true
+twig:
+  cache: true
+strict_mode:
+  twig3_compat: false
+  twig2_compat: false
+debugger:
+  enabled: false
+errors:
+  display: 1
+  log: true

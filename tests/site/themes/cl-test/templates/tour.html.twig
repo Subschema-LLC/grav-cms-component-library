@@ -1,0 +1,14 @@
+{#
+    Pattern: page-type/bookable-tour — theme template scaffold
+    Copy to your theme as templates/tour.html.twig; adjust extends/blocks.
+#}
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <article class="tour-page">
+        {% include 'patterns/page/header-image/header-image.html.twig' %}
+        {% include 'patterns/page/page-heading/page-heading.html.twig' %}
+        {% include 'patterns/page-type/bookable-tour/tour.html.twig' with { heading_level: 2 } %}
+        {% if page.content|striptags|trim is not empty %}<div class="tour-page__content">{{ page.content|raw }}</div>{% endif %}
+    </article>
+{% endblock %}

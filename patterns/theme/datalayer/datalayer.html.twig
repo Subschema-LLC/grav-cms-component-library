@@ -1,0 +1,23 @@
+{#
+    Pattern: theme/datalayer
+
+    In the theme's base template, BEFORE the assets are rendered (inside the
+    javascripts block is fine):
+
+        {% include 'patterns/theme/datalayer/datalayer.html.twig' %}
+
+    It registers datalayer.js in the head group and prints the JSON config the
+    script reads. Mark elements whose presence should emit an event:
+
+        <div id="map" data-datalayer-event="map_view"></div>
+#}
+{% set dl = grav.config.get('theme.datalayer')|default({}) %}
+{% if dl.enabled is not defined or dl.enabled %}
+    {% do assets.addJs('plugin://component-library/patterns/theme/datalayer/datalayer.js', { priority: 200, group: 'head' }) %}
+    {% set custom = {
+        app: dl.app|default(grav.config.get('site.title')),
+        app_env: dl.env|default('production'),
+        collection_method: dl.collection_method|default('')
+    }|filter(v => v is not empty) %}
+    <script type="application/json" id="cl-datalayer-config">{{ { customData: custom }|json_encode(15)|raw }}</script>
+{% endif %}

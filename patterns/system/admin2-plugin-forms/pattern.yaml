@@ -1,0 +1,49 @@
+id: system/admin2-plugin-forms
+name: Plugin settings that work in Admin2
+version: 1.0.0
+level: system
+status: stable
+summary: How a plugin's settings form behaves in Grav 2's Admin2 (an API client that reads saved YAML), and the event wiring that keeps derived or read-only values correct in both Admins.
+use_when:
+  - A plugin's settings form shows values computed by the plugin, or reacts to a save.
+  - A plugin worked in Grav 1.7's Admin and shows blank or stale fields in Admin2.
+avoid_when:
+  - The form is plain fields with no computed values; blueprints carry over to Admin2 unchanged.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11']
+requires:
+  php: true
+files:
+  snippets: [Admin2FormsPlugin.php, blueprints-snippet.yaml]
+apply:
+  php: |
+    // getSubscribedEvents(): subscribe form events unconditionally
+    'onApiBlueprintResolved' => ['onApiBlueprintResolved', 0],   // Admin2: adjust the form definition
+    'onAdminSave'            => ['onAdminSave', 0],              // both Admins: adjust values being saved
+    // The event carries context ('plugin', 'theme', 'page', 'account'), the
+    // plugin or theme name (or template for pages), and the serialized `fields`.
+  blueprint: |
+    site_id:
+      type: text
+      label: Site ID
+      disabled: true
+solves:
+  - problem: A plugin set a display value with $this->config->set() for the settings form; it showed in classic Admin but stayed blank in Admin2.
+    fix: Admin2 loads values from the saved YAML through the API, never from runtime config. Supply the value as the field's default in onApiBlueprintResolved, and persist it in onAdminSave.
+    seen_in: AGGREGATE plugin v1.1.1
+  - problem: The browser could not compute a value from a secret field, because Admin2 sends secrets masked.
+    fix: Derive the value on the server (onApiBlueprintResolved / onAdminSave), never in the browser.
+    seen_in: AGGREGATE plugin v1.1.1
+  - problem: Form listeners registered inside onPluginsInitialized behind isAdmin() never ran in Admin2, because its API requests are not "admin" requests while plugins initialize.
+    fix: Subscribe onApiBlueprintResolved and onAdminSave in getSubscribedEvents(); keep isAdmin() only for classic-Admin-specific work.
+    seen_in: AGGREGATE plugin; another plugin's GPM review (connect flow never ran under Admin2)
+  - problem: An onAdminSave handler changed the wrong object, because the event fires for every save (pages, users, other plugins).
+    fix: isOwnConfiguration() checks the storage file (plugins/<slug>.yaml), falling back to the classic Admin route.
+    seen_in: AGGREGATE plugin
+  - problem: After saving a new secret, Admin2 still showed the value derived from the old one.
+    fix: onAdminSave stores the refreshed derived value, which Admin2 reloads.
+    seen_in: AGGREGATE plugin v1.1.1
+verify:
+  - GET /api/v1/blueprints/plugins/<slug> shows the derived field with a default.
+  - Saving a new secret in Admin2, then reloading the page, shows the new derived value.

@@ -1,0 +1,23 @@
+{#
+    Pattern: page/page-heading
+
+    {% include 'patterns/page/page-heading/page-heading.html.twig' with {
+        subtitle_tag: 'p',          -- 'p' (default); 'h2' only if your CSS depends on it
+        classes: { title: 'title is-1' }
+    } %}
+
+    An <hgroup> with the H1 (page_name, else the page title), the subtitle and
+    the byline. Slots for `classes`: root, title, subtitle, byline.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', title: '', subtitle: '', byline: '' }|merge(classes|default({})) %}
+{% set heading = page.header.page_name|default(page.title) %}
+{% set subtitle = page.header.page_name_subtitle|default('') %}
+{% set byline = page.header.page_byline|default('') %}
+{% set stag = subtitle_tag|default('p') in ['p', 'h2', 'div'] ? subtitle_tag|default('p') : 'p' %}
+
+<hgroup class="{{ cl.cls('cl-page-heading', c.root) }}">
+    <h1 class="{{ cl.cls('cl-page-heading__title', c.title) }}">{{ heading|e }}</h1>
+    {% if subtitle %}<{{ stag }} class="{{ cl.cls('cl-page-heading__subtitle', c.subtitle) }}">{{ subtitle|e }}</{{ stag }}>{% endif %}
+    {% if byline %}<p class="{{ cl.cls('cl-page-heading__byline', c.byline) }}">{{ byline|e }}</p>{% endif %}
+</hgroup>

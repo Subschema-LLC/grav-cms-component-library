@@ -1,0 +1,129 @@
+# Pattern: page-type/job-listing — fields for one job posting (template: job)
+form:
+  fields:
+    header_job_section:
+      type: section
+      title: Job
+      underline: true
+
+    header.jobtitle:
+      type: text
+      label: Job Title
+      help: The position's title only, such as "Seasonal Tour Guide". No pay, location or company names here.
+      validate:
+        required: true
+        max: 120
+
+    header.jobdescription:
+      type: markdown
+      label: Description
+      help: Duties, qualifications and how to apply. Shown on the page and sent to job search engines.
+      validate:
+        required: true
+
+    header.job.employment_type:
+      type: select
+      label: Employment Type
+      multiple: true
+      options:
+        FULL_TIME: Full time
+        PART_TIME: Part time
+        CONTRACTOR: Contractor
+        TEMPORARY: Temporary or seasonal
+        INTERN: Internship
+        VOLUNTEER: Volunteer
+        PER_DIEM: Per diem
+        OTHER: Other
+
+    header.job.date_posted:
+      type: datetime
+      label: Date Posted
+      help: Defaults to the page date.
+
+    header.job.valid_through:
+      type: datetime
+      label: Closes On
+      help: After this date the posting leaves the job list and the page says the position is closed.
+
+    header_job_location_section:
+      type: section
+      title: Location
+      underline: true
+
+    header.job.remote:
+      type: toggle
+      label: Fully Remote
+      highlight: 0
+      default: 0
+      options:
+        1: PLUGIN_ADMIN.YES
+        0: PLUGIN_ADMIN.NO
+      validate:
+        type: bool
+
+    header.job.location.street:
+      type: text
+      label: Street Address
+
+    header.job.location.locality:
+      type: text
+      label: City or Town
+      help: Defaults to the theme's structured-data city.
+
+    header.job.location.region:
+      type: text
+      label: State or Region
+
+    header.job.location.postal_code:
+      type: text
+      label: Postal Code
+
+    header.job.location.country:
+      type: text
+      label: Country Code
+      default: US
+      validate:
+        pattern: '^[A-Z]{2}$'
+
+    header_job_pay_section:
+      type: section
+      title: Pay & Applying
+      underline: true
+
+    header.job.salary.min:
+      type: text
+      label: Pay From
+      validate:
+        type: number
+        min: 0
+
+    header.job.salary.max:
+      type: text
+      label: Pay To
+      help: Optional. Leave empty for a single rate.
+      validate:
+        type: number
+        min: 0
+
+    header.job.salary.unit:
+      type: select
+      label: Per
+      default: HOUR
+      options:
+        HOUR: Hour
+        DAY: Day
+        WEEK: Week
+        MONTH: Month
+        YEAR: Year
+
+    header.job.salary.currency:
+      type: text
+      label: Currency
+      default: USD
+      validate:
+        pattern: '^[A-Z]{3}$'
+
+    header.job.apply_url:
+      type: text
+      label: Apply Link
+      help: A page or form where candidates apply, such as /jobs/apply or a full URL.

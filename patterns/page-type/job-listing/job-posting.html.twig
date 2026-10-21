@@ -1,0 +1,106 @@
+{#
+    Pattern: page-type/job-listing — one posting, with JobPosting JSON-LD
+
+    {% include 'patterns/page-type/job-listing/job-posting.html.twig' with {
+        heading_level: 2,
+        classes: { apply: 'button is-primary' }
+    } %}
+
+    The page's H1 comes from your template (page/page-heading); this partial
+    renders the facts, the description, the apply link and the structured data.
+    Slots for `classes`: root, facts, body, apply, closed.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', facts: '', body: '', apply: '', closed: '' }|merge(classes|default({})) %}
+{% set h = heading_level|default(2) %}
+{% set job = page.header.job|default({}) %}
+{% set loc = job.location|default({}) %}
+{% set defaults = grav.config.get('theme.schema_defaults')|default({}) %}
+{% set title = page.header.jobtitle|default(page.title) %}
+{% set description_html = page.header.jobdescription|default('')|markdown %}
+{% set posted = job.date_posted|default(page.date) %}
+{% set closes = job.valid_through|default('') %}
+{% set is_closed = closes is not empty and closes|date('U') < 'now'|date('U') %}
+{% set types = { FULL_TIME: 'Full time', PART_TIME: 'Part time', CONTRACTOR: 'Contractor', TEMPORARY: 'Temporary or seasonal', INTERN: 'Internship', VOLUNTEER: 'Volunteer', PER_DIEM: 'Per diem', OTHER: 'Other' } %}
+{% set employment = job.employment_type|default([]) %}
+{% set employment = employment is iterable ? employment : [employment] %}
+{% set place = [loc.locality|default(defaults.address_locality|default('')), loc.region|default(defaults.address_region|default(''))]|filter(v => v is not empty)|join(', ') %}
+{% set salary = job.salary|default({}) %}
+{% set pay = '' %}
+{% if salary.min|default('') is not empty %}
+    {% set money = (salary.currency|default('USD')) == 'USD' ? '$' : (salary.currency ~ ' ') %}
+    {# Whole amounts print without decimals: 18 -> $18, 18.5 -> $18.50 #}
+    {% set min_fmt = salary.min|number_format((salary.min ~ '') matches '/\\.\\d*[1-9]/' ? 2 : 0) %}
+    {% set max_fmt = salary.max|default('') is not empty ? salary.max|number_format((salary.max ~ '') matches '/\\.\\d*[1-9]/' ? 2 : 0) : '' %}
+    {% set pay = money ~ min_fmt ~ (max_fmt ? '–' ~ money ~ max_fmt : '') ~ ' per ' ~ (salary.unit|default('HOUR'))|lower %}
+{% endif %}
+
+<div class="{{ cl.cls('cl-job', c.root) }}">
+    {% if is_closed %}
+        <p class="{{ cl.cls('cl-job__closed', c.closed) }}" role="status">This position is closed.</p>
+    {% endif %}
+
+    <dl class="{{ cl.cls('cl-job__facts', c.facts) }}">
+        {% if employment|length %}<dt>Type</dt><dd>{{ employment|map(t => types[t] ?? t)|join(', ')|e }}</dd>{% endif %}
+        <dt>Location</dt><dd>{{ job.remote|default(false) ? 'Remote' : (place|default('On site'))|e }}</dd>
+        {% if pay %}<dt>Pay</dt><dd>{{ pay|e }}</dd>{% endif %}
+        <dt>Posted</dt><dd><time datetime="{{ posted|date('Y-m-d') }}">{{ posted|date('F j, Y') }}</time></dd>
+        {% if closes %}<dt>Closes</dt><dd><time datetime="{{ closes|date('Y-m-d') }}">{{ closes|date('F j, Y') }}</time></dd>{% endif %}
+    </dl>
+
+    <div class="{{ cl.cls('cl-job__body', c.body) }}">{{ description_html|raw }}</div>
+
+    {% if job.apply_url|default('') and not is_closed %}
+        <p class="cl-job__action"><a class="{{ cl.cls('cl-job__apply', c.apply) }}" href="{{ job.apply_url|e }}" data-tracking-info="job-apply_{{ title|e }}">Apply for this job</a></p>
+    {% endif %}
+</div>
+
+{# JobPosting structured data. Required by Google: title, description, datePosted,
+   hiringOrganization, and jobLocation (or jobLocationType TELECOMMUTE with
+   applicantLocationRequirements). Check Google's current JobPosting guidelines
+   before relying on rich results. #}
+{% set site_url = (base_url_absolute|default(''))|trim('/', 'right') %}
+{% set page_url = page.canonical(true)|default(page.url(true)) %}
+{% set posting = {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    '@id': page_url ~ '#job',
+    'mainEntityOfPage': { '@id': page_url ~ '#webpage' },
+    'title': title,
+    'description': description_html|trim,
+    'datePosted': posted|date('Y-m-d'),
+    'url': page_url,
+    'hiringOrganization': {
+        '@type': defaults.organization_type|default('Organization') == 'Person' ? 'Organization' : defaults.organization_type|default('Organization'),
+        '@id': site_url ~ '/#organization',
+        'name': defaults.organization_name|default(grav.config.get('site.title')),
+        'sameAs': site_url ~ '/'
+    }
+} %}
+{% if closes %}{% set posting = posting|merge({ 'validThrough': closes|date('c') }) %}{% endif %}
+{% if employment|length %}{% set posting = posting|merge({ 'employmentType': employment|length == 1 ? employment|first : employment|merge([]) }) %}{% endif %}
+{% if job.remote|default(false) %}
+    {% set posting = posting|merge({
+        'jobLocationType': 'TELECOMMUTE',
+        'applicantLocationRequirements': { '@type': 'Country', 'name': loc.country|default(defaults.address_country|default('US')) }
+    }) %}
+{% else %}
+    {% set address = {
+        '@type': 'PostalAddress',
+        'streetAddress': loc.street|default(''),
+        'addressLocality': loc.locality|default(defaults.address_locality|default('')),
+        'addressRegion': loc.region|default(defaults.address_region|default('')),
+        'postalCode': loc.postal_code|default(defaults.postal_code|default('')),
+        'addressCountry': loc.country|default(defaults.address_country|default('US'))
+    }|filter(v => v is not empty) %}
+    {% set posting = posting|merge({ 'jobLocation': { '@type': 'Place', 'address': address } }) %}
+{% endif %}
+{% if salary.min|default('') is not empty %}
+    {% set value = { '@type': 'QuantitativeValue', 'unitText': salary.unit|default('HOUR') } %}
+    {% set value = salary.max|default('') is not empty
+        ? value|merge({ 'minValue': salary.min|float, 'maxValue': salary.max|float })
+        : value|merge({ 'value': salary.min|float }) %}
+    {% set posting = posting|merge({ 'baseSalary': { '@type': 'MonetaryAmount', 'currency': salary.currency|default('USD'), 'value': value } }) %}
+{% endif %}
+{% if job.apply_url|default('') %}{% set posting = posting|merge({ 'directApply': true }) %}{% endif %}
+<script type="application/ld+json">{{ posting|json_encode(321)|raw }}</script>

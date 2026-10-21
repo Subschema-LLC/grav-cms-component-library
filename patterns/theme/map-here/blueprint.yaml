@@ -1,0 +1,62 @@
+# Pattern: theme/map-here — theme blueprint fragment
+# Import on a section in the theme's blueprints.yaml:
+#   map_section:
+#     type: section
+#     title: Map
+#     text: Used on pages with an element id="map", pages that turn on "Load map", and the Map page type.
+#     underline: true
+#     import@:
+#       type: theme/map-here/blueprint
+#       context: 'plugin://component-library/patterns'
+form:
+  fields:
+    here_map.api_key:
+      type: text
+      label: HERE API Key
+      help: A HERE Maps API for JavaScript key. It is visible in page source by design, so restrict it to this site's domains in the HERE platform console.
+
+    here_map.latitude:
+      type: text
+      label: Default Center Latitude
+      help: Decimal degrees, for example 44.98. Without a center, maps fit their markers, and a map with no markers shows the whole world.
+      validate:
+        type: number
+        min: -90
+        max: 90
+
+    here_map.longitude:
+      type: text
+      label: Default Center Longitude
+      help: Decimal degrees, negative for west, for example -93.27.
+      validate:
+        type: number
+        min: -180
+        max: 180
+
+    here_map.zoom:
+      type: text
+      label: Default Zoom
+      help: 1 shows the world, 12 a town and its surroundings, 16 individual streets.
+      placeholder: '12'
+      validate:
+        type: int
+        min: 1
+        max: 20
+
+    here_map.label:
+      type: text
+      label: Map Label for Screen Readers
+      help: Read out when a visitor reaches the map, for example "Interactive map of the trail system".
+      placeholder: Interactive map
+
+    here_map.legacy_globals:
+      type: toggle
+      label: Legacy Map Globals
+      help: Turn on only if older inline scripts on the site call map.addObject() or moveMap() directly. Exposes window.map, platform, ui, behavior, defaultLayers and moveMap.
+      highlight: 0
+      default: 0
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool

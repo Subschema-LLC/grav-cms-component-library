@@ -1,0 +1,33 @@
+# Pattern: system/environments-and-secrets
+#
+# Grav merges an environment's config/ over user/config/. The environment name
+# is GRAV_ENVIRONMENT when set, otherwise the request's host name exactly as
+# sent (example.com and www.example.com are different environments; "cli" on
+# the command line).
+#
+# Where environment folders live (Grav 1.7 and 2.x):
+#   user/env/<environment>/config/   used when the folder user/env/ exists
+#   user/<environment>/config/       the older (Grav 1.6) location, used only
+#                                    when user/env/ does NOT exist
+# Creating user/env/ for a new site therefore switches every environment to
+# the new location and silently ignores older user/<host>/ folders. Use one
+# layout per site. An environment folder must already exist; Grav 2 does not
+# create one when a config save arrives under an unexpected host name.
+#
+#   user/config/system.yaml                         shared settings, committed
+#   user/env/www.example.com/config/system.yaml     production overrides
+#   user/env/localhost/config/system.yaml           local overrides
+#   user/env/staging.example.com/config/themes/mytheme.yaml   (datalayer.env: staging)
+#
+# Run locally with production's environment config:
+#   GRAV_ENVIRONMENT=www.example.com php -S 127.0.0.1:8765 system/router.php
+#
+# Example: user/env/localhost/config/system.yaml
+cache:
+  enabled: false
+debugger:
+  enabled: true
+twig:
+  cache: false
+errors:
+  display: 1

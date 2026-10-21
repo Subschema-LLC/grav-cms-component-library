@@ -1,0 +1,73 @@
+id: theme/footer-columns
+name: Footer columns
+version: 1.0.0
+level: theme
+status: stable
+summary: Footer link columns where each column owns its heading and links, plus an optional trusted-HTML embed column, social links and a note line with {year}.
+use_when:
+  - The site footer has grouped links that editors maintain.
+avoid_when:
+  - The footer mirrors the main menu exactly; render the page tree instead.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [_shared/macros]
+data:
+  scope: theme
+  keys:
+    footer_columns:
+      type: list
+      item:
+        title: string
+        links: "list of { label, url, target: _self | _blank }"
+    footer_embed: { type: trusted html }
+    footer_note: { type: string, description: "{year} and {site} are replaced" }
+legacy_keys:
+  - key: footerlinks + footer_column_1_title..footer_column_4_title
+    handling: When footer_columns is empty, links are grouped by their cid1–cid4 column value under the matching footer_column_N_title.
+  - key: footerembed
+    handling: Used when footer_embed is empty.
+  - key: site.social[].title as an icon name
+    handling: Without an icon key, the title is shown as link text. Add icon (for example fa-brands fa-facebook) to each site.social entry for an icon.
+files:
+  blueprint: blueprint.yaml
+  template: footer-columns.html.twig
+  example: example.yaml
+apply:
+  blueprint: |
+    footer_section:
+      type: section
+      title: Footer
+      underline: true
+      import@:
+        type: theme/footer-columns/blueprint
+        context: 'plugin://component-library/patterns'
+  template: |
+    <footer class="site-footer">
+      {% include 'patterns/theme/footer-columns/footer-columns.html.twig' with { heading_level: 2 } %}
+    </footer>
+classes:
+  markup: [cl-footer, cl-footer__columns, cl-footer__column, cl-footer__heading, cl-footer__links, cl-footer__embed, cl-footer__social, cl-footer__note]
+  slots: [root, columns, column, heading, links, embed, social, note]
+solves:
+  - problem: Each link chose its column from a select whose labels were hard-coded ("Column 1 — Explore"), while the column headings were separate settings, so renaming a heading left the select describing the old one.
+    fix: Columns are a list; each column holds its own heading and links.
+    seen_in: community-guide theme
+  - problem: New links defaulted to a "Please select a footer column" value (cid0) and silently never appeared.
+    fix: A link can only exist inside a column.
+    seen_in: community-guide theme
+  - problem: The copyright line hard-coded the domain name, so it was wrong on every other site using the theme.
+    fix: footer_note with {year} and {site} tokens.
+    seen_in: community-guide theme
+  - problem: The embed column was read with theme_var(), which a page's front matter can override, so a page editor could place raw HTML in every footer.
+    fix: footer_embed is read from theme config only.
+    seen_in: library review
+  - problem: New-tab links lacked rel="noopener noreferrer".
+    fix: cl.link_attrs.
+  - problem: Adding a fourth link column meant editing the template.
+    fix: Any number of columns; the theme's grid classes go in through the classes slots.
+verify:
+  - Theme settings show Footer Columns, Embed Column and Footer Note.
+  - A site with only the old footerlinks keys renders the same columns as before.
+  - Columns with no heading and no valid links are skipped.

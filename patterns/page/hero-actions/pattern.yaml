@@ -1,0 +1,51 @@
+id: page/hero-actions
+name: Hero actions
+version: 1.0.0
+level: page
+status: stable
+summary: A primary and an optional secondary button under the page heading, each rendered only when complete.
+use_when:
+  - A home or landing page hero needs one or two clear next steps.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [_shared/macros]
+data:
+  scope: page.header
+  keys:
+    primary_cta_text: { type: string }
+    primary_cta_link: { type: path or URL }
+    secondary_cta_text: { type: string }
+    secondary_cta_link: { type: path or URL }
+files:
+  blueprint: blueprint.yaml
+  template: hero-actions.html.twig
+  example: example.md
+apply:
+  blueprint: |
+    home:
+      type: tab
+      title: Home Page
+      import@1:
+        type: page/page-heading/blueprint
+        context: 'plugin://component-library/patterns'
+      import@2:
+        type: page/hero-actions/blueprint
+        context: 'plugin://component-library/patterns'
+  template: |
+    {% include 'patterns/page/page-heading/page-heading.html.twig' %}
+    {% include 'patterns/page/hero-actions/hero-actions.html.twig' with {
+        classes: { primary: 'button is-primary', secondary: 'button is-light' }
+    } %}
+classes:
+  markup: [cl-hero-actions, cl-hero-actions__button, cl-hero-actions__button--primary, cl-hero-actions__button--secondary]
+  slots: [root, primary, secondary]
+solves:
+  - problem: A button with a label but no link (or the reverse) rendered as a dead control.
+    fix: Each button renders only with both values.
+    seen_in: community-guide theme home page
+  - problem: Hero buttons were not distinguishable in analytics.
+    fix: data-tracking-info="hero-primary_<label>" for theme/datalayer or any tag manager.
+verify:
+  - With only the primary pair set, exactly one link renders.

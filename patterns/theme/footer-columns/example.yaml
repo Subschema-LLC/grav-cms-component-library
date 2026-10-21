@@ -1,0 +1,20 @@
+# user/config/themes/<your-theme>.yaml
+footer_columns:
+  - title: Explore
+    links:
+      - { label: Trails, url: /trails }
+      - { label: Events, url: /events }
+  - title: Resources
+    links:
+      - { label: Trail conditions, url: https://example.com/conditions, target: _blank }
+footer_embed: |
+  <form class="newsletter" action="https://example.com/subscribe" method="post">
+    <label for="nl-email">Newsletter</label>
+    <input id="nl-email" type="email" name="email" autocomplete="email" required>
+    <button type="submit">Sign up</button>
+  </form>
+footer_note: "© {year} {site}. An independent community resource."
+
+# user/config/site.yaml (social links shown under the columns)
+# social:
+#   - { title: Facebook, url: 'https://facebook.com/example', icon: 'fa-brands fa-facebook' }

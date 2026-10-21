@@ -1,0 +1,77 @@
+id: page-type/bookable-tour
+name: Bookable tour or experience
+version: 1.0.0
+level: page-type
+touches: [page]
+status: stable
+summary: A page type for a tour or experience with a structured weekly schedule, price and availability, ordered stops, a booking widget from page/embed-block, and TouristTrip structured data with an Offer and itinerary.
+use_when:
+  - The site sells or promotes recurring tours, classes or experiences booked through a third-party system.
+  - Replacing the Gantry tour-details, tour-snapshot and product-calendar particles.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [page/embed-block, page/header-image, page/page-heading, theme/schema-graph, _shared/macros]
+data:
+  scope: page.header
+  keys:
+    tour:
+      type: map
+      item:
+        name: string
+        summary: string
+        image: page media filename
+        duration_minutes: int
+        schedule: "list of { day, start: HH:MM, end: HH:MM }"
+        price: number
+        currency: ISO 4217
+        availability: "InStock | LimitedAvailability | SoldOut | PreOrder"
+        price_valid_until: date
+        sku: string
+        stops: "list of { title, content, image, image_alt, url }"
+legacy_keys:
+  - key: tourname, tourdescription, tourofferprice, tourofferenddate, tourproductid
+    handling: Read when the matching tour.* key is empty.
+  - key: tourimageurl
+    handling: Used only when it is an https URL and no tour.image or header image is set.
+  - key: tourdayofweek + tourtime (+ tourtimeofday)
+    handling: Shown as one "When" line until tour.schedule rows are added.
+  - key: stopdetails (detailtitle, content, image) and stops (description)
+    handling: Mapped to tour.stops when tour.stops is empty.
+  - key: rezdyembed
+    handling: Not read. Move the calendar's iframe src into an embed (page/embed-block).
+files:
+  blueprint: fields.yaml
+  template: tour.html.twig
+  templates: [tour-page.html.twig]
+  snippets: [page-blueprint.yaml]
+  example: example.md
+apply:
+  blueprint: |
+    # Copy page-blueprint.yaml -> user/themes/<theme>/blueprints/tour.yaml
+  template: |
+    # Copy tour-page.html.twig -> user/themes/<theme>/templates/tour.html.twig
+    # and adjust extends/blocks.
+classes:
+  markup: [cl-tour, cl-tour__summary, cl-tour__facts, cl-tour__heading, cl-tour__schedule, cl-tour__stops, cl-tour__stop, cl-tour__stop--media, cl-tour__stop-text, cl-tour__stop-title, cl-tour__stop-body, cl-tour__stop-media, cl-tour__booking]
+  slots: [root, facts, schedule, stops, stop, booking]
+solves:
+  - problem: Tour times were a select of fixed strings ("2:00 pm - 5:00 pm"), so a new departure time meant editing the blueprint, and a tour with two departures could not be described.
+    fix: A schedule list of day, start and end in 24-hour time, validated, displayed in 12-hour format.
+    seen_in: Gantry tour-details blueprint
+  - problem: Price, product ID and image were free text "for Schema.org", with the brand and seller names hard-coded in the particle that printed them.
+    fix: Validated price and currency fields; the provider and seller are the site Organization by @id from theme/schema-graph.
+    seen_in: Gantry schema particle
+  - problem: The tour was marked up as a Product, and its Open Graph tags were injected with JavaScript after load.
+    fix: TouristTrip with an Offer and an itinerary of the stops, rendered server-side. Social meta belongs in page.header.metadata.
+    seen_in: Gantry schema particle
+  - problem: Stops were entered twice, once as a plain list and again as detail sections.
+    fix: One stops list with optional details, image and link.
+    seen_in: Gantry tour-details blueprint
+  - problem: The booking calendar was a pasted iframe field per provider.
+    fix: page/embed-block (by URL, titled, lazy).
+    seen_in: Gantry tour-details blueprint
+verify:
+  - The JSON-LD @type is TouristTrip, with offers.price formatted to two decimals and an itinerary whose numberOfItems equals the number of stops.
+  - A legacy page with only tourname and tourofferprice still shows its name and price.

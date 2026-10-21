@@ -1,0 +1,72 @@
+{#
+    Pattern: page/tiles
+
+    {% include 'patterns/page/tiles/tiles.html.twig' with {
+        tiles: page.header.tiles,                               -- the default
+        heading_level: 3,                                       -- 2 by default
+        tile_types: { weather: 'partials/weather-tile.html.twig' },
+        width_classes: { 'is-half': 'column is-half-tablet' },  -- optional framework classes per width
+        classes: { button: 'button is-primary' }
+    } %}
+
+    A tile_type other than "content" is rendered by the template named in
+    tile_types; that template receives `tile` and `h`. Unknown types fall back
+    to content. Slots for `classes`: root, item, card, heading, body, media, button.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set tiles = tiles|default(page.header.tiles|default([])) %}
+{% set h = heading_level|default(2) %}
+{% set tile_types = tile_types|default({}) %}
+{% set width_classes = width_classes|default({}) %}
+{% set c = { root: '', item: '', card: '', heading: '', body: '', media: '', button: '' }|merge(classes|default({})) %}
+{% set widths = { 'is-one-quarter': 'quarter', 'is-one-third': 'third', 'is-half': 'half', 'is-two-thirds': 'two-thirds', 'is-full': 'full' } %}
+
+{% if tiles is iterable and tiles|length %}
+<div class="{{ cl.cls('cl-tiles', c.root) }}">
+    {% for tile in tiles %}
+        {% set width = tile.tile_width in widths|keys ? tile.tile_width : 'is-half' %}
+        {% set show_image = tile.tile_image is not defined or tile.tile_image in [1, '1', true] %}
+        {% set media = show_image and tile.tile_image_file ? page.media[tile.tile_image_file] : null %}
+        {% set has_button = tile.button_text and tile.button_link %}
+        {% set custom_type = tile.tile_type|default('content') != 'content' and tile_types[tile.tile_type] is defined %}
+
+        {% if tile.title or tile.content or media or has_button or custom_type %}
+        <div class="{{ cl.cls('cl-tiles__item cl-tiles__item--' ~ widths[width], ((width_classes[width] ?? '') ~ ' ' ~ c.item)|trim) }}">
+            <article class="{{ cl.cls('cl-tiles__card' ~ (tile.card_link ? ' cl-tiles__card--linked'), c.card) }}">
+                {% if tile.title %}
+                    <h{{ h }} class="{{ cl.cls('cl-tiles__heading', c.heading) }}">
+                        {{- cl.icon(tile.tile_icon, null, 'cl-tiles__icon') -}}
+                        {%- if tile.card_link -%}
+                            <a class="cl-tiles__card-link" href="{{ tile.card_link|e }}">{{ tile.title|e }}</a>
+                        {%- else -%}
+                            {{ tile.title|e }}
+                        {%- endif -%}
+                    </h{{ h }}>
+                {% endif %}
+
+                {% if custom_type %}
+                    <div class="{{ cl.cls('cl-tiles__body cl-tiles__body--' ~ tile.tile_type|e, c.body) }}">
+                        {% include tile_types[tile.tile_type] with { tile: tile, h: h } %}
+                    </div>
+                {% elseif tile.content %}
+                    <div class="{{ cl.cls('cl-tiles__body', c.body) }}">{{ tile.content|markdown }}</div>
+                {% endif %}
+
+                {% if media %}
+                    {% set alt = tile.tile_image_alt is defined and tile.tile_image_alt is not null ? tile.tile_image_alt : tile.title|default('') %}
+                    <div class="{{ cl.cls('cl-tiles__media' ~ (tile.tile_image_fit == 'cover' ? ' cl-tiles__media--cover'), c.media) }}">
+                        {{ media.loading('lazy').html('', alt)|raw }}
+                    </div>
+                {% endif %}
+
+                {% if has_button %}
+                    <p class="cl-tiles__action">
+                        <a class="{{ cl.cls('cl-tiles__button', c.button) }}" href="{{ tile.button_link|e }}" data-tracking-info="tile-cta_{{ tile.button_text|e }}">{{ tile.button_text|e }}</a>
+                    </p>
+                {% endif %}
+            </article>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}

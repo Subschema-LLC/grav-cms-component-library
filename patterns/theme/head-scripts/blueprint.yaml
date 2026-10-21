@@ -1,0 +1,23 @@
+# Pattern: theme/head-scripts — theme blueprint fragment
+# Import on a section in the theme's blueprints.yaml:
+#   scripts_section:
+#     type: section
+#     title: Tracking & Scripts
+#     underline: true
+#     import@:
+#       type: theme/head-scripts/blueprint
+#       context: 'plugin://component-library/patterns'
+form:
+  fields:
+    tracking_tags:
+      type: textarea
+      label: Scripts for the <head> (trusted HTML)
+      help: Analytics or tag-manager snippets, pasted exactly as the vendor provides them. They load on every page, after the theme's own CSS and scripts. Anyone who can edit theme settings can add code here.
+      rows: 8
+      placeholder: '<script async src="https://…"></script>'
+
+    body_end_scripts:
+      type: textarea
+      label: Scripts before </body> (trusted HTML)
+      help: Chat widgets and other snippets that should load after the page content.
+      rows: 6

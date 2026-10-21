@@ -1,0 +1,18 @@
+# Pattern: theme/author-registry — page blueprint fragment (the picker)
+# Import on the tab or section that should hold the author field:
+#   import@:
+#     type: theme/author-registry/page
+#     context: 'plugin://component-library/patterns'
+#
+# The options come from the theme's `authors` list at the moment the form
+# opens, so adding an author in theme settings needs no blueprint change.
+# Without the component-library plugin, copy ComponentLibraryPlugin::authorOptions()
+# into your theme class and point data-options@ at it (see README).
+form:
+  fields:
+    header.author:
+      type: select
+      label: Author
+      help: Choose from the authors in the theme settings.
+      default: ''
+      data-options@: '\Grav\Plugin\ComponentLibraryPlugin::authorOptions'

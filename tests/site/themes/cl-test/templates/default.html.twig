@@ -1,0 +1,14 @@
+{# Fixture default template: every page-level pattern; each renders nothing without its data. #}
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    {% include 'patterns/page/header-image/header-image.html.twig' %}
+    {% include 'patterns/page/page-heading/page-heading.html.twig' %}
+    {% include 'patterns/page/hero-actions/hero-actions.html.twig' with { classes: { primary: 'btn btn-primary' } } %}
+    {% if page.content|striptags|trim is not empty %}<div class="content">{{ page.content|raw }}</div>{% endif %}
+    {% include 'patterns/page/quick-actions/quick-actions.html.twig' with { heading_level: 2 } %}
+    {% include 'patterns/page/tiles/tiles.html.twig' with { heading_level: 2, tile_types: { weather: 'partials/weather-tile.html.twig' } } %}
+    {% include 'patterns/page/cta-rows/cta-rows.html.twig' with { classes: { button: 'btn btn-primary' } } %}
+    {% include 'patterns/page/embed-block/embed-block.html.twig' %}
+    {% include 'patterns/theme/author-registry/author-bio.html.twig' with { heading: 'About the author' } %}
+{% endblock %}

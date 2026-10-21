@@ -1,0 +1,59 @@
+id: page/quick-actions
+name: Quick actions (link blocks)
+version: 1.0.0
+level: page
+status: stable
+summary: A navigation block of shortcut cards (label, icon, one-line description) in two to four columns.
+use_when:
+  - A home or landing page points visitors to their most common tasks.
+  - Replacing a Gantry "link blocks" particle.
+avoid_when:
+  - The cards need images or long text; use page/tiles.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [_shared/macros]
+data:
+  scope: page.header
+  keys:
+    quick_actions_title: { type: string }
+    quick_actions_columns: { type: "2 | 3 | 4" }
+    quick_actions:
+      type: list
+      item:
+        label: string
+        link: path or URL
+        icon: icon class
+        description: string
+files:
+  blueprint: blueprint.yaml
+  template: quick-actions.html.twig
+  example: example.md
+apply:
+  blueprint: |
+    home:
+      type: tab
+      title: Home Page
+      import@:
+        type: page/quick-actions/blueprint
+        context: 'plugin://component-library/patterns'
+  template: |
+    {% include 'patterns/page/quick-actions/quick-actions.html.twig' with { heading_level: 2 } %}
+classes:
+  markup: [cl-quick-actions, cl-quick-actions__heading, cl-quick-actions__grid, cl-quick-actions__grid--2, cl-quick-actions__grid--3, cl-quick-actions__grid--4, cl-quick-actions__item, cl-quick-actions__icon, cl-quick-actions__text, cl-quick-actions__label, cl-quick-actions__description]
+  slots: [root, heading, grid, item]
+solves:
+  - problem: The block's default heading named one specific town, so any other site showed the wrong heading until an editor noticed.
+    fix: No default heading; without one the nav gets aria-label="Quick links" instead.
+    seen_in: community-guide theme
+  - problem: The heading id was fixed, so two blocks on one page produced duplicate ids and a broken aria-labelledby.
+    fix: id parameter.
+  - problem: Shortcuts saved with only a label (or only a link) rendered as dead cards.
+    fix: Label and link are required in the blueprint and filtered in the template.
+  - problem: The Gantry link-blocks particle stored its links in the layout, not the page, so editors had to use the Gantry admin to change them.
+    fix: The links are page fields, edited with the page.
+    seen_in: Gantry link-blocks particle
+verify:
+  - The block is a <nav> with an accessible name (aria-labelledby or aria-label).
+  - Items lacking a label or link do not render.

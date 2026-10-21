@@ -1,0 +1,40 @@
+# Pattern: page/header-image — page blueprint fragment
+#   import@:
+#     type: page/header-image/blueprint
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header_header_image_section:
+      type: section
+      title: Header Image
+      text: The large image at the top of the page. Also used as the page's image in search results and structured data, even when hidden.
+      underline: true
+
+    header.header_image:
+      type: toggle
+      toggleable: true
+      label: Show Header Image
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    header.header_image_file:
+      type: filepicker
+      label: Image
+      help: Choose from this page's media. Use a wide image, at least 1600 pixels across.
+      preview_images: true
+      accept:
+        - .jpg
+        - .jpeg
+        - .png
+        - .webp
+        - .avif
+
+    header.header_image_alt:
+      type: text
+      label: Alt Text
+      help: Describe what the image shows. Leave it empty only when the image is purely decorative.

@@ -1,0 +1,56 @@
+id: page/page-heading
+name: Page heading and title tag
+version: 1.0.0
+level: page
+status: stable
+summary: Separate SEO title, visible H1, subtitle and byline fields, rendered as an <hgroup> and a <title> element with sensible fallbacks.
+use_when:
+  - Editors need a search title that differs from the visible heading, or a hero heading with a subtitle.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [_shared/macros]
+data:
+  scope: page.header
+  keys:
+    seo_page_title: { type: string }
+    page_name: { type: string }
+    page_name_subtitle: { type: string }
+    page_byline: { type: string }
+files:
+  blueprint: blueprint.yaml
+  template: page-heading.html.twig
+  templates: [title-tag.html.twig]
+  example: example.md
+apply:
+  blueprint: |
+    page_info:
+      type: tab
+      title: Page Info
+      import@:
+        type: page/page-heading/blueprint
+        context: 'plugin://component-library/patterns'
+  template: |
+    {# <head> #}
+    {% include 'patterns/page/page-heading/title-tag.html.twig' %}
+    {# page header area #}
+    {% include 'patterns/page/page-heading/page-heading.html.twig' %}
+classes:
+  markup: [cl-page-heading, cl-page-heading__title, cl-page-heading__subtitle, cl-page-heading__byline]
+  slots: [root, title, subtitle, byline]
+solves:
+  - problem: The page title was printed into the H1 with no escaping filter (flagged by code scanning in two templates), relying on Grav's autoescape setting.
+    fix: Every value is escaped explicitly with |e, so the partial stays safe on sites that turn autoescape off.
+    seen_in: community-guide theme, code-scanning fixes
+  - problem: The subtitle was an h2, so screen readers listed it as a section heading with no section under it, ahead of the page's real h2 sections.
+    fix: The subtitle is a <p> inside an <hgroup> (subtitle_tag can keep h2 where CSS depends on it).
+    seen_in: community-guide theme home hero
+  - problem: The heading fields only appeared when a Gantry particle referenced them, so the same front matter rendered differently on pages with different layouts.
+    fix: One partial that any template includes.
+    seen_in: Gantry page-title particles
+  - problem: The home page title read "Home | Site Name".
+    fix: title-tag.html.twig shows only the site title on the home page unless an SEO title is set.
+verify:
+  - Exactly one <h1> per page, containing page_name or the page title.
+  - <title> uses seo_page_title when set.

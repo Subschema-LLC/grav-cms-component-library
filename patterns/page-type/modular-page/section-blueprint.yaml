@@ -1,0 +1,36 @@
+# Pattern: page-type/modular-page — module blueprint scaffold
+# Copy to your theme as blueprints/modular/section.yaml.
+title: Section
+extends@: default
+
+form:
+  fields:
+    tabs:
+      fields:
+        section:
+          type: tab
+          title: Section
+          fields:
+            header.section_heading:
+              type: text
+              label: Section Heading
+              help: Defaults to the module's title.
+            header.hide_heading:
+              type: toggle
+              label: Hide the Heading
+              highlight: 0
+              default: 0
+              options:
+                1: PLUGIN_ADMIN.YES
+                0: PLUGIN_ADMIN.NO
+              validate:
+                type: bool
+        blocks:
+          type: tab
+          title: Tiles & Rows
+          import@1:
+            type: page/tiles/blueprint
+            context: 'plugin://component-library/patterns'
+          import@2:
+            type: page/cta-rows/blueprint
+            context: 'plugin://component-library/patterns'

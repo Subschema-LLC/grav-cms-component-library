@@ -1,0 +1,15 @@
+# Pattern: page-type/job-listing — page blueprint scaffold for one posting
+# Copy to your theme as blueprints/job.yaml.
+title: Job
+extends@: default
+
+form:
+  fields:
+    tabs:
+      fields:
+        job:
+          type: tab
+          title: Job
+          import@:
+            type: page-type/job-listing/fields-posting
+            context: 'plugin://component-library/patterns'

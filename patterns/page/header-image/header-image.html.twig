@@ -1,0 +1,30 @@
+{#
+    Pattern: page/header-image
+
+    {% include 'patterns/page/header-image/header-image.html.twig' with {
+        sizes: '100vw',                      -- the image's rendered width, for srcset
+        widths: [640, 1920, 320],            -- min, max, step for the responsive set
+        classes: { root: 'hero-image' }
+    } %}
+
+    The header image is usually the largest thing above the fold (the page's
+    Largest Contentful Paint), so it loads eagerly with fetchpriority="high"
+    and a responsive srcset; never lazily.
+    Slots for `classes`: root, image.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', image: '' }|merge(classes|default({})) %}
+{% set show = page.header.header_image is not defined or page.header.header_image in [1, '1', true] %}
+{% set media = show and page.header.header_image_file ? page.media[page.header.header_image_file] : null %}
+
+{% if media %}
+    {% set w = widths|default([640, 1920, 320]) %}
+    {% set alt = page.header.header_image_alt is defined and page.header.header_image_alt is not null ? page.header.header_image_alt : '' %}
+    {% set img = media %}
+    {% if media.type|default('') == 'image' and media.mime|default('') != 'image/svg+xml' %}
+        {% set img = media.derivatives(w[0], w[1], w[2]).sizes(sizes|default('100vw')) %}
+    {% endif %}
+    <div class="{{ cl.cls('cl-header-image', c.root) }}">
+        {{ img.loading('eager').fetchpriority('high').decoding('async').html('', alt, ('cl-header-image__img ' ~ c.image)|trim)|raw }}
+    </div>
+{% endif %}

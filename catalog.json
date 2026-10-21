@@ -1,0 +1,2818 @@
+{
+    "name": "Grav CMS Component Library",
+    "plugin": {
+        "slug": "component-library",
+        "version": "1.0.0",
+        "compatibility": {
+            "grav": [
+                "1.7",
+                "2.0"
+            ]
+        }
+    },
+    "repository": "https://github.com/Subschema-LLC/grav-cms-component-library",
+    "spec": "docs/PATTERN_SPEC.md",
+    "agents": "AGENTS.md",
+    "pattern_count": 26,
+    "patterns": [
+        {
+            "id": "page-type/bookable-tour",
+            "name": "Bookable tour or experience",
+            "version": "1.0.0",
+            "level": "page-type",
+            "touches": [
+                "page"
+            ],
+            "status": "stable",
+            "summary": "A page type for a tour or experience with a structured weekly schedule, price and availability, ordered stops, a booking widget from page/embed-block, and TouristTrip structured data with an Offer and itinerary.",
+            "use_when": [
+                "The site sells or promotes recurring tours, classes or experiences booked through a third-party system.",
+                "Replacing the Gantry tour-details, tour-snapshot and product-calendar particles."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "page/embed-block",
+                    "page/header-image",
+                    "page/page-heading",
+                    "theme/schema-graph",
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "tour": {
+                        "type": "map",
+                        "item": {
+                            "name": "string",
+                            "summary": "string",
+                            "image": "page media filename",
+                            "duration_minutes": "int",
+                            "schedule": "list of { day, start: HH:MM, end: HH:MM }",
+                            "price": "number",
+                            "currency": "ISO 4217",
+                            "availability": "InStock | LimitedAvailability | SoldOut | PreOrder",
+                            "price_valid_until": "date",
+                            "sku": "string",
+                            "stops": "list of { title, content, image, image_alt, url }"
+                        }
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "tourname, tourdescription, tourofferprice, tourofferenddate, tourproductid",
+                    "handling": "Read when the matching tour.* key is empty."
+                },
+                {
+                    "key": "tourimageurl",
+                    "handling": "Used only when it is an https URL and no tour.image or header image is set."
+                },
+                {
+                    "key": "tourdayofweek + tourtime (+ tourtimeofday)",
+                    "handling": "Shown as one \"When\" line until tour.schedule rows are added."
+                },
+                {
+                    "key": "stopdetails (detailtitle, content, image) and stops (description)",
+                    "handling": "Mapped to tour.stops when tour.stops is empty."
+                },
+                {
+                    "key": "rezdyembed",
+                    "handling": "Not read. Move the calendar's iframe src into an embed (page/embed-block)."
+                }
+            ],
+            "import": {
+                "type": "page-type/bookable-tour/fields",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page-type/bookable-tour/tour.html.twig",
+            "apply": {
+                "blueprint": "# Copy page-blueprint.yaml -> user/themes/<theme>/blueprints/tour.yaml\n",
+                "template": "# Copy tour-page.html.twig -> user/themes/<theme>/templates/tour.html.twig\n# and adjust extends/blocks.\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-tour",
+                    "cl-tour__summary",
+                    "cl-tour__facts",
+                    "cl-tour__heading",
+                    "cl-tour__schedule",
+                    "cl-tour__stops",
+                    "cl-tour__stop",
+                    "cl-tour__stop--media",
+                    "cl-tour__stop-text",
+                    "cl-tour__stop-title",
+                    "cl-tour__stop-body",
+                    "cl-tour__stop-media",
+                    "cl-tour__booking"
+                ],
+                "slots": [
+                    "root",
+                    "facts",
+                    "schedule",
+                    "stops",
+                    "stop",
+                    "booking"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "Tour times were a select of fixed strings (\"2:00 pm - 5:00 pm\"), so a new departure time meant editing the blueprint, and a tour with two departures could not be described.",
+                    "fix": "A schedule list of day, start and end in 24-hour time, validated, displayed in 12-hour format.",
+                    "seen_in": "Gantry tour-details blueprint"
+                },
+                {
+                    "problem": "Price, product ID and image were free text \"for Schema.org\", with the brand and seller names hard-coded in the particle that printed them.",
+                    "fix": "Validated price and currency fields; the provider and seller are the site Organization by @id from theme/schema-graph.",
+                    "seen_in": "Gantry schema particle"
+                },
+                {
+                    "problem": "The tour was marked up as a Product, and its Open Graph tags were injected with JavaScript after load.",
+                    "fix": "TouristTrip with an Offer and an itinerary of the stops, rendered server-side. Social meta belongs in page.header.metadata.",
+                    "seen_in": "Gantry schema particle"
+                },
+                {
+                    "problem": "Stops were entered twice, once as a plain list and again as detail sections.",
+                    "fix": "One stops list with optional details, image and link.",
+                    "seen_in": "Gantry tour-details blueprint"
+                },
+                {
+                    "problem": "The booking calendar was a pasted iframe field per provider.",
+                    "fix": "page/embed-block (by URL, titled, lazy).",
+                    "seen_in": "Gantry tour-details blueprint"
+                }
+            ],
+            "verify": [
+                "The JSON-LD @type is TouristTrip, with offers.price formatted to two decimals and an itinerary whose numberOfItems equals the number of stops.",
+                "A legacy page with only tourname and tourofferprice still shows its name and price."
+            ],
+            "path": "patterns/page-type/bookable-tour",
+            "readme": "patterns/page-type/bookable-tour/README.md",
+            "manifest": "patterns/page-type/bookable-tour/pattern.yaml",
+            "files": [
+                "patterns/page-type/bookable-tour/fields.yaml",
+                "patterns/page-type/bookable-tour/tour.html.twig",
+                "patterns/page-type/bookable-tour/tour-page.html.twig",
+                "patterns/page-type/bookable-tour/page-blueprint.yaml",
+                "patterns/page-type/bookable-tour/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page-type/bookable-tour/"
+        },
+        {
+            "id": "page-type/job-listing",
+            "name": "Job listing and postings",
+            "version": "1.0.0",
+            "level": "page-type",
+            "touches": [
+                "page"
+            ],
+            "status": "stable",
+            "summary": "Two page types, a jobs page that lists its open child postings automatically and a job posting with employment type, location, pay, closing date and JobPosting structured data.",
+            "use_when": [
+                "An organization posts openings on its site and wants them found by job search engines.",
+                "Replacing the Gantry job-list and job-details particles."
+            ],
+            "avoid_when": [
+                "Jobs live in an applicant tracking system; link to it or embed its widget with page/embed-block."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "theme/schema-graph",
+                    "page/page-heading",
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "jobtitle": {
+                        "type": "string"
+                    },
+                    "jobdescription": {
+                        "type": "markdown"
+                    },
+                    "job": {
+                        "type": "map",
+                        "item": {
+                            "employment_type": "list of FULL_TIME | PART_TIME | CONTRACTOR | TEMPORARY | INTERN | VOLUNTEER | PER_DIEM | OTHER",
+                            "date_posted": "datetime",
+                            "valid_through": "datetime",
+                            "remote": "bool",
+                            "location": "{ street, locality, region, postal_code, country }",
+                            "salary": "{ min, max, unit: HOUR | DAY | WEEK | MONTH | YEAR, currency }",
+                            "apply_url": "path or URL"
+                        }
+                    },
+                    "jobs": {
+                        "type": "map",
+                        "description": "On the list page: empty_message, show_summary"
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "jobdetails (list page; detailtitle, content, link)",
+                    "handling": "Rendered when the list page has no child postings. Create one child page per job to get structured data and automatic closing."
+                }
+            ],
+            "import": {
+                "type": "page-type/job-listing/fields-posting",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page-type/job-listing/job-posting.html.twig",
+            "apply": {
+                "blueprint": "# Copy page-blueprint-job.yaml  -> user/themes/<theme>/blueprints/job.yaml\n# Copy page-blueprint-jobs.yaml -> user/themes/<theme>/blueprints/jobs.yaml\n",
+                "template": "# Copy job.html.twig and jobs.html.twig to user/themes/<theme>/templates/\n# and adjust their extends/blocks. Then create /jobs (template jobs) with one\n# child page per opening (template job).\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-job",
+                    "cl-job__closed",
+                    "cl-job__facts",
+                    "cl-job__body",
+                    "cl-job__action",
+                    "cl-job__apply",
+                    "cl-jobs",
+                    "cl-jobs__list",
+                    "cl-jobs__item",
+                    "cl-jobs__heading",
+                    "cl-jobs__summary",
+                    "cl-jobs__empty"
+                ],
+                "slots": [
+                    "root",
+                    "facts",
+                    "body",
+                    "apply",
+                    "closed",
+                    "item",
+                    "heading",
+                    "summary",
+                    "empty"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "The job list was typed by hand on the list page, separately from the job pages, so titles and links drifted and filled positions stayed listed.",
+                    "fix": "The list is built from child pages; postings past their closing date drop off by themselves.",
+                    "seen_in": "Gantry job-list particle"
+                },
+                {
+                    "problem": "Job pages had only a title and a description, so job search engines had nothing structured to read.",
+                    "fix": "Employment type, location (or remote), pay range, posting and closing dates, and a JobPosting JSON-LD block linked to the site's Organization.",
+                    "seen_in": "Gantry job-details particle"
+                },
+                {
+                    "problem": "A closed position's page kept saying \"Apply\".",
+                    "fix": "After the closing date the apply link is replaced by \"This position is closed\" and validThrough tells search engines."
+                },
+                {
+                    "problem": "The job pages depended on a Gantry outline to render.",
+                    "fix": "Plain page types; any theme includes the partials.",
+                    "seen_in": "Gantry child theme"
+                }
+            ],
+            "verify": [
+                "A child job page with a past valid_through is not listed and shows the closed notice.",
+                "The posting's JSON-LD has title, description, datePosted, hiringOrganization and jobLocation (or jobLocationType TELECOMMUTE).",
+                "Run a posting through Google's Rich Results Test."
+            ],
+            "path": "patterns/page-type/job-listing",
+            "readme": "patterns/page-type/job-listing/README.md",
+            "manifest": "patterns/page-type/job-listing/pattern.yaml",
+            "files": [
+                "patterns/page-type/job-listing/fields-posting.yaml",
+                "patterns/page-type/job-listing/job-posting.html.twig",
+                "patterns/page-type/job-listing/job-listing.html.twig",
+                "patterns/page-type/job-listing/job.html.twig",
+                "patterns/page-type/job-listing/jobs.html.twig",
+                "patterns/page-type/job-listing/fields-listing.yaml",
+                "patterns/page-type/job-listing/page-blueprint-job.yaml",
+                "patterns/page-type/job-listing/page-blueprint-jobs.yaml",
+                "patterns/page-type/job-listing/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page-type/job-listing/"
+        },
+        {
+            "id": "page-type/map-page",
+            "name": "Map page",
+            "version": "1.0.0",
+            "level": "page-type",
+            "touches": [
+                "page"
+            ],
+            "status": "stable",
+            "summary": "A page type that pins every page with a Map Location plus optional extra pins, lists the same places under the map with \"Show on map\" buttons, and outputs them as a Schema.org ItemList.",
+            "use_when": [
+                "A site has several pages about places and wants one map that links to all of them."
+            ],
+            "avoid_when": [
+                "The site has hundreds of pages and only a few locations; scanning every page on each request adds up. Turn include_pages off and use Additional Pins, or cache the page."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "theme/map-here",
+                    "page/map-location",
+                    "page/page-heading",
+                    "_shared/macros"
+                ],
+                "plugins": [
+                    "component-library"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "map_page": {
+                        "type": "map",
+                        "item": {
+                            "include_pages": "bool (default true)",
+                            "list_title": "string"
+                        }
+                    },
+                    "map_markers": {
+                        "type": "list",
+                        "item": {
+                            "link": "page route",
+                            "title": "string",
+                            "latitude": "number",
+                            "longitude": "number",
+                            "summary": "string"
+                        }
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "page-type/map-page/fields",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page-type/map-page/map-page.html.twig",
+            "apply": {
+                "blueprint": "# 1. Copy page-blueprint.yaml to user/themes/<theme>/blueprints/map.yaml\n# 2. Add page/map-location to the default page blueprint so places can be pinned.\n",
+                "template": "# 3. Copy map.html.twig to user/themes/<theme>/templates/map.html.twig and\n#    adjust its extends/blocks to your base template.\n# 4. In the base template's javascripts block (theme/map-here):\n{% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-map-page",
+                    "cl-map-page__map",
+                    "cl-map-page__places",
+                    "cl-map-page__heading",
+                    "cl-map-page__list",
+                    "cl-map-page__place",
+                    "cl-map-page__place-text",
+                    "cl-map-page__place-link",
+                    "cl-map-page__place-name",
+                    "cl-map-page__place-summary",
+                    "cl-map-page__locate"
+                ],
+                "slots": [
+                    "root",
+                    "map",
+                    "heading",
+                    "list",
+                    "item",
+                    "button"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "The pin list and the \"Show on map\" buttons got out of step, because Twig's sort keeps the original array keys and the JSON became an object instead of an array.",
+                    "fix": "merge([]) after sort renumbers the list, so button n always opens pin n.",
+                    "seen_in": "community-guide theme, Map page"
+                },
+                {
+                    "problem": "Visitors without the map (keyboard, screen reader, blocked script) had no way to reach the places.",
+                    "fix": "A real list of links under the map; the locate buttons stay hidden until their pin exists.",
+                    "seen_in": "community-guide theme, Map page"
+                },
+                {
+                    "problem": "The structured data listed only the extra pins, not the pages with a Map Location.",
+                    "fix": "The ItemList is built from the same list the page renders.",
+                    "seen_in": "community-guide theme, Schema.org work"
+                },
+                {
+                    "problem": "Each map page fired its analytics event through an inline script.",
+                    "fix": "data-datalayer-event=\"map_view\" on the map element (theme/datalayer).",
+                    "seen_in": "community-guide theme, map_view tracking"
+                },
+                {
+                    "problem": "A pin for a page that was later unpublished or made non-routable still appeared.",
+                    "fix": "Only published, routable pages are pinned."
+                }
+            ],
+            "verify": [
+                "The",
+                "Each button's data-marker-index equals its list position (0-based).",
+                "The page has one ItemList JSON-LD with numberOfItems equal to the list length."
+            ],
+            "path": "patterns/page-type/map-page",
+            "readme": "patterns/page-type/map-page/README.md",
+            "manifest": "patterns/page-type/map-page/pattern.yaml",
+            "files": [
+                "patterns/page-type/map-page/fields.yaml",
+                "patterns/page-type/map-page/map-page.html.twig",
+                "patterns/page-type/map-page/map.html.twig",
+                "patterns/page-type/map-page/page-blueprint.yaml",
+                "patterns/page-type/map-page/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page-type/map-page/"
+        },
+        {
+            "id": "page-type/modular-page",
+            "name": "Modular page with a general-purpose section",
+            "version": "1.0.0",
+            "level": "page-type",
+            "touches": [
+                "page"
+            ],
+            "status": "stable",
+            "summary": "A modular parent template that renders its intro and every module with a linkable id, and a general-purpose \"section\" module built from page/tiles and page/cta-rows.",
+            "use_when": [
+                "Landing pages are assembled from stacked sections.",
+                "A theme ships no module templates yet and modular pages should work immediately."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "page/tiles",
+                    "page/cta-rows",
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "content.items": {
+                        "type": "string",
+                        "description": "'@self.modular' on the parent page",
+                        "frontmatter_only": true
+                    },
+                    "section_heading": {
+                        "type": "string",
+                        "description": "On a modular/section module"
+                    },
+                    "hide_heading": {
+                        "type": "bool"
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "page-type/modular-page/section-blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page-type/modular-page/modular-page.html.twig",
+            "apply": {
+                "blueprint": "# Copy section-blueprint.yaml -> user/themes/<theme>/blueprints/modular/section.yaml\n",
+                "template": "# Copy modular.html.twig -> user/themes/<theme>/templates/modular.html.twig\n# Copy section.html.twig -> user/themes/<theme>/templates/modular/section.html.twig\n# Parent page (modular.md):\n#   content:\n#     items: '@self.modular'\n# Modules: child folders starting with _ (for example _intro/section.md).\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-modular",
+                    "cl-modular__intro",
+                    "cl-modular__module",
+                    "cl-section",
+                    "cl-section__heading",
+                    "cl-section__body"
+                ],
+                "slots": [
+                    "root",
+                    "intro",
+                    "module"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "The modular template's content block had been commented out, so modular pages rendered an empty body.",
+                    "fix": "A tested modular partial; the scaffold template only includes it.",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "The theme shipped no module templates, so every new modular page needed template work first.",
+                    "fix": "A general-purpose section module (heading, content, tiles, CTA rows).",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "Sections had no ids, so a menu could not link to one.",
+                    "fix": "Each module's wrapper gets its folder slug as the id."
+                }
+            ],
+            "verify": [
+                "A modular page with two modules renders two <section> elements whose ids are the module slugs without underscores.",
+                "Tiles and CTA rows in a module render with h3 headings under the section's h2."
+            ],
+            "path": "patterns/page-type/modular-page",
+            "readme": "patterns/page-type/modular-page/README.md",
+            "manifest": "patterns/page-type/modular-page/pattern.yaml",
+            "files": [
+                "patterns/page-type/modular-page/section-blueprint.yaml",
+                "patterns/page-type/modular-page/modular-page.html.twig",
+                "patterns/page-type/modular-page/section.html.twig",
+                "patterns/page-type/modular-page/modular.html.twig",
+                "patterns/page-type/modular-page/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page-type/modular-page/"
+        },
+        {
+            "id": "page/cta-rows",
+            "name": "Call-to-action rows",
+            "version": "1.0.0",
+            "level": "page",
+            "touches": [],
+            "status": "stable",
+            "summary": "Editor-managed full-width rows, each with a heading, markdown text, an optional image and one button.",
+            "use_when": [
+                "A page needs a few promotional or \"next step\" sections the editor can add, reorder and remove.",
+                "Each section has at most one primary action."
+            ],
+            "avoid_when": [
+                "Content is a grid of equal cards; use page/tiles.",
+                "The page needs a list of many plain links; use page/quick-actions."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "info_cta_section": {
+                        "type": "list",
+                        "item": {
+                            "title": "string",
+                            "content": "markdown",
+                            "cta_section_image_file": "page media filename",
+                            "cta_section_image_alt": "string (empty = decorative)",
+                            "button_text": "string",
+                            "button_link": "path or URL",
+                            "button_new_tab": "_self | _blank"
+                        }
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "info_cta_section.*.cta_section_image",
+                    "handling": "The old \"Display image\" toggle is no longer in the blueprint (an image now shows whenever a file is chosen). Pages that still store '0' keep their image hidden."
+                },
+                {
+                    "key": "info_cta_section.*.contentid",
+                    "handling": "Ignored. Rows render in list order; the cid0–cid10 position select is gone."
+                }
+            ],
+            "import": {
+                "type": "page/cta-rows/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page/cta-rows/cta-rows.html.twig",
+            "apply": {
+                "blueprint": "# In a page blueprint, on the tab (or section) that should hold the rows:\ncontent_blocks:\n  type: tab\n  title: Content Blocks\n  import@:\n    type: page/cta-rows/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% include 'patterns/page/cta-rows/cta-rows.html.twig' with {\n    heading_level: 2,\n    classes: { button: 'button is-primary is-large' }\n} %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-cta-rows",
+                    "cl-cta-rows__row",
+                    "cl-cta-rows__row--media",
+                    "cl-cta-rows__row--single",
+                    "cl-cta-rows__text",
+                    "cl-cta-rows__heading",
+                    "cl-cta-rows__body",
+                    "cl-cta-rows__action",
+                    "cl-cta-rows__button",
+                    "cl-cta-rows__media"
+                ],
+                "slots": [
+                    "root",
+                    "row",
+                    "heading",
+                    "body",
+                    "button",
+                    "media"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "A row whose image file was renamed or deleted threw an error or left an empty image wrapper.",
+                    "fix": "The template looks the file up in page.media and renders the media column only when it exists.",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "An editor who cleared the alt field for a decorative image still got the row title read out as alt text.",
+                    "fix": "Alt falls back to the title only when the field is absent, not when it is empty (`is defined`, not `|default`).",
+                    "seen_in": "community-guide theme, code-scanning fix"
+                },
+                {
+                    "problem": "Alt text also appeared as a hover tooltip, so screen readers announced it twice.",
+                    "fix": "media.html('', alt) passes an empty title.",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "Buttons opening a new tab had no rel attribute, leaving window.opener reachable from the linked site.",
+                    "fix": "cl.link_attrs adds rel=\"noopener noreferrer\" whenever target is _blank.",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "Rows were tied to numbered slots in the layout (a \"content section ID\" select, cid1–cid10), so adding or reordering rows meant editing two places.",
+                    "fix": "Rows render in list order; drag to reorder.",
+                    "seen_in": "Gantry 5 info-CTA particle"
+                },
+                {
+                    "problem": "Headings were hard-coded as h2, which broke the outline when rows were placed under another h2.",
+                    "fix": "heading_level parameter.",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "Body text used the code editor field, so editors had no formatting toolbar in Grav 2's Admin.",
+                    "fix": "type markdown, which Admin2 renders with its markdown editor (and Editor Pro when installed).",
+                    "seen_in": "Admin2 migration"
+                }
+            ],
+            "verify": [
+                "The page blueprint shows a \"Call-to-Action Rows\" section with a Rows list (Admin2 or GET /api/v1/blueprints/pages/<template>).",
+                "Rendering example.md outputs one .cl-cta-rows__row per non-empty row and no empty .cl-cta-rows__media.",
+                "Every <a target=\"_blank\"> inside .cl-cta-rows has rel=\"noopener noreferrer\"."
+            ],
+            "path": "patterns/page/cta-rows",
+            "readme": "patterns/page/cta-rows/README.md",
+            "manifest": "patterns/page/cta-rows/pattern.yaml",
+            "files": [
+                "patterns/page/cta-rows/blueprint.yaml",
+                "patterns/page/cta-rows/cta-rows.html.twig",
+                "patterns/page/cta-rows/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/cta-rows/"
+        },
+        {
+            "id": "page/embed-block",
+            "name": "Embeds and page scripts",
+            "version": "1.0.0",
+            "level": "page",
+            "touches": [],
+            "status": "stable",
+            "summary": "Structured fields for third-party embeds (an iframe by URL with a required title and a shape, or a trusted HTML snippet) and page-only scripts, so embed code and Twig stay out of page content.",
+            "use_when": [
+                "A page needs a booking calendar, video, map from another provider, form or widget.",
+                "Migrating content that relied on Twig or raw embed code inside Markdown."
+            ],
+            "avoid_when": [
+                "The embed appears on every page; use theme/head-scripts or a plugin."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "embeds": {
+                        "type": "list",
+                        "item": {
+                            "title": "string (iframe accessible name)",
+                            "kind": "iframe | html",
+                            "src": "https URL",
+                            "aspect": "16:9 | 4:3 | 1:1 | fixed",
+                            "height": "int px (fixed)",
+                            "html": "trusted html",
+                            "caption": "string"
+                        }
+                    },
+                    "page_scripts": {
+                        "type": "trusted html"
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "rezdyembed (and other per-provider \"paste the iframe\" fields)",
+                    "handling": "Not read. Copy the iframe's src into an embed of kind iframe and give it a title."
+                }
+            ],
+            "import": {
+                "type": "page/embed-block/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page/embed-block/embed-block.html.twig",
+            "apply": {
+                "blueprint": "embeds_tab:\n  type: tab\n  title: Embeds\n  import@:\n    type: page/embed-block/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% include 'patterns/page/embed-block/embed-block.html.twig' %}\n{# before </body>: #}\n{% include 'patterns/page/embed-block/embed-block.html.twig' with { slot: 'scripts' } %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-embeds",
+                    "cl-embeds__item",
+                    "cl-embeds__item--iframe",
+                    "cl-embeds__item--html",
+                    "cl-embeds__frame",
+                    "cl-embeds__frame--16x9",
+                    "cl-embeds__frame--4x3",
+                    "cl-embeds__frame--1x1",
+                    "cl-embeds__frame--fixed",
+                    "cl-embeds__html",
+                    "cl-embeds__caption"
+                ],
+                "slots": [
+                    "root",
+                    "item",
+                    "caption"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "Grav 2 runs Twig in page content inside a sandbox (and before 2.0.19 did not run it at all by default), so content that built embeds with Twig printed raw {{ }} or was blocked after migration.",
+                    "fix": "Embeds are header fields rendered by the template, so no Twig runs in content.",
+                    "seen_in": "Grav 2 migration"
+                },
+                {
+                    "problem": "Editors pasted whole iframe tags from providers, which Grav's save-time XSS check rejects for anyone but super admins, and which usually lacked a title (an unnamed frame for screen readers) and lazy loading.",
+                    "fix": "Kind \"Embed by URL\" stores only an https URL; the template builds the iframe with a required title, loading=\"lazy\" and a referrer policy. Any editor can use it.",
+                    "seen_in": "Gantry tour pages (booking-calendar iframe field)"
+                },
+                {
+                    "problem": "Embedded videos and calendars had fixed pixel sizes and overflowed on phones.",
+                    "fix": "Shape classes using aspect-ratio, or a fixed height for calendars and forms. No style attributes, so a strict CSP stays possible."
+                },
+                {
+                    "problem": "Page-specific scripts were pasted into the content, mixing code with prose.",
+                    "fix": "page_scripts, printed before </body> through slot 'scripts'.",
+                    "seen_in": "Gantry default page blueprint (page_scripts)"
+                }
+            ],
+            "verify": [
+                "An embed of kind iframe without an https src is skipped.",
+                "Every rendered iframe has a non-empty title and loading=\"lazy\".",
+                "A non-super-admin saving <script> in the HTML snippet gets Grav's XSS error; saving an iframe URL succeeds."
+            ],
+            "path": "patterns/page/embed-block",
+            "readme": "patterns/page/embed-block/README.md",
+            "manifest": "patterns/page/embed-block/pattern.yaml",
+            "files": [
+                "patterns/page/embed-block/blueprint.yaml",
+                "patterns/page/embed-block/embed-block.html.twig",
+                "patterns/page/embed-block/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/embed-block/"
+        },
+        {
+            "id": "page/header-image",
+            "name": "Header image",
+            "version": "1.0.0",
+            "level": "page",
+            "touches": [],
+            "status": "stable",
+            "summary": "A per-page header image with alt text and a show/hide switch, rendered as a responsive, eagerly loaded, high-priority image.",
+            "use_when": [
+                "Pages open with a large photo chosen per page."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "header_image": {
+                        "type": "bool",
+                        "description": "Show the image. The file still feeds structured data when hidden."
+                    },
+                    "header_image_file": {
+                        "type": "page media filename"
+                    },
+                    "header_image_alt": {
+                        "type": "string",
+                        "description": "Empty means decorative."
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "page/header-image/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page/header-image/header-image.html.twig",
+            "apply": {
+                "blueprint": "page_info:\n  type: tab\n  title: Page Info\n  import@:\n    type: page/header-image/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% include 'patterns/page/header-image/header-image.html.twig' with { sizes: '100vw' } %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-header-image",
+                    "cl-header-image__img"
+                ],
+                "slots": [
+                    "root",
+                    "image"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "The header image was lazy-loaded like every other image, which delays the page's largest above-the-fold element (Largest Contentful Paint).",
+                    "fix": "loading=\"eager\", fetchpriority=\"high\" and decoding=\"async\"."
+                },
+                {
+                    "problem": "One full-size file was sent to phones and desktops alike.",
+                    "fix": "Grav's derivatives() builds a srcset (640–1920 px by default) with a sizes attribute."
+                },
+                {
+                    "problem": "A header image whose file was deleted left an empty wrapper or a broken image.",
+                    "fix": "The partial renders only when the file exists in page.media.",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "The header-image fields only rendered when a Gantry particle was placed in the page's layout.",
+                    "fix": "A plain partial any template includes.",
+                    "seen_in": "Gantry header-image particle"
+                }
+            ],
+            "verify": [
+                "The rendered <img> has loading=\"eager\", fetchpriority=\"high\" and a srcset (for raster images).",
+                "With header_image false, nothing renders, and theme/schema-graph still uses the file as the page image."
+            ],
+            "path": "patterns/page/header-image",
+            "readme": "patterns/page/header-image/README.md",
+            "manifest": "patterns/page/header-image/pattern.yaml",
+            "files": [
+                "patterns/page/header-image/blueprint.yaml",
+                "patterns/page/header-image/header-image.html.twig",
+                "patterns/page/header-image/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/header-image/"
+        },
+        {
+            "id": "page/hero-actions",
+            "name": "Hero actions",
+            "version": "1.0.0",
+            "level": "page",
+            "touches": [],
+            "status": "stable",
+            "summary": "A primary and an optional secondary button under the page heading, each rendered only when complete.",
+            "use_when": [
+                "A home or landing page hero needs one or two clear next steps."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "primary_cta_text": {
+                        "type": "string"
+                    },
+                    "primary_cta_link": {
+                        "type": "path or URL"
+                    },
+                    "secondary_cta_text": {
+                        "type": "string"
+                    },
+                    "secondary_cta_link": {
+                        "type": "path or URL"
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "page/hero-actions/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page/hero-actions/hero-actions.html.twig",
+            "apply": {
+                "blueprint": "home:\n  type: tab\n  title: Home Page\n  import@1:\n    type: page/page-heading/blueprint\n    context: 'plugin://component-library/patterns'\n  import@2:\n    type: page/hero-actions/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% include 'patterns/page/page-heading/page-heading.html.twig' %}\n{% include 'patterns/page/hero-actions/hero-actions.html.twig' with {\n    classes: { primary: 'button is-primary', secondary: 'button is-light' }\n} %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-hero-actions",
+                    "cl-hero-actions__button",
+                    "cl-hero-actions__button--primary",
+                    "cl-hero-actions__button--secondary"
+                ],
+                "slots": [
+                    "root",
+                    "primary",
+                    "secondary"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "A button with a label but no link (or the reverse) rendered as a dead control.",
+                    "fix": "Each button renders only with both values.",
+                    "seen_in": "community-guide theme home page"
+                },
+                {
+                    "problem": "Hero buttons were not distinguishable in analytics.",
+                    "fix": "data-tracking-info=\"hero-primary_<label>\" for theme/datalayer or any tag manager."
+                }
+            ],
+            "verify": [
+                "With only the primary pair set, exactly one link renders."
+            ],
+            "path": "patterns/page/hero-actions",
+            "readme": "patterns/page/hero-actions/README.md",
+            "manifest": "patterns/page/hero-actions/pattern.yaml",
+            "files": [
+                "patterns/page/hero-actions/blueprint.yaml",
+                "patterns/page/hero-actions/hero-actions.html.twig",
+                "patterns/page/hero-actions/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/hero-actions/"
+        },
+        {
+            "id": "page/map-location",
+            "name": "Map location",
+            "version": "1.0.0",
+            "level": "page",
+            "touches": [],
+            "status": "stable",
+            "summary": "Coordinates, a pin title and a summary on any page, so the page appears on Map pages and gets a Place entity in structured data, with no extra markup of its own.",
+            "use_when": [
+                "Pages describe physical places (businesses, parks, landmarks) that should appear on a map."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {},
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "map_marker": {
+                        "type": "map",
+                        "item": {
+                            "latitude": "number",
+                            "longitude": "number",
+                            "title": "string",
+                            "summary": "string"
+                        }
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "page/map-location/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": null,
+            "apply": {
+                "blueprint": "page_info:\n  type: tab\n  title: Page Info\n  import@:\n    type: page/map-location/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{# No template of its own. Read by: #}\n{#   page-type/map-page    (a pin per page with a location) #}\n{#   theme/schema-graph    (a Place with GeoCoordinates)   #}\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "Each place had to be entered twice, once on its own page and again as a marker on the map page, and the two copies drifted.",
+                    "fix": "The coordinates live on the place's page; every Map page collects them.",
+                    "seen_in": "community-guide theme, Map page"
+                },
+                {
+                    "problem": "Coordinates were typed as free text, and a swapped or out-of-range value silently dropped the pin.",
+                    "fix": "Number validation with latitude ±90 and longitude ±180."
+                }
+            ],
+            "verify": [
+                "A page with both coordinates appears as a pin on a Map page and as a Place (#place) in its JSON-LD."
+            ],
+            "path": "patterns/page/map-location",
+            "readme": "patterns/page/map-location/README.md",
+            "manifest": "patterns/page/map-location/pattern.yaml",
+            "files": [
+                "patterns/page/map-location/blueprint.yaml",
+                "patterns/page/map-location/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/map-location/"
+        },
+        {
+            "id": "page/page-heading",
+            "name": "Page heading and title tag",
+            "version": "1.0.0",
+            "level": "page",
+            "touches": [],
+            "status": "stable",
+            "summary": "Separate SEO title, visible H1, subtitle and byline fields, rendered as an <hgroup> and a <title> element with sensible fallbacks.",
+            "use_when": [
+                "Editors need a search title that differs from the visible heading, or a hero heading with a subtitle."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "seo_page_title": {
+                        "type": "string"
+                    },
+                    "page_name": {
+                        "type": "string"
+                    },
+                    "page_name_subtitle": {
+                        "type": "string"
+                    },
+                    "page_byline": {
+                        "type": "string"
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "page/page-heading/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page/page-heading/page-heading.html.twig",
+            "apply": {
+                "blueprint": "page_info:\n  type: tab\n  title: Page Info\n  import@:\n    type: page/page-heading/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{# <head> #}\n{% include 'patterns/page/page-heading/title-tag.html.twig' %}\n{# page header area #}\n{% include 'patterns/page/page-heading/page-heading.html.twig' %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-page-heading",
+                    "cl-page-heading__title",
+                    "cl-page-heading__subtitle",
+                    "cl-page-heading__byline"
+                ],
+                "slots": [
+                    "root",
+                    "title",
+                    "subtitle",
+                    "byline"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "The page title was printed into the H1 with no escaping filter (flagged by code scanning in two templates), relying on Grav's autoescape setting.",
+                    "fix": "Every value is escaped explicitly with |e, so the partial stays safe on sites that turn autoescape off.",
+                    "seen_in": "community-guide theme, code-scanning fixes"
+                },
+                {
+                    "problem": "The subtitle was an h2, so screen readers listed it as a section heading with no section under it, ahead of the page's real h2 sections.",
+                    "fix": "The subtitle is a <p> inside an <hgroup> (subtitle_tag can keep h2 where CSS depends on it).",
+                    "seen_in": "community-guide theme home hero"
+                },
+                {
+                    "problem": "The heading fields only appeared when a Gantry particle referenced them, so the same front matter rendered differently on pages with different layouts.",
+                    "fix": "One partial that any template includes.",
+                    "seen_in": "Gantry page-title particles"
+                },
+                {
+                    "problem": "The home page title read \"Home | Site Name\".",
+                    "fix": "title-tag.html.twig shows only the site title on the home page unless an SEO title is set."
+                }
+            ],
+            "verify": [
+                "Exactly one <h1> per page, containing page_name or the page title.",
+                "<title> uses seo_page_title when set."
+            ],
+            "path": "patterns/page/page-heading",
+            "readme": "patterns/page/page-heading/README.md",
+            "manifest": "patterns/page/page-heading/pattern.yaml",
+            "files": [
+                "patterns/page/page-heading/blueprint.yaml",
+                "patterns/page/page-heading/page-heading.html.twig",
+                "patterns/page/page-heading/title-tag.html.twig",
+                "patterns/page/page-heading/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/page-heading/"
+        },
+        {
+            "id": "page/quick-actions",
+            "name": "Quick actions (link blocks)",
+            "version": "1.0.0",
+            "level": "page",
+            "touches": [],
+            "status": "stable",
+            "summary": "A navigation block of shortcut cards (label, icon, one-line description) in two to four columns.",
+            "use_when": [
+                "A home or landing page points visitors to their most common tasks.",
+                "Replacing a Gantry \"link blocks\" particle."
+            ],
+            "avoid_when": [
+                "The cards need images or long text; use page/tiles."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "quick_actions_title": {
+                        "type": "string"
+                    },
+                    "quick_actions_columns": {
+                        "type": "2 | 3 | 4"
+                    },
+                    "quick_actions": {
+                        "type": "list",
+                        "item": {
+                            "label": "string",
+                            "link": "path or URL",
+                            "icon": "icon class",
+                            "description": "string"
+                        }
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "page/quick-actions/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page/quick-actions/quick-actions.html.twig",
+            "apply": {
+                "blueprint": "home:\n  type: tab\n  title: Home Page\n  import@:\n    type: page/quick-actions/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% include 'patterns/page/quick-actions/quick-actions.html.twig' with { heading_level: 2 } %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-quick-actions",
+                    "cl-quick-actions__heading",
+                    "cl-quick-actions__grid",
+                    "cl-quick-actions__grid--2",
+                    "cl-quick-actions__grid--3",
+                    "cl-quick-actions__grid--4",
+                    "cl-quick-actions__item",
+                    "cl-quick-actions__icon",
+                    "cl-quick-actions__text",
+                    "cl-quick-actions__label",
+                    "cl-quick-actions__description"
+                ],
+                "slots": [
+                    "root",
+                    "heading",
+                    "grid",
+                    "item"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "The block's default heading named one specific town, so any other site showed the wrong heading until an editor noticed.",
+                    "fix": "No default heading; without one the nav gets aria-label=\"Quick links\" instead.",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "The heading id was fixed, so two blocks on one page produced duplicate ids and a broken aria-labelledby.",
+                    "fix": "id parameter."
+                },
+                {
+                    "problem": "Shortcuts saved with only a label (or only a link) rendered as dead cards.",
+                    "fix": "Label and link are required in the blueprint and filtered in the template."
+                },
+                {
+                    "problem": "The Gantry link-blocks particle stored its links in the layout, not the page, so editors had to use the Gantry admin to change them.",
+                    "fix": "The links are page fields, edited with the page.",
+                    "seen_in": "Gantry link-blocks particle"
+                }
+            ],
+            "verify": [
+                "The block is a <nav> with an accessible name (aria-labelledby or aria-label).",
+                "Items lacking a label or link do not render."
+            ],
+            "path": "patterns/page/quick-actions",
+            "readme": "patterns/page/quick-actions/README.md",
+            "manifest": "patterns/page/quick-actions/pattern.yaml",
+            "files": [
+                "patterns/page/quick-actions/blueprint.yaml",
+                "patterns/page/quick-actions/quick-actions.html.twig",
+                "patterns/page/quick-actions/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/quick-actions/"
+        },
+        {
+            "id": "page/tiles",
+            "name": "Tiles (card grid)",
+            "version": "1.0.0",
+            "level": "page",
+            "touches": [],
+            "status": "stable",
+            "summary": "An editor-managed grid of cards with widths, icons, markdown text, images, an optional whole-card link and a button, plus a hook for tile types that other templates render.",
+            "use_when": [
+                "A page shows several comparable items (places, services, features) as cards."
+            ],
+            "avoid_when": [
+                "Each item is a full-width section with one action; use page/cta-rows.",
+                "The cards are just links with a short description; use page/quick-actions."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "page.header",
+                "keys": {
+                    "tiles": {
+                        "type": "list",
+                        "item": {
+                            "tile_type": "content, or a type the theme maps in tile_types",
+                            "tile_width": "is-one-quarter | is-one-third | is-half | is-two-thirds | is-full",
+                            "title": "string",
+                            "tile_icon": "icon class (Admin2 saves fa-name or fa-brands fa-name)",
+                            "content": "markdown",
+                            "tile_image_file": "page media filename",
+                            "tile_image_alt": "string (empty = decorative)",
+                            "tile_image_fit": "natural | cover",
+                            "card_link": "path or URL",
+                            "button_text": "string",
+                            "button_link": "path or URL"
+                        }
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "tiles.*.tile_image",
+                    "handling": "The \"Display image\" toggle is gone; an explicit '0' still hides the image."
+                },
+                {
+                    "key": "tiles.*.tile_type = weather",
+                    "handling": "Rendered by the template you map in tile_types (for example { weather: 'partials/weather-tile.html.twig' } calling the plugin's Twig function). Without a mapping it renders as a content tile."
+                }
+            ],
+            "import": {
+                "type": "page/tiles/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/page/tiles/tiles.html.twig",
+            "apply": {
+                "blueprint": "content_blocks:\n  type: tab\n  title: Content Blocks\n  import@:\n    type: page/tiles/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% include 'patterns/page/tiles/tiles.html.twig' with {\n    heading_level: 3,\n    classes: { button: 'button is-primary' }\n} %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-tiles",
+                    "cl-tiles__item",
+                    "cl-tiles__item--quarter",
+                    "cl-tiles__item--third",
+                    "cl-tiles__item--half",
+                    "cl-tiles__item--two-thirds",
+                    "cl-tiles__item--full",
+                    "cl-tiles__card",
+                    "cl-tiles__card--linked",
+                    "cl-tiles__heading",
+                    "cl-tiles__icon",
+                    "cl-tiles__card-link",
+                    "cl-tiles__body",
+                    "cl-tiles__media",
+                    "cl-tiles__media--cover",
+                    "cl-tiles__action",
+                    "cl-tiles__button"
+                ],
+                "slots": [
+                    "root",
+                    "item",
+                    "card",
+                    "heading",
+                    "body",
+                    "media",
+                    "button"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "Making a whole card clickable by wrapping it in <a> nested the button link inside another link (invalid HTML) and made screen readers read the whole card as the link name.",
+                    "fix": "The title link is stretched over the card with CSS (.cl-tiles__card--linked); inner links and buttons sit above it and keep working.",
+                    "seen_in": "community-guide theme, \"Full Card Link\""
+                },
+                {
+                    "problem": "Tile headings were always h2, which broke the outline on the home page where tiles sit under an h2 section heading.",
+                    "fix": "heading_level parameter (the home page passes 3).",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "Photos of different shapes made uneven rows, but cropping every image ruined logos.",
+                    "fix": "Per-tile Image Fit (cover crops photos to equal height; natural leaves logos alone).",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "Width options were Bulma class names written straight into the markup, tying content to one CSS framework.",
+                    "fix": "The stored values stay (no content change), the markup uses neutral cl-tiles__item--half modifiers, and width_classes maps each width to any framework's classes."
+                },
+                {
+                    "problem": "A plugin-rendered tile (weather) was special-cased inside the tile template.",
+                    "fix": "tile_types maps a type to a template, so the tile partial knows nothing about plugins.",
+                    "seen_in": "community-guide theme, weather tile"
+                },
+                {
+                    "problem": "Admin2's icon picker saves solid icons as a bare fa-name, which renders nothing without a family class.",
+                    "fix": "cl.icon adds the configured family class (default fa-solid).",
+                    "seen_in": "Admin2 migration"
+                },
+                {
+                    "problem": "Missing media, decorative-image alt text and alt-as-tooltip issues (same as page/cta-rows).",
+                    "fix": "Same guards as page/cta-rows."
+                }
+            ],
+            "verify": [
+                "Rendering example.md gives one .cl-tiles__item per non-empty tile with the width modifier.",
+                "The linked tile has exactly one <a class=\"cl-tiles__card-link\"> and its button is a separate, non-nested link."
+            ],
+            "path": "patterns/page/tiles",
+            "readme": "patterns/page/tiles/README.md",
+            "manifest": "patterns/page/tiles/pattern.yaml",
+            "files": [
+                "patterns/page/tiles/blueprint.yaml",
+                "patterns/page/tiles/tiles.html.twig",
+                "patterns/page/tiles/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/tiles/"
+        },
+        {
+            "id": "system/admin2-plugin-forms",
+            "name": "Plugin settings that work in Admin2",
+            "version": "1.0.0",
+            "level": "system",
+            "touches": [],
+            "status": "stable",
+            "summary": "How a plugin's settings form behaves in Grav 2's Admin2 (an API client that reads saved YAML), and the event wiring that keeps derived or read-only values correct in both Admins.",
+            "use_when": [
+                "A plugin's settings form shows values computed by the plugin, or reacts to a save.",
+                "A plugin worked in Grav 1.7's Admin and shows blank or stale fields in Admin2."
+            ],
+            "avoid_when": [
+                "The form is plain fields with no computed values; blueprints carry over to Admin2 unchanged."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11"
+                ]
+            },
+            "requires": {
+                "php": true
+            },
+            "data": null,
+            "legacy_keys": [],
+            "import": null,
+            "include": null,
+            "apply": {
+                "php": "// getSubscribedEvents(): subscribe form events unconditionally\n'onApiBlueprintResolved' => ['onApiBlueprintResolved', 0],   // Admin2: adjust the form definition\n'onAdminSave'            => ['onAdminSave', 0],              // both Admins: adjust values being saved\n// The event carries context ('plugin', 'theme', 'page', 'account'), the\n// plugin or theme name (or template for pages), and the serialized `fields`.\n",
+                "blueprint": "site_id:\n  type: text\n  label: Site ID\n  disabled: true\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "A plugin set a display value with $this->config->set() for the settings form; it showed in classic Admin but stayed blank in Admin2.",
+                    "fix": "Admin2 loads values from the saved YAML through the API, never from runtime config. Supply the value as the field's default in onApiBlueprintResolved, and persist it in onAdminSave.",
+                    "seen_in": "AGGREGATE plugin v1.1.1"
+                },
+                {
+                    "problem": "The browser could not compute a value from a secret field, because Admin2 sends secrets masked.",
+                    "fix": "Derive the value on the server (onApiBlueprintResolved / onAdminSave), never in the browser.",
+                    "seen_in": "AGGREGATE plugin v1.1.1"
+                },
+                {
+                    "problem": "Form listeners registered inside onPluginsInitialized behind isAdmin() never ran in Admin2, because its API requests are not \"admin\" requests while plugins initialize.",
+                    "fix": "Subscribe onApiBlueprintResolved and onAdminSave in getSubscribedEvents(); keep isAdmin() only for classic-Admin-specific work.",
+                    "seen_in": "AGGREGATE plugin; another plugin's GPM review (connect flow never ran under Admin2)"
+                },
+                {
+                    "problem": "An onAdminSave handler changed the wrong object, because the event fires for every save (pages, users, other plugins).",
+                    "fix": "isOwnConfiguration() checks the storage file (plugins/<slug>.yaml), falling back to the classic Admin route.",
+                    "seen_in": "AGGREGATE plugin"
+                },
+                {
+                    "problem": "After saving a new secret, Admin2 still showed the value derived from the old one.",
+                    "fix": "onAdminSave stores the refreshed derived value, which Admin2 reloads.",
+                    "seen_in": "AGGREGATE plugin v1.1.1"
+                }
+            ],
+            "verify": [
+                "GET /api/v1/blueprints/plugins/<slug> shows the derived field with a default.",
+                "Saving a new secret in Admin2, then reloading the page, shows the new derived value."
+            ],
+            "path": "patterns/system/admin2-plugin-forms",
+            "readme": "patterns/system/admin2-plugin-forms/README.md",
+            "manifest": "patterns/system/admin2-plugin-forms/pattern.yaml",
+            "files": [
+                "patterns/system/admin2-plugin-forms/Admin2FormsPlugin.php",
+                "patterns/system/admin2-plugin-forms/blueprints-snippet.yaml"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/admin2-plugin-forms/"
+        },
+        {
+            "id": "system/compatibility-flag",
+            "name": "Compatibility flag",
+            "version": "1.0.0",
+            "level": "system",
+            "touches": [],
+            "status": "stable",
+            "summary": "Declare the Grav generations a plugin or theme was tested on with compatibility.grav, record the exact versions in a comment, and keep dependencies for minimum versions.",
+            "use_when": [
+                "Releasing or updating any plugin or theme for Grav 2."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11"
+                ]
+            },
+            "requires": {},
+            "data": null,
+            "legacy_keys": [],
+            "import": null,
+            "include": null,
+            "apply": {
+                "blueprint": "# blueprints.yaml\n# Tested on Grav 2.2.11 (Twig 3, twig3_compat off) and Grav 1.7.53.\ncompatibility:\n  grav: ['1.7', '2.0']\ndependencies:\n  - { name: grav, version: '>=1.7.0' }\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "Without a compatibility block, Grav 2 infers support from dependencies, so a package that requires grav >=1.7.0 is treated as 1.7-only and held back by the migration tool and by GPM's strict mode.",
+                    "fix": "An explicit compatibility.grav list that includes '2.0' once the package is tested on 2.x.",
+                    "seen_in": "theme and plugin releases for Grav 2"
+                },
+                {
+                    "problem": "compatibility says which generations, not which releases, so it was unclear what \"tested\" meant.",
+                    "fix": "A comment above the block with the exact versions and the Twig compatibility setting used in testing, matching what the README says.",
+                    "seen_in": "community-guide theme and AGGREGATE plugin"
+                },
+                {
+                    "problem": "Raising dependencies to grav >=2.0.0 to \"mark\" 2.0 support dropped 1.7 sites from updates.",
+                    "fix": "dependencies keeps the true minimum; compatibility carries the tested generations."
+                }
+            ],
+            "verify": [
+                "blueprints.yaml has compatibility.grav with every generation you tested on, and no others.",
+                "On a Grav 2 site, the package installs and updates through GPM without a compatibility warning."
+            ],
+            "path": "patterns/system/compatibility-flag",
+            "readme": "patterns/system/compatibility-flag/README.md",
+            "manifest": "patterns/system/compatibility-flag/pattern.yaml",
+            "files": [
+                "patterns/system/compatibility-flag/blueprints-snippet.yaml"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/compatibility-flag/"
+        },
+        {
+            "id": "system/dynamic-options",
+            "name": "Dynamic select options (data-options@)",
+            "version": "1.0.0",
+            "level": "system",
+            "touches": [
+                "page",
+                "theme"
+            ],
+            "status": "stable",
+            "summary": "Build a select's options from site data with data-options@ and a static provider on the theme or plugin class, registered for Grav 2's provider allowlist.",
+            "use_when": [
+                "A dropdown lists things that live elsewhere (authors, categories, locations) and must not drift from them."
+            ],
+            "avoid_when": [
+                "The options are fixed and few; list them in the blueprint.",
+                "The options are pages; use the pages field type."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11"
+                ]
+            },
+            "requires": {
+                "php": true
+            },
+            "data": null,
+            "legacy_keys": [],
+            "import": null,
+            "include": null,
+            "apply": {
+                "blueprint": "header.category:\n  type: select\n  label: Category\n  default: ''\n  data-options@: '\\Grav\\Theme\\Mytheme::categoryOptions'\n",
+                "php": "// In onThemeInitialized (theme) or onPluginsInitialized (plugin), not behind isAdmin():\nif (method_exists(\\Grav\\Common\\Data\\Blueprint::class, 'addAllowedDynamicCallable')) {\n    \\Grav\\Common\\Data\\Blueprint::addAllowedDynamicCallable(self::class . '::categoryOptions');\n}\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "Option lists copied into page blueprints (author names, for example) drifted from the data they described, and differed between themes.",
+                    "fix": "The provider reads the data each time the form opens.",
+                    "seen_in": "community-guide and Gantry child themes (author select)"
+                },
+                {
+                    "problem": "A select's default was a value that none of its options used, so new pages started with an unsaved, invalid choice.",
+                    "fix": "The provider always returns an explicit empty choice, and the blueprint default is ''.",
+                    "seen_in": "Gantry child theme page blueprint"
+                },
+                {
+                    "problem": "Grav 2.0.11 and later refuse Class::method providers that are not on the allowlist in some code paths, and registering them behind isAdmin() misses Admin2's API requests.",
+                    "fix": "Blueprint::addAllowedDynamicCallable() on every request, guarded with method_exists for Grav 1.7.",
+                    "seen_in": "Grav 2 Admin2 migration"
+                },
+                {
+                    "problem": "A provider in a separate class needed a composer.json and autoloader just for one method.",
+                    "fix": "A public static method on the theme or plugin class, which Grav already loads."
+                }
+            ],
+            "verify": [
+                "GET /api/v1/blueprints/pages/<template> lists the provider's options on the field.",
+                "In Admin2, adding an item to the source data shows it in the dropdown without editing the blueprint."
+            ],
+            "path": "patterns/system/dynamic-options",
+            "readme": "patterns/system/dynamic-options/README.md",
+            "manifest": "patterns/system/dynamic-options/pattern.yaml",
+            "files": [
+                "patterns/system/dynamic-options/OptionsProvider.php"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/dynamic-options/"
+        },
+        {
+            "id": "system/environments-and-secrets",
+            "name": "Environments and secrets",
+            "version": "1.0.0",
+            "level": "system",
+            "touches": [],
+            "status": "stable",
+            "summary": "Use Grav's per-host environment folders for production, staging and local settings, keep salts, keys and accounts out of the repository, and never let local copies talk to live services.",
+            "use_when": [
+                "A site is developed locally and deployed to one or more hosts.",
+                "A theme or site repository is about to be made public."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11"
+                ]
+            },
+            "requires": {},
+            "data": null,
+            "legacy_keys": [],
+            "import": null,
+            "include": null,
+            "apply": {
+                "config": "# user/env/staging.example.com/config/themes/mytheme.yaml\ndatalayer:\n  env: staging\n",
+                "php": "# Run locally with production's environment config:\nGRAV_ENVIRONMENT=www.example.com php -S 127.0.0.1:8765 system/router.php\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "A site repository contained user/config/security.yaml (the site's salt) and environment folders, which is fine while private but cannot be published as-is.",
+                    "fix": "Ignore security.yaml, accounts and API private keys; publish reusable parts as a separate, generalized repository (this library).",
+                    "seen_in": "Gantry particle base repository"
+                },
+                {
+                    "problem": "A local checkout used the live site's environment configuration, including form endpoints and third-party integrations, so testing a form could reach real services.",
+                    "fix": "A localhost environment folder that overrides integrations with test values, and a README warning before the first form submit.",
+                    "seen_in": "community-guide theme README"
+                },
+                {
+                    "problem": "Staging traffic was reported as production analytics.",
+                    "fix": "Per-environment theme config (for example datalayer.env staging in user/env/staging.example.com/config/themes/<theme>.yaml).",
+                    "seen_in": "community-guide theme data layer"
+                },
+                {
+                    "problem": "Environment folders were kept at the older user/<host>/ location; adding a user/env/ folder (the Grav 1.7+ default) would silently switch every environment there and drop those overrides.",
+                    "fix": "Pick one layout per site; the example documents both and the rule Grav uses to choose (checked in Grav 2.2's Setup).",
+                    "seen_in": "community-guide site checkout (user/<host>/config)"
+                },
+                {
+                    "problem": "The maps API key has to appear in page source, which reads like a leaked secret and invites copying it into server-side config too.",
+                    "fix": "Treat browser keys as public by design and restrict them by domain in the provider's console; keep server keys and tokens only in untracked environment config.",
+                    "seen_in": "community-guide theme, HERE Maps key"
+                }
+            ],
+            "verify": [
+                "git ls-files | grep -E 'security.yaml|accounts/|api-private' returns nothing.",
+                "Visiting the site on localhost shows the debugger and uncached pages; production does not.",
+                "Exactly one of user/env/ or user/<host>/ is used for environment folders."
+            ],
+            "path": "patterns/system/environments-and-secrets",
+            "readme": "patterns/system/environments-and-secrets/README.md",
+            "manifest": "patterns/system/environments-and-secrets/pattern.yaml",
+            "files": [
+                "patterns/system/environments-and-secrets/environment-example.yaml",
+                "patterns/system/environments-and-secrets/gitignore-snippet.txt"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/environments-and-secrets/"
+        },
+        {
+            "id": "system/frontend-output-guards",
+            "name": "Front-end output guards for injecting plugins",
+            "version": "1.0.0",
+            "level": "system",
+            "touches": [],
+            "status": "stable",
+            "summary": "The checks a plugin should pass before injecting scripts into rendered pages, HTML responses only, privacy signals, and staff accounts in both Grav 1.7 and Grav 2 permission models.",
+            "use_when": [
+                "A plugin adds analytics, consent, chat or other scripts to every page."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11"
+                ]
+            },
+            "requires": {
+                "php": true
+            },
+            "data": null,
+            "legacy_keys": [],
+            "import": null,
+            "include": null,
+            "apply": {
+                "php": "// HTML only\n$page = $this->grav['page'] ?? null;\nif (!$page || !method_exists($page, 'templateFormat') || $page->templateFormat() !== 'html') { return false; }\n// Privacy signals\nif (($_SERVER['HTTP_DNT'] ?? '') === '1' || in_array($_SERVER['HTTP_SEC_GPC'] ?? '', ['1', '?1'], true)) { return false; }\n// Staff (Grav 1.7 admin.* and Grav 2 api.*)\nif ($user->authenticated && ($user->authorize('admin.login') || $user->authorize('admin.super')\n    || $user->authorize('api.access') || $user->authorize('api.super'))) { return false; }\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "The tracker was injected into non-HTML responses (JSON, XML, Markdown) that happened to contain a closing </body> in their data.",
+                    "fix": "Inject only when the page's template format is html.",
+                    "seen_in": "AGGREGATE plugin v1.1.2"
+                },
+                {
+                    "problem": "Staff visits were counted on Grav 2 sites, because Grav 2 admin accounts can hold only api.access / api.super and no admin.* permissions.",
+                    "fix": "Check both permission families.",
+                    "seen_in": "AGGREGATE plugin v1.1.2"
+                },
+                {
+                    "problem": "Global Privacy Control was ignored while Do Not Track was honored.",
+                    "fix": "Treat Sec-GPC 1 (and ?1) like DNT 1.",
+                    "seen_in": "AGGREGATE plugin v1.1.2"
+                },
+                {
+                    "problem": "Excluding \"logged-in admins\" by checking only that a user was logged in also excluded ordinary front-end members.",
+                    "fix": "Exclude by permission, not by login state.",
+                    "seen_in": "a public plugin's GPM review for Grav 2"
+                },
+                {
+                    "problem": "Inline tracker configuration blocked a strict Content-Security-Policy.",
+                    "fix": "A single external script tag with defer and referrerpolicy, configured by URL parameters or data attributes, with no inline JavaScript.",
+                    "seen_in": "AGGREGATE plugin v1.0.0"
+                }
+            ],
+            "verify": [
+                "curl a .json or .xml route of the site; the response has no injected script.",
+                "curl -H 'Sec-GPC: 1' on the home page returns no tracker script.",
+                "Logged in as an Admin2-only account, the public pages have no tracker script."
+            ],
+            "path": "patterns/system/frontend-output-guards",
+            "readme": "patterns/system/frontend-output-guards/README.md",
+            "manifest": "patterns/system/frontend-output-guards/pattern.yaml",
+            "files": [
+                "patterns/system/frontend-output-guards/OutputGuards.php"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/frontend-output-guards/"
+        },
+        {
+            "id": "system/template-hygiene",
+            "name": "Twig template hygiene for Grav 2",
+            "version": "1.0.0",
+            "level": "system",
+            "touches": [
+                "theme",
+                "page"
+            ],
+            "status": "stable",
+            "summary": "The template rules every pattern here follows, checkable on any theme with `bin/plugin component-library lint <path>`.",
+            "use_when": [
+                "Writing or reviewing any theme or plugin template.",
+                "Moving a theme to Grav 2 (Twig 3, twig3_compat off)."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "plugins": [
+                    "component-library"
+                ]
+            },
+            "data": null,
+            "legacy_keys": [],
+            "import": null,
+            "include": null,
+            "apply": {
+                "php": "# From the Grav root, against a theme or plugin folder:\nbin/plugin component-library lint user/themes/mytheme\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "Page titles were printed as {{ page.header.title }} with no filter, flagged by code scanning in two templates. Grav's autoescape covered them, but only for as long as autoescape stays on (twig2_compat turns it off).",
+                    "fix": "Escape every stored value explicitly with |e; |markdown for markdown fields; |raw only for documented trusted-HTML fields. (lint rule unescaped-header, a warning)",
+                    "seen_in": "community-guide theme, code-scanning fixes"
+                },
+                {
+                    "problem": "A logout link \"commented out\" with <!-- --> still rendered a security nonce into every page, because Twig runs inside HTML comments.",
+                    "fix": "Comment out Twig with {#",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "A template had two {% extends %} tags and failed with \"Multiple extends tags are forbidden\", taking the password-reset page down.",
+                    "fix": "One extends per template, as its first tag. (lint rule multiple-extends)",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "A doc comment containing {# ...",
+                    "fix": "Twig comments do not nest; write notes inside comments with \"--\" instead. (lint rule nested-comment)",
+                    "seen_in": "this library's own first draft"
+                },
+                {
+                    "problem": "Trusted-HTML settings were read with theme_var(), which lets page front matter override them, then printed with |raw.",
+                    "fix": "Read trusted fields with grav.config.get('theme.<key>'). (lint rule theme-var-raw)",
+                    "seen_in": "library review of the community-guide footer and head templates"
+                },
+                {
+                    "problem": "Links opening a new tab lacked rel=\"noopener noreferrer\". (lint rule blank-without-rel)",
+                    "fix": "Use cl.link_attrs or add the rel attribute.",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "JSON inside <script> tags was printed with plain json_encode, so a \"</script>\" in any value could end the tag.",
+                    "fix": "json_encode with JSON_HEX_TAG (any flags value with bit 1 set, such as 15 or 321). (lint rule json-without-hex-tag)",
+                    "seen_in": "Gantry schema particle"
+                },
+                {
+                    "problem": "Templates used Twig 1/2 syntax removed in Twig 3, such as {% filter %}, {% spaceless %} or \"for ... if\", and only worked with twig3_compat on.",
+                    "fix": "{% apply %}, the spaceless filter, and an {% if %} inside the loop; test with twig3_compat: false. (lint rule twig1-syntax)",
+                    "seen_in": "Grav 2 migration"
+                },
+                {
+                    "problem": "Structured-data image URLs were built with page.media[file].url(true), expecting an absolute URL; media url()'s argument means \"reset\", so the JSON-LD carried relative paths.",
+                    "fix": "url(page.media[file].url, true) adds the scheme and host. (lint rule media-url-true)",
+                    "seen_in": "community-guide theme, Schema.org partial (found while testing this library on Grav 2.2.11)"
+                }
+            ],
+            "verify": [
+                "bin/plugin component-library lint <theme folder> reports no errors.",
+                "The theme renders with system.strict_mode.twig3_compat false."
+            ],
+            "path": "patterns/system/template-hygiene",
+            "readme": "patterns/system/template-hygiene/README.md",
+            "manifest": "patterns/system/template-hygiene/pattern.yaml",
+            "files": [
+                "patterns/system/template-hygiene/rules.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/template-hygiene/"
+        },
+        {
+            "id": "system/twig-in-content",
+            "name": "Twig in page content on Grav 2",
+            "version": "1.0.0",
+            "level": "system",
+            "touches": [
+                "page"
+            ],
+            "status": "stable",
+            "summary": "Keep Twig out of page content by moving dynamic parts into header fields and templates; when content Twig is genuinely needed, widen the sandbox narrowly in security.yaml or from a plugin.",
+            "use_when": [
+                "Migrating a site whose Markdown contains {{ }} or {% %}.",
+                "A page shows raw Twig, or a security.log \"sandbox blocked\" entry, after moving to Grav 2."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11"
+                ]
+            },
+            "requires": {},
+            "data": null,
+            "legacy_keys": [],
+            "import": null,
+            "include": null,
+            "apply": {
+                "config": "# user/config/security.yaml: widen, never disable the sandbox\ntwig_sandbox:\n  allowed_functions: [my_safe_function]\n",
+                "php": "// Plugin: allow its own safe function inside page content\npublic function onBuildTwigSandboxPolicy(Event $event): void\n{\n    $functions = $event['functions'];\n    $functions[] = 'example_gallery';\n    $event['functions'] = $functions;\n}\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "After migrating to Grav 2, pages with Twig in their Markdown showed raw {{ ... }} (before 2.0.19 content Twig was off by default) or had expressions silently blocked by the sandbox.",
+                    "fix": "Move the dynamic part into a header field and render it from the template (page/embed-block, page/tiles, page/map-location), so no Twig runs in content. Admin's Tools → Reports → Twig in Content lists affected pages.",
+                    "seen_in": "Grav 2 migration"
+                },
+                {
+                    "problem": "Building embeds and maps with Twig in content mixed presentation into writing and let any page editor run template code.",
+                    "fix": "Header fields plus templates; editors fill in values, templates decide markup.",
+                    "seen_in": "community-guide theme (maps via <div id=\"map\">, no Twig)"
+                },
+                {
+                    "problem": "A site copied the whole default sandbox list into security.yaml to add one function, freezing it against later core security fixes (lists merge by replacement).",
+                    "fix": "In Grav 2.2 the allowed_* keys are additive over built-in defaults; add only your entry. Tighten with denied_*.",
+                    "seen_in": "Grav 2 security configuration changes"
+                },
+                {
+                    "problem": "Turning the sandbox off to make one page work removed SSTI protection for every editor-written page.",
+                    "fix": "Leave twig_sandbox.enabled true; allow the specific member instead."
+                }
+            ],
+            "verify": [
+                "Admin → Tools → Reports → Twig in Content shows no pages leaking raw Twig.",
+                "logs/security.log has no new sandbox-blocked entries after visiting the affected pages."
+            ],
+            "path": "patterns/system/twig-in-content",
+            "readme": "patterns/system/twig-in-content/README.md",
+            "manifest": "patterns/system/twig-in-content/pattern.yaml",
+            "files": [
+                "patterns/system/twig-in-content/security-snippet.yaml",
+                "patterns/system/twig-in-content/SandboxPolicy.php"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/twig-in-content/"
+        },
+        {
+            "id": "theme/author-registry",
+            "name": "Author registry",
+            "version": "1.0.0",
+            "level": "theme",
+            "touches": [
+                "page"
+            ],
+            "status": "stable",
+            "summary": "A list of authors kept once in the theme settings, a page field that picks one by ID with options read live from that list, and an author card partial.",
+            "use_when": [
+                "Several people write for the site and pages credit one of them.",
+                "Author details feed both a visible bio and Schema.org author data."
+            ],
+            "avoid_when": [
+                "Authors need their own login accounts and profile pages; use Grav user accounts or Flex Objects instead."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ],
+                "plugins": [
+                    "component-library"
+                ],
+                "php": true
+            },
+            "data": {
+                "scope": "theme",
+                "keys": {
+                    "authors": {
+                        "type": "list",
+                        "item": {
+                            "authorid": "lowercase id, stable",
+                            "authorname": "string",
+                            "jobtitle": "string",
+                            "bio": "markdown",
+                            "image": "file map (user://assets/authors)",
+                            "authorpageurl": "path or URL",
+                            "socialmedia": "list of { socialurl, label, icon }"
+                        }
+                    },
+                    "page.header.author": {
+                        "type": "string",
+                        "description": "An authorid from the registry",
+                        "set": "by the page fragment page.yaml."
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "authors.*.picked_image",
+                    "handling": "Read when image is empty, from theme://assets/images/authors/<file>."
+                },
+                {
+                    "key": "authors.*.title",
+                    "handling": "Ignored. It only set an image tooltip, which repeated the name."
+                }
+            ],
+            "import": {
+                "type": "theme/author-registry/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/theme/author-registry/author-bio.html.twig",
+            "apply": {
+                "blueprint": "# theme blueprints.yaml, under form.fields:\nauthors_section:\n  type: section\n  title: Authors\n  underline: true\n  import@:\n    type: theme/author-registry/blueprint\n    context: 'plugin://component-library/patterns'\n\n# page blueprint, on the tab that holds page info:\npage_info:\n  type: tab\n  title: Page Info\n  import@:\n    type: theme/author-registry/page\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% include 'patterns/theme/author-registry/author-bio.html.twig' with { heading: 'About the author', heading_level: 2 } %}\n",
+                "php": "// Only needed WITHOUT the component-library plugin. In your theme class:\npublic static function getSubscribedEvents(): array\n{\n    return ['onThemeInitialized' => ['onThemeInitialized', 0]];\n}\npublic function onThemeInitialized(): void\n{\n    if (method_exists(\\Grav\\Common\\Data\\Blueprint::class, 'addAllowedDynamicCallable')) {\n        \\Grav\\Common\\Data\\Blueprint::addAllowedDynamicCallable(self::class . '::authorOptions');\n    }\n}\n// ...then copy authorOptions() from component-library.php and change page.yaml's\n// data-options@ to '\\Grav\\Theme\\YourTheme::authorOptions'.\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-author",
+                    "cl-author__heading",
+                    "cl-author__image",
+                    "cl-author__text",
+                    "cl-author__name",
+                    "cl-author__role",
+                    "cl-author__bio",
+                    "cl-author__social"
+                ],
+                "slots": [
+                    "root",
+                    "image",
+                    "name",
+                    "role",
+                    "bio",
+                    "social"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "Page blueprints hard-coded the author dropdown (\"Jane Doe (Author ID: jd)\"), so every new author meant editing a YAML file in each theme, and the list drifted from the registry.",
+                    "fix": "data-options@ builds the options from the theme's authors list when the form opens, in both Admins.",
+                    "seen_in": "community-guide theme and Gantry child theme"
+                },
+                {
+                    "problem": "The author select's default was a person's full name while the option keys were initials, so the default never matched any option and new pages showed a blank, unsaved author.",
+                    "fix": "Default is '' (None); the provider always includes a None option.",
+                    "seen_in": "Gantry child theme page blueprint"
+                },
+                {
+                    "problem": "Author photos were uploaded into the theme folder and disappeared on theme updates.",
+                    "fix": "Uploads go to user://assets/authors.",
+                    "seen_in": "community-guide and Gantry-based themes"
+                },
+                {
+                    "problem": "Changing an author's ID silently unlinked every page that used it.",
+                    "fix": "The ID field is validated (lowercase pattern, required) and its help text says pages store it."
+                },
+                {
+                    "problem": "Icon-only social links had no accessible name.",
+                    "fix": "A per-link label, with a \"Name on host\" fallback, used as aria-label."
+                },
+                {
+                    "problem": "Grav 2.0.11+ refuses a data-options@ Class::method provider that is not on its allowlist whenever the blueprint is not treated as a trusted file, and registering it behind isAdmin() misses Admin2, whose requests go through the API where isAdmin() is false.",
+                    "fix": "The plugin registers the provider with Blueprint::addAllowedDynamicCallable() in onPluginsInitialized, for every request type.",
+                    "seen_in": "Grav 2 Admin2 migration"
+                }
+            ],
+            "verify": [
+                "GET /api/v1/blueprints/pages/<template> returns header.author with one option per registry entry plus None.",
+                "A page whose author is in the registry renders aside.cl-author with the name; an unknown ID renders nothing."
+            ],
+            "path": "patterns/theme/author-registry",
+            "readme": "patterns/theme/author-registry/README.md",
+            "manifest": "patterns/theme/author-registry/pattern.yaml",
+            "files": [
+                "patterns/theme/author-registry/blueprint.yaml",
+                "patterns/theme/author-registry/author-bio.html.twig",
+                "patterns/theme/author-registry/page.yaml",
+                "patterns/theme/author-registry/example.yaml"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/author-registry/"
+        },
+        {
+            "id": "theme/datalayer",
+            "name": "Data layer",
+            "version": "1.0.0",
+            "level": "theme",
+            "touches": [],
+            "status": "stable",
+            "summary": "A site-agnostic window.dataLayer helper loaded in the head, configured from theme settings through a JSON block, with declarative data-datalayer-event attributes instead of inline scripts.",
+            "use_when": [
+                "The site uses a tag manager (GTM, a self-hosted TMS) that reads window.dataLayer.",
+                "Templates need to report events such as \"map_view\" or \"weather_view\"."
+            ],
+            "avoid_when": [],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "plugins": [
+                    "component-library"
+                ]
+            },
+            "data": {
+                "scope": "theme",
+                "keys": {
+                    "datalayer.enabled": {
+                        "type": "bool"
+                    },
+                    "datalayer.app": {
+                        "type": "string",
+                        "description": "customData.app; default site.title"
+                    },
+                    "datalayer.env": {
+                        "type": "production | staging | development"
+                    },
+                    "datalayer.collection_method": {
+                        "type": "string"
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "theme/datalayer/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/theme/datalayer/datalayer.html.twig",
+            "apply": {
+                "blueprint": "scripts_section:\n  type: section\n  title: Tracking & Scripts\n  underline: true\n  import@1:\n    type: theme/datalayer/blueprint\n    context: 'plugin://component-library/patterns'\n  import@2:\n    type: theme/head-scripts/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% block javascripts %}\n    {% include 'patterns/theme/datalayer/datalayer.html.twig' %}\n    ...\n{% endblock %}\n\n{# Emit an event when an element is on the page: #}\n<div id=\"map\" data-datalayer-event=\"map_view\"></div>\n",
+                "config": "# user/env/staging.example.com/config/themes/<theme>.yaml\ndatalayer:\n  env: staging\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "The data layer script hard-coded the app name and \"PROD\", so staging and local traffic was reported as production and the file had to be edited per site.",
+                    "fix": "App name and environment come from theme settings (overridable per environment folder) through a JSON config block.",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "The script loaded at the bottom of the page, so tags in the head pushed events before dataLayer helpers existed.",
+                    "fix": "Registered in the head asset group at high priority.",
+                    "seen_in": "community-guide theme, \"move dataLayer.js to the head\""
+                },
+                {
+                    "problem": "Each template added its own inline snippet to fire an event, and those had to be rewritten twice to wait for DOMContentLoaded.",
+                    "fix": "Templates add data-datalayer-event=\"name\"; the script emits each name once when the DOM is ready. No inline JavaScript, which also keeps a strict Content-Security-Policy possible.",
+                    "seen_in": "community-guide theme, weather_view and map_view tracking"
+                }
+            ],
+            "verify": [
+                "The page head contains datalayer.js and a",
+                "In the browser console, window.dataLayer contains a \"metadata\" event after load, and one event per distinct data-datalayer-event name."
+            ],
+            "path": "patterns/theme/datalayer",
+            "readme": "patterns/theme/datalayer/README.md",
+            "manifest": "patterns/theme/datalayer/pattern.yaml",
+            "files": [
+                "patterns/theme/datalayer/blueprint.yaml",
+                "patterns/theme/datalayer/datalayer.html.twig",
+                "patterns/theme/datalayer/datalayer.js"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/datalayer/"
+        },
+        {
+            "id": "theme/footer-columns",
+            "name": "Footer columns",
+            "version": "1.0.0",
+            "level": "theme",
+            "touches": [],
+            "status": "stable",
+            "summary": "Footer link columns where each column owns its heading and links, plus an optional trusted-HTML embed column, social links and a note line with {year}.",
+            "use_when": [
+                "The site footer has grouped links that editors maintain."
+            ],
+            "avoid_when": [
+                "The footer mirrors the main menu exactly; render the page tree instead."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "theme",
+                "keys": {
+                    "footer_columns": {
+                        "type": "list",
+                        "item": {
+                            "title": "string",
+                            "links": "list of { label, url, target: _self | _blank }"
+                        }
+                    },
+                    "footer_embed": {
+                        "type": "trusted html"
+                    },
+                    "footer_note": {
+                        "type": "string",
+                        "description": "{year} and {site} are replaced"
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "footerlinks + footer_column_1_title..footer_column_4_title",
+                    "handling": "When footer_columns is empty, links are grouped by their cid1–cid4 column value under the matching footer_column_N_title."
+                },
+                {
+                    "key": "footerembed",
+                    "handling": "Used when footer_embed is empty."
+                },
+                {
+                    "key": "site.social[].title as an icon name",
+                    "handling": "Without an icon key, the title is shown as link text. Add icon (for example fa-brands fa-facebook) to each site.social entry for an icon."
+                }
+            ],
+            "import": {
+                "type": "theme/footer-columns/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/theme/footer-columns/footer-columns.html.twig",
+            "apply": {
+                "blueprint": "footer_section:\n  type: section\n  title: Footer\n  underline: true\n  import@:\n    type: theme/footer-columns/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "<footer class=\"site-footer\">\n  {% include 'patterns/theme/footer-columns/footer-columns.html.twig' with { heading_level: 2 } %}\n</footer>\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-footer",
+                    "cl-footer__columns",
+                    "cl-footer__column",
+                    "cl-footer__heading",
+                    "cl-footer__links",
+                    "cl-footer__embed",
+                    "cl-footer__social",
+                    "cl-footer__note"
+                ],
+                "slots": [
+                    "root",
+                    "columns",
+                    "column",
+                    "heading",
+                    "links",
+                    "embed",
+                    "social",
+                    "note"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "Each link chose its column from a select whose labels were hard-coded (\"Column 1 — Explore\"), while the column headings were separate settings, so renaming a heading left the select describing the old one.",
+                    "fix": "Columns are a list; each column holds its own heading and links.",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "New links defaulted to a \"Please select a footer column\" value (cid0) and silently never appeared.",
+                    "fix": "A link can only exist inside a column.",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "The copyright line hard-coded the domain name, so it was wrong on every other site using the theme.",
+                    "fix": "footer_note with {year} and {site} tokens.",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "The embed column was read with theme_var(), which a page's front matter can override, so a page editor could place raw HTML in every footer.",
+                    "fix": "footer_embed is read from theme config only.",
+                    "seen_in": "library review"
+                },
+                {
+                    "problem": "New-tab links lacked rel=\"noopener noreferrer\".",
+                    "fix": "cl.link_attrs."
+                },
+                {
+                    "problem": "Adding a fourth link column meant editing the template.",
+                    "fix": "Any number of columns; the theme's grid classes go in through the classes slots."
+                }
+            ],
+            "verify": [
+                "Theme settings show Footer Columns, Embed Column and Footer Note.",
+                "A site with only the old footerlinks keys renders the same columns as before.",
+                "Columns with no heading and no valid links are skipped."
+            ],
+            "path": "patterns/theme/footer-columns",
+            "readme": "patterns/theme/footer-columns/README.md",
+            "manifest": "patterns/theme/footer-columns/pattern.yaml",
+            "files": [
+                "patterns/theme/footer-columns/blueprint.yaml",
+                "patterns/theme/footer-columns/footer-columns.html.twig",
+                "patterns/theme/footer-columns/example.yaml"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/footer-columns/"
+        },
+        {
+            "id": "theme/head-scripts",
+            "name": "Head and body-end scripts",
+            "version": "1.0.0",
+            "level": "theme",
+            "touches": [],
+            "status": "stable",
+            "summary": "Two trusted-HTML theme settings for vendor snippets (analytics, tag managers, chat widgets), rendered in the right place, with a per-page off switch.",
+            "use_when": [
+                "Non-developers need to add or change tracking or widget snippets without editing templates."
+            ],
+            "avoid_when": [
+                "A dedicated plugin exists for the service (it can respect consent, Do Not Track and Admin users; see system/frontend-output-guards).",
+                "The snippet only belongs on one page; use page/embed-block."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {},
+            "data": {
+                "scope": "theme",
+                "keys": {
+                    "tracking_tags": {
+                        "type": "trusted html"
+                    },
+                    "body_end_scripts": {
+                        "type": "trusted html"
+                    },
+                    "page.header.head_scripts": {
+                        "type": "bool",
+                        "description": "Set false on a page to skip both snippets there.",
+                        "frontmatter_only": true
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "theme/head-scripts/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/theme/head-scripts/head-scripts.html.twig",
+            "apply": {
+                "blueprint": "scripts_section:\n  type: section\n  title: Tracking & Scripts\n  underline: true\n  import@:\n    type: theme/head-scripts/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{# in <head>, after assets.css() and assets.js() #}\n{% include 'patterns/theme/head-scripts/head-scripts.html.twig' with { slot: 'head' } %}\n{# just before </body> #}\n{% include 'patterns/theme/head-scripts/head-scripts.html.twig' with { slot: 'body_end' } %}\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "Tracking code was pasted into templates per site, so changing a tag ID meant a theme release.",
+                    "fix": "Theme settings fields, rendered by one partial.",
+                    "seen_in": "community-guide and Gantry-based themes"
+                },
+                {
+                    "problem": "Tag-manager events fired before the data layer existed because the data layer script loaded at the bottom of the page.",
+                    "fix": "Render the head slot after assets.js() in the head, and load theme/datalayer in the head group so it is defined first.",
+                    "seen_in": "community-guide theme, data layer fixes"
+                },
+                {
+                    "problem": "Reading the snippets with theme_var() let any page's front matter override them (theme_var checks page.header first), so a page editor could inject a script into the raw-output slot.",
+                    "fix": "Trusted fields are read with grav.config.get('theme.<key>') only.",
+                    "seen_in": "library review of the community-guide footer and head templates"
+                },
+                {
+                    "problem": "There was no way to keep tracking off a single page.",
+                    "fix": "head_scripts false in a page's front matter."
+                }
+            ],
+            "verify": [
+                "The head snippet appears once, inside <head>, after the asset tags.",
+                "A page with head_scripts false has neither snippet."
+            ],
+            "path": "patterns/theme/head-scripts",
+            "readme": "patterns/theme/head-scripts/README.md",
+            "manifest": "patterns/theme/head-scripts/pattern.yaml",
+            "files": [
+                "patterns/theme/head-scripts/blueprint.yaml",
+                "patterns/theme/head-scripts/head-scripts.html.twig"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/head-scripts/"
+        },
+        {
+            "id": "theme/map-here",
+            "name": "HERE map with conditional loading",
+            "version": "1.0.0",
+            "level": "theme",
+            "touches": [
+                "page"
+            ],
+            "status": "stable",
+            "summary": "HERE Maps settings in the theme, a loader that adds the map scripts only on pages that show a map, and a map script that reads its settings from JSON and supports linked markers.",
+            "use_when": [
+                "Some pages show an interactive map and most do not.",
+                "Maps should be editable by putting <div id=\"map\"></div> in content, without Twig."
+            ],
+            "avoid_when": [
+                "Every page shows a map (load the scripts unconditionally).",
+                "A static map image is enough."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "plugins": [
+                    "component-library"
+                ]
+            },
+            "data": {
+                "scope": "theme",
+                "keys": {
+                    "here_map.api_key": {
+                        "type": "string",
+                        "description": "Public by design; restrict it to the site's domains in the HERE console."
+                    },
+                    "here_map.latitude": {
+                        "type": "number"
+                    },
+                    "here_map.longitude": {
+                        "type": "number"
+                    },
+                    "here_map.zoom": {
+                        "type": "int"
+                    },
+                    "here_map.label": {
+                        "type": "string"
+                    },
+                    "here_map.legacy_globals": {
+                        "type": "bool"
+                    },
+                    "page.header.map_enabled": {
+                        "type": "bool"
+                    },
+                    "page.header.here_map": {
+                        "type": "map",
+                        "description": "Per-page overrides: latitude, longitude, zoom",
+                        "frontmatter_only": true
+                    }
+                }
+            },
+            "legacy_keys": [],
+            "import": {
+                "type": "theme/map-here/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/theme/map-here/map-here.html.twig",
+            "apply": {
+                "blueprint": "# theme blueprints.yaml\nmap_section:\n  type: section\n  title: Map\n  underline: true\n  import@:\n    type: theme/map-here/blueprint\n    context: 'plugin://component-library/patterns'\n\n# page blueprint\npage_options:\n  type: tab\n  title: Page Options\n  import@:\n    type: theme/map-here/page\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% block javascripts %}\n    {% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}\n{% endblock %}\n\n{# In page content (Markdown), no Twig needed: #}\n<div id=\"map\" data-lat=\"44.98\" data-lng=\"-93.27\" data-zoom=\"14\"></div>\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-map-bubble",
+                    "cl-map-bubble__title",
+                    "cl-map-bubble__summary"
+                ],
+                "slots": []
+            },
+            "solves": [
+                {
+                    "problem": "Maps centered on Europe because the HERE default center was used when no center was passed.",
+                    "fix": "The script uses the theme's default center; with none it fits the markers, or shows the world with a console warning instead of a misleading region.",
+                    "seen_in": "community-guide theme, v0.2.0"
+                },
+                {
+                    "problem": "The four HERE scripts and stylesheet loaded on every page.",
+                    "fix": "The loader adds them only for map templates, map_enabled pages, or pages whose content, tiles, CTA rows or modular sections contain id=\"map\".",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "The API key, center and zoom were hard-coded in JavaScript.",
+                    "fix": "Theme settings, passed through a JSON block; per-page here_map overrides and per-element data-lat, data-lng and data-zoom.",
+                    "seen_in": "community-guide theme"
+                },
+                {
+                    "problem": "After the map script was rewritten, older inline scripts that called map.addObject() failed with \"map.addObject is not a function\", because the global map no longer existed and \"map\" resolved to the <div id=\"map\"> element.",
+                    "fix": "An opt-in Legacy Map Globals setting restores window.map, platform, ui, behavior, defaultLayers and moveMap. The default center pin is skipped when another script added objects.",
+                    "seen_in": "community-guide theme, fix/map-globals"
+                },
+                {
+                    "problem": "The map had no accessible name.",
+                    "fix": "role=\"region\" plus a configurable aria-label."
+                },
+                {
+                    "problem": "Animated panning ignored the visitor's reduced-motion setting.",
+                    "fix": "prefers-reduced-motion turns animation off."
+                }
+            ],
+            "verify": [
+                "A page without a map has no js.api.here.com requests.",
+                "A page with <div id=\"map\"></div> in its content loads mapsjs-core.js and has a",
+                "With no API key, the browser console says so and the page has no script errors."
+            ],
+            "path": "patterns/theme/map-here",
+            "readme": "patterns/theme/map-here/README.md",
+            "manifest": "patterns/theme/map-here/pattern.yaml",
+            "files": [
+                "patterns/theme/map-here/blueprint.yaml",
+                "patterns/theme/map-here/map-here.html.twig",
+                "patterns/theme/map-here/page.yaml",
+                "patterns/theme/map-here/map-here.js"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/map-here/"
+        },
+        {
+            "id": "theme/schema-graph",
+            "name": "Schema.org graph",
+            "version": "1.0.0",
+            "level": "theme",
+            "touches": [
+                "page"
+            ],
+            "status": "stable",
+            "summary": "One linked JSON-LD @graph per page (Organization, WebSite, BreadcrumbList, the page, plus BlogPosting and Place when they apply), with site-wide defaults in the theme and a per-page Schema.org tab.",
+            "use_when": [
+                "Any public site; search engines and AI crawlers read JSON-LD."
+            ],
+            "avoid_when": [
+                "An SEO plugin already outputs the same entities (two Organization nodes with different @id values confuse parsers). Pick one source."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "theme/site-logo",
+                    "theme/author-registry",
+                    "page/map-location"
+                ]
+            },
+            "data": {
+                "scope": "theme",
+                "keys": {
+                    "schema_defaults.organization_type": {
+                        "type": "string"
+                    },
+                    "schema_defaults.organization_name": {
+                        "type": "string"
+                    },
+                    "schema_defaults.telephone": {
+                        "type": "string"
+                    },
+                    "schema_defaults.address_locality": {
+                        "type": "string"
+                    },
+                    "schema_defaults.address_region": {
+                        "type": "string"
+                    },
+                    "schema_defaults.postal_code": {
+                        "type": "string"
+                    },
+                    "schema_defaults.address_country": {
+                        "type": "ISO 3166-1 alpha-2"
+                    },
+                    "schema_defaults.home_about": {
+                        "type": "map",
+                        "description": "name, description, latitude, longitude"
+                    },
+                    "page.header.schema": {
+                        "type": "map",
+                        "item": {
+                            "enabled": "bool",
+                            "type": "auto | WebPage | AboutPage | ContactPage | CollectionPage | ItemPage | FAQPage | BlogPosting",
+                            "name": "string",
+                            "description": "string",
+                            "image": "media filename, path or URL",
+                            "place_type": "Schema.org Place subtype",
+                            "place_name": "string",
+                            "place_description": "string",
+                            "latitude": "number",
+                            "longitude": "number",
+                            "telephone": "string",
+                            "street_address": "string",
+                            "address_locality": "string",
+                            "address_region": "string",
+                            "postal_code": "string",
+                            "author_name": "string",
+                            "author_url": "string",
+                            "date_published": "datetime",
+                            "custom_json": "JSON object"
+                        }
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "page.header.schema_type",
+                    "handling": "Not read. Move the value to schema.type."
+                }
+            ],
+            "import": {
+                "type": "theme/schema-graph/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/theme/schema-graph/schema-graph.html.twig",
+            "apply": {
+                "blueprint": "# theme blueprints.yaml\nschema_section:\n  type: section\n  title: Structured Data\n  underline: true\n  import@:\n    type: theme/schema-graph/blueprint\n    context: 'plugin://component-library/patterns'\n\n# page blueprint: its own tab\nschema:\n  type: tab\n  title: Schema.org\n  import@:\n    type: theme/schema-graph/page\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{# in <head> #}\n{% include 'patterns/theme/schema-graph/schema-graph.html.twig' with {\n    page_types: { contact: 'ContactPage', blog: 'CollectionPage' },\n    article_templates: ['item', 'blogpost']\n} %}\n"
+            },
+            "classes": null,
+            "solves": [
+                {
+                    "problem": "The JSON-LD partial hard-coded one site's town, region, postal code, coordinates and organization name, so it was wrong on any other site and the address defaults could not be changed without editing Twig.",
+                    "fix": "Site-wide defaults (publisher type and name, address defaults, home-page subject) are theme settings.",
+                    "seen_in": "community-guide theme, Schema.org work"
+                },
+                {
+                    "problem": "Older Gantry particles wrote Product JSON-LD with a hard-coded brand and seller name, and added Open Graph tags with JavaScript, which most crawlers never run.",
+                    "fix": "Names come from settings; social meta belongs in server-rendered <meta> tags (page.header.metadata), never in JavaScript.",
+                    "seen_in": "Gantry schema particle"
+                },
+                {
+                    "problem": "Values were printed into JSON by hand inside a script tag, so a \"</script>\" in any field could end the tag early.",
+                    "fix": "The whole graph is built as a Twig hash and printed once with json_encode(321), which includes JSON_HEX_TAG.",
+                    "seen_in": "Gantry schema particle (fixed in the community-guide rewrite)"
+                },
+                {
+                    "problem": "The Map page's ItemList listed only the extra markers, not the pages carrying a Map Location, so structured data disagreed with the visible list.",
+                    "fix": "The map page type outputs its own ItemList from the same list it renders (page-type/map-page); this graph links to it by",
+                    "seen_in": "community-guide theme, map page"
+                },
+                {
+                    "problem": "Page images in the JSON-LD were relative paths, because media url(true) does not add the host (its argument means \"reset\").",
+                    "fix": "url(page.media[file].url, true).",
+                    "seen_in": "community-guide theme, Schema.org partial"
+                },
+                {
+                    "problem": "The Organization logo URL broke when the logo storage moved.",
+                    "fix": "Reads theme/site-logo's field, with the legacy picker as fallback."
+                },
+                {
+                    "problem": "An author override and the author registry disagreed on precedence.",
+                    "fix": "schema.author_name, then the registry entry for page.header.author, then site.author.name."
+                }
+            ],
+            "verify": [
+                "Exactly one application/ld+json script with an @graph is in <head>.",
+                "Paste the page into the Schema Markup Validator (validator.schema.org) with no errors.",
+                "Setting schema.enabled false on a page removes the block."
+            ],
+            "path": "patterns/theme/schema-graph",
+            "readme": "patterns/theme/schema-graph/README.md",
+            "manifest": "patterns/theme/schema-graph/pattern.yaml",
+            "files": [
+                "patterns/theme/schema-graph/blueprint.yaml",
+                "patterns/theme/schema-graph/schema-graph.html.twig",
+                "patterns/theme/schema-graph/page.yaml",
+                "patterns/theme/schema-graph/example.md"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/schema-graph/"
+        },
+        {
+            "id": "theme/site-logo",
+            "name": "Site logo",
+            "version": "1.0.0",
+            "level": "theme",
+            "touches": [],
+            "status": "stable",
+            "summary": "One upload field for the site logo, stored outside the theme folder, with a home-link partial and a URL helper shared with Schema.org output.",
+            "use_when": [
+                "Editors should be able to change the logo from the theme settings.",
+                "The logo URL is also needed elsewhere (Organization schema, social cards)."
+            ],
+            "avoid_when": [
+                "The logo is part of the theme's design and never changes; reference it from the theme's own images folder."
+            ],
+            "compatibility": {
+                "grav": [
+                    "1.7",
+                    "2.0"
+                ],
+                "tested": [
+                    "2.2.11",
+                    "1.7.53"
+                ]
+            },
+            "requires": {
+                "patterns": [
+                    "_shared/macros"
+                ]
+            },
+            "data": {
+                "scope": "theme",
+                "keys": {
+                    "site_logo": {
+                        "type": "file map",
+                        "description": "Grav file field value: { 'user/assets/site-logo/logo.svg': { name, path, type, size } }"
+                    },
+                    "site_logo_alt": {
+                        "type": "string"
+                    },
+                    "site_logo_width": {
+                        "type": "int"
+                    }
+                }
+            },
+            "legacy_keys": [
+                {
+                    "key": "picked_site_logo_image",
+                    "handling": "Read when site_logo is empty, from theme://assets/images/global/<file>. Upload the logo again with the new field to move it out of the theme folder, then clear the old value."
+                }
+            ],
+            "import": {
+                "type": "theme/site-logo/blueprint",
+                "context": "plugin://component-library/patterns"
+            },
+            "include": "patterns/theme/site-logo/site-logo.html.twig",
+            "apply": {
+                "blueprint": "# theme blueprints.yaml, under form.fields:\nbranding_section:\n  type: section\n  title: Branding\n  underline: true\n  import@:\n    type: theme/site-logo/blueprint\n    context: 'plugin://component-library/patterns'\n",
+                "template": "{% include 'patterns/theme/site-logo/site-logo.html.twig' with { classes: { root: 'navbar-item' } } %}\n\n{# Anywhere else that needs the URL: #}\n{% import 'patterns/theme/site-logo/logo.macros.twig' as logo %}\n{% set logo_url = logo.src(true)|trim %}\n"
+            },
+            "classes": {
+                "markup": [
+                    "cl-site-logo",
+                    "cl-site-logo__image",
+                    "cl-site-logo__text"
+                ],
+                "slots": [
+                    "root",
+                    "image",
+                    "text"
+                ]
+            },
+            "solves": [
+                {
+                    "problem": "The logo was uploaded into the theme's own folder (theme://assets/images/global), so updating or reinstalling the theme deleted it.",
+                    "fix": "The upload destination is user://assets/site-logo.",
+                    "seen_in": "community-guide and Gantry-based themes"
+                },
+                {
+                    "problem": "Two fields for one image (an upload field plus a file picker), so a freshly uploaded logo did not show until an editor also picked it.",
+                    "fix": "A single file field; the template reads its stored path.",
+                    "seen_in": "community-guide and Gantry-based themes"
+                },
+                {
+                    "problem": "A blueprint copied between themes left the logo picker pointed at the authors' image folder, so it listed staff photos.",
+                    "fix": "No picker, no folder to drift.",
+                    "seen_in": "Gantry child theme"
+                },
+                {
+                    "problem": "Schema.org Organization output rebuilt the logo URL by hand and broke when the storage path changed.",
+                    "fix": "logo.src(true) returns the absolute URL for both the new and the legacy field.",
+                    "seen_in": "community-guide theme, structured-data work"
+                },
+                {
+                    "problem": "The header shifted when the logo loaded (layout shift).",
+                    "fix": "Optional display width written as the width attribute."
+                }
+            ],
+            "verify": [
+                "Theme settings show Site Logo, Logo Alt Text and Logo Display Width.",
+                "With no logo set, the partial renders the site title inside a.cl-site-logo.",
+                "After an upload, the file is in user/assets/site-logo/ and the img src points there."
+            ],
+            "path": "patterns/theme/site-logo",
+            "readme": "patterns/theme/site-logo/README.md",
+            "manifest": "patterns/theme/site-logo/pattern.yaml",
+            "files": [
+                "patterns/theme/site-logo/blueprint.yaml",
+                "patterns/theme/site-logo/site-logo.html.twig",
+                "patterns/theme/site-logo/logo.macros.twig",
+                "patterns/theme/site-logo/example.yaml"
+            ],
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/site-logo/"
+        }
+    ]
+}

@@ -1,0 +1,63 @@
+# Pattern: page/cta-rows — blueprint fragment
+# Import inside any tab's or section's `fields:` in a page blueprint:
+#   import@:
+#     type: page/cta-rows/blueprint
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header_cta_rows_section:
+      type: section
+      title: Call-to-Action Rows
+      text: Full-width rows with a heading, text, an optional image and one button. Drag rows to reorder them.
+      underline: true
+
+    header.info_cta_section:
+      type: list
+      style: vertical
+      label: Rows
+      collapsed: true
+      fields:
+        .title:
+          type: text
+          label: Heading
+          validate:
+            max: 120
+        .content:
+          type: markdown
+          label: Text
+          help: Markdown. Keep it to a short paragraph or a short list.
+        .cta_section_image_file:
+          type: filepicker
+          label: Image
+          help: Choose an image from this page's media. Leave empty for a text-only row.
+          preview_images: true
+          accept:
+            - .jpg
+            - .jpeg
+            - .png
+            - .webp
+            - .avif
+            - .svg
+        .cta_section_image_alt:
+          type: text
+          label: Image Alt Text
+          help: Describe what the image shows. Leave it empty only when the image is decorative.
+          placeholder: Describe what the image shows
+        .button_text:
+          type: text
+          label: Button Label
+          help: A short action, such as "Plan a visit". The button shows only when both label and link are set.
+          validate:
+            max: 60
+        .button_link:
+          type: text
+          label: Button Link
+          help: A site path such as /visit, or a full https:// URL.
+          placeholder: /some-page
+        .button_new_tab:
+          type: select
+          label: Open Link In
+          default: _self
+          options:
+            _self: Same tab
+            _blank: New tab

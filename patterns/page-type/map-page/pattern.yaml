@@ -1,0 +1,70 @@
+id: page-type/map-page
+name: Map page
+version: 1.0.0
+level: page-type
+touches: [page]
+status: stable
+summary: A page type that pins every page with a Map Location plus optional extra pins, lists the same places under the map with "Show on map" buttons, and outputs them as a Schema.org ItemList.
+use_when:
+  - A site has several pages about places and wants one map that links to all of them.
+avoid_when:
+  - The site has hundreds of pages and only a few locations; scanning every page on each request adds up. Turn include_pages off and use Additional Pins, or cache the page.
+compatibility:
+  grav: ['1.7', '2.0']
+  tested: ['2.2.11', '1.7.53']
+requires:
+  patterns: [theme/map-here, page/map-location, page/page-heading, _shared/macros]
+  plugins: [component-library]
+data:
+  scope: page.header
+  keys:
+    map_page:
+      type: map
+      item:
+        include_pages: bool (default true)
+        list_title: string
+    map_markers:
+      type: list
+      item:
+        link: page route
+        title: string
+        latitude: number
+        longitude: number
+        summary: string
+files:
+  blueprint: fields.yaml
+  template: map-page.html.twig
+  templates: [map.html.twig]
+  snippets: [page-blueprint.yaml]
+  example: example.md
+apply:
+  blueprint: |
+    # 1. Copy page-blueprint.yaml to user/themes/<theme>/blueprints/map.yaml
+    # 2. Add page/map-location to the default page blueprint so places can be pinned.
+  template: |
+    # 3. Copy map.html.twig to user/themes/<theme>/templates/map.html.twig and
+    #    adjust its extends/blocks to your base template.
+    # 4. In the base template's javascripts block (theme/map-here):
+    {% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}
+classes:
+  markup: [cl-map-page, cl-map-page__map, cl-map-page__places, cl-map-page__heading, cl-map-page__list, cl-map-page__place, cl-map-page__place-text, cl-map-page__place-link, cl-map-page__place-name, cl-map-page__place-summary, cl-map-page__locate]
+  slots: [root, map, heading, list, item, button]
+solves:
+  - problem: The pin list and the "Show on map" buttons got out of step, because Twig's sort keeps the original array keys and the JSON became an object instead of an array.
+    fix: merge([]) after sort renumbers the list, so button n always opens pin n.
+    seen_in: community-guide theme, Map page
+  - problem: Visitors without the map (keyboard, screen reader, blocked script) had no way to reach the places.
+    fix: A real list of links under the map; the locate buttons stay hidden until their pin exists.
+    seen_in: community-guide theme, Map page
+  - problem: The structured data listed only the extra pins, not the pages with a Map Location.
+    fix: The ItemList is built from the same list the page renders.
+    seen_in: community-guide theme, Schema.org work
+  - problem: Each map page fired its analytics event through an inline script.
+    fix: data-datalayer-event="map_view" on the map element (theme/datalayer).
+    seen_in: community-guide theme, map_view tracking
+  - problem: A pin for a page that was later unpublished or made non-routable still appeared.
+    fix: Only published, routable pages are pinned.
+verify:
+  - The #cl-map-markers JSON is an array (starts with "[") whose length equals the number of list items.
+  - Each button's data-marker-index equals its list position (0-based).
+  - The page has one ItemList JSON-LD with numberOfItems equal to the list length.

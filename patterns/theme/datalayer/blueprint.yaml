@@ -1,0 +1,38 @@
+# Pattern: theme/datalayer — theme blueprint fragment
+# Import on a section in the theme's blueprints.yaml (next to theme/head-scripts):
+#   import@:
+#     type: theme/datalayer/blueprint
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    datalayer.enabled:
+      type: toggle
+      label: Data Layer
+      help: Adds window.dataLayer and emitToDatalayer() for tag managers, and pushes a "metadata" event on every page.
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    datalayer.app:
+      type: text
+      label: App Name
+      help: Sent as customData.app. Leave empty to use the site title.
+
+    datalayer.env:
+      type: select
+      label: Environment
+      help: Sent as customData.app_env, so test traffic can be filtered out. Set it per environment in user/env/<host>/config/themes/<theme>.yaml (see system/environments-and-secrets).
+      default: production
+      options:
+        production: Production
+        staging: Staging
+        development: Development
+
+    datalayer.collection_method:
+      type: text
+      label: Collection Method
+      help: Optional label sent as customData.collection_method, for example the tag manager's name.

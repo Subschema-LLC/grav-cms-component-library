@@ -1,0 +1,89 @@
+{#
+    Pattern: theme/footer-columns
+
+    Place inside the theme's own <footer> element:
+        <footer class="site-footer">
+            {% include 'patterns/theme/footer-columns/footer-columns.html.twig' with {
+                heading_level: 2,
+                show_social: true,
+                classes: { columns: 'columns is-multiline', column: 'column is-3-desktop' }
+            } %}
+        </footer>
+
+    Reads footer_columns; falls back to the older flat footerlinks list with
+    footer_column_1..4_title headings. Slots: root, columns, column, heading,
+    links, embed, social, note.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', columns: '', column: '', heading: '', links: '', embed: '', social: '', note: '' }|merge(classes|default({})) %}
+{% set h = heading_level|default(2) %}
+
+{% set columns = theme_var('footer_columns')|default([]) %}
+{% if columns is empty and theme_var('footerlinks') %}
+    {# Legacy: one flat list of links, each tagged with a column id cid1..cid4. #}
+    {% set columns = [] %}
+    {% for n in 1..4 %}
+        {% set legacy_links = [] %}
+        {% for l in theme_var('footerlinks') %}
+            {% if l.column == 'cid' ~ n %}
+                {% set legacy_links = legacy_links|merge([{ label: l.label, url: l.url, target: l.action|default('_self') }]) %}
+            {% endif %}
+        {% endfor %}
+        {% set legacy_title = theme_var('footer_column_' ~ n ~ '_title') %}
+        {% if legacy_title or legacy_links|length %}
+            {% set columns = columns|merge([{ title: legacy_title|default(''), links: legacy_links }]) %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{# Trusted HTML is read from theme config only: theme_var() would let page front matter supply it. #}
+{% set embed = grav.config.get('theme.footer_embed')|default(grav.config.get('theme.footerembed')) %}
+{% set note = theme_var('footer_note') %}
+{% set social = (show_social is not defined or show_social) ? grav.config.get('site.social')|default([]) : [] %}
+
+<div class="{{ cl.cls('cl-footer', c.root) }}">
+    {% if columns|length or embed %}
+        <div class="{{ cl.cls('cl-footer__columns', c.columns) }}">
+            {% for col in columns %}
+                {% set links = col.links|default([])|filter(l => l.label|default('') is not empty and l.url|default('') is not empty) %}
+                {% if col.title or links|length %}
+                    <div class="{{ cl.cls('cl-footer__column', c.column) }}">
+                        {% if col.title %}<h{{ h }} class="{{ cl.cls('cl-footer__heading', c.heading) }}">{{ col.title|e }}</h{{ h }}>{% endif %}
+                        {% if links|length %}
+                            <nav aria-label="{{ (col.title|default('Footer'))|e }}">
+                                <ul class="{{ cl.cls('cl-footer__links', c.links) }}">
+                                    {% for l in links %}
+                                        <li><a {{ cl.link_attrs(l.url, l.target) }}>{{ l.label|e }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if embed %}
+                <div class="{{ cl.cls('cl-footer__column cl-footer__embed', c.embed) }}">
+                    {# Trusted HTML: only users who can edit theme settings can set it. #}
+                    {{ embed|raw }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% set social = social|filter(s => s.url|default('') is not empty) %}
+    {% if social|length %}
+        <ul class="{{ cl.cls('cl-footer__social', c.social) }}" aria-label="Social media">
+            {% for s in social %}
+                {% set label = s.title|default(s.url|split('/')[2]|default(s.url)) %}
+                <li>
+                    <a href="{{ s.url|e }}" target="_blank" rel="me noopener noreferrer" aria-label="{{ label|e }}">
+                        {%- if s.icon -%}{{ cl.icon(s.icon) }}{%- else -%}{{ label|e }}{%- endif -%}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if note %}
+        <p class="{{ cl.cls('cl-footer__note', c.note) }}">{{ note|replace({ '{year}': 'now'|date('Y'), '{site}': grav.config.get('site.title') })|e }}</p>
+    {% endif %}
+</div>

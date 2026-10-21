@@ -1,0 +1,33 @@
+# Pattern: page/hero-actions — page blueprint fragment
+#   import@:
+#     type: page/hero-actions/blueprint
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header_hero_actions_section:
+      type: section
+      title: Hero Actions
+      text: Up to two buttons under the page heading. Each shows only when both its label and link are set.
+      underline: true
+
+    header.primary_cta_text:
+      type: text
+      label: Primary Button Label
+      help: The main task, such as "Plan a visit".
+      validate:
+        max: 40
+
+    header.primary_cta_link:
+      type: text
+      label: Primary Button Link
+      help: A site path such as /visit, or a full https:// URL.
+
+    header.secondary_cta_text:
+      type: text
+      label: Secondary Button Label
+      validate:
+        max: 40
+
+    header.secondary_cta_link:
+      type: text
+      label: Secondary Button Link

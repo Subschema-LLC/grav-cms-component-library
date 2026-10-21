@@ -1,0 +1,19 @@
+# Pattern: theme/map-here — page blueprint fragment
+# Import on a page tab or section:
+#   import@:
+#     type: theme/map-here/page
+#     context: 'plugin://component-library/patterns'
+form:
+  fields:
+    header.map_enabled:
+      type: toggle
+      toggleable: true
+      label: Load Map Scripts
+      help: Not needed when the page content already contains <div id="map"></div>. Turn it on when a map is added another way, for example inside a modular section.
+      highlight: 1
+      default: 0
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool

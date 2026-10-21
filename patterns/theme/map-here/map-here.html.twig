@@ -1,0 +1,53 @@
+{#
+    Pattern: theme/map-here — loader
+
+    In the theme's base template, inside the javascripts block (before the
+    assets are rendered):
+
+        {% include 'patterns/theme/map-here/map-here.html.twig' %}
+
+    Loads the HERE scripts and stylesheet only on pages that show a map:
+      - the page template is in `map_templates` (default: ['map']), or
+      - the page sets map_enabled: true, or
+      - the page content, or the content of one of its tiles, CTA rows or
+        modular sections, contains id="map", or
+      - the include passes force: true.
+
+    Then a map renders into any <div id="map"> with optional overrides:
+        <div id="map" data-lat="44.98" data-lng="-93.27" data-zoom="14"></div>
+#}
+{% set map_templates = map_templates|default(['map']) %}
+{% set needs_map = force|default(false) or page.template in map_templates or page.header.map_enabled|default(false) %}
+
+{% if not needs_map %}
+    {% set html_sources = [page.content] %}
+    {% for t in page.header.tiles|default([]) %}{% set html_sources = html_sources|merge([t.content|default('')]) %}{% endfor %}
+    {% for r in page.header.info_cta_section|default([]) %}{% set html_sources = html_sources|merge([r.content|default('')]) %}{% endfor %}
+    {% if page.header.content.items is defined and page.header.content.items == '@self.modular' %}
+        {% for module in page.collection() %}{% set html_sources = html_sources|merge([module.content]) %}{% endfor %}
+    {% endif %}
+    {% for html in html_sources %}
+        {% if 'id="map"' in html %}{% set needs_map = true %}{% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if needs_map %}
+    {% set cfg = grav.config.get('theme.here_map')|default({}) %}
+    {% set here = 'https://js.api.here.com/v3/3.1/' %}
+    {% do assets.addCss(here ~ 'mapsjs-ui.css', 95) %}
+    {% do assets.addJs(here ~ 'mapsjs-core.js', { priority: 99, group: 'bottom' }) %}
+    {% do assets.addJs(here ~ 'mapsjs-service.js', { priority: 98, group: 'bottom' }) %}
+    {% do assets.addJs(here ~ 'mapsjs-ui.js', { priority: 97, group: 'bottom' }) %}
+    {% do assets.addJs(here ~ 'mapsjs-mapevents.js', { priority: 96, group: 'bottom' }) %}
+    {% do assets.addJs('plugin://component-library/patterns/theme/map-here/map-here.js', { priority: 10, group: 'bottom', loading: 'defer' }) %}
+    {# A page can override any value in front matter: here_map: { zoom: 14 } #}
+    {% set page_cfg = page.header.here_map|default({}) %}
+    <script type="application/json" id="cl-map-config">{{ {
+        apiKey: cfg.api_key|default(''),
+        latitude: page_cfg.latitude|default(cfg.latitude|default(null)),
+        longitude: page_cfg.longitude|default(cfg.longitude|default(null)),
+        zoom: page_cfg.zoom|default(cfg.zoom|default(null)),
+        label: cfg.label|default('Interactive map'),
+        legacyGlobals: cfg.legacy_globals|default(false) ? true : false
+    }|json_encode(15)|raw }}</script>
+{% endif %}

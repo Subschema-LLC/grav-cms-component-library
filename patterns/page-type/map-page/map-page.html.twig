@@ -1,0 +1,104 @@
+{#
+    Pattern: page-type/map-page — the map, the list of places, and their ItemList JSON-LD
+
+    {% include 'patterns/page-type/map-page/map-page.html.twig' with {
+        heading_level: 2,
+        classes: { button: 'button is-small is-light' }
+    } %}
+
+    Pins come from (1) every published, routable page with map_marker
+    coordinates, unless map_page.include_pages is false, and (2) this page's
+    map_markers. The list under the map has the same places in the same order,
+    so the page works by keyboard, by screen reader and without JavaScript.
+    Slots for `classes`: root, map, heading, list, item, button.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', map: '', heading: '', list: '', item: '', button: '' }|merge(classes|default({})) %}
+{% set h = heading_level|default(2) %}
+{% set settings = page.header.map_page|default({}) %}
+{% set markers = [] %}
+
+{% if settings.include_pages is not defined or settings.include_pages %}
+    {% for p in grav.pages.all %}
+        {% set loc = p.header.map_marker|default({}) %}
+        {% if loc.latitude|default('') is not empty and loc.longitude|default('') is not empty
+            and p.published and p.routable and p.route != page.route %}
+            {% set markers = markers|merge([{
+                title: loc.title|default(p.menu|default(p.title)),
+                url: p.url,
+                abs: p.url(true),
+                latitude: loc.latitude|float,
+                longitude: loc.longitude|float,
+                summary: loc.summary|default(p.header.metadata.description|default(''))
+            }]) %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% for m in page.header.map_markers|default([]) %}
+    {% set target = m.link ? grav.pages.find(m.link) : null %}
+    {% if m.latitude|default('') is not empty and m.longitude|default('') is not empty and (m.title or target) %}
+        {% set markers = markers|merge([{
+            title: m.title|default(target ? target.menu|default(target.title) : ''),
+            url: target ? target.url : '',
+            abs: target ? target.url(true) : '',
+            latitude: m.latitude|float,
+            longitude: m.longitude|float,
+            summary: m.summary|default(target ? target.header.metadata.description|default('') : '')
+        }]) %}
+    {% endif %}
+{% endfor %}
+
+{# sort() keeps the original keys; merge([]) renumbers them, so the JSON is a plain
+   array whose indexes match the data-marker-index buttons below. #}
+{% set markers = markers|sort((a, b) => a.title|lower > b.title|lower ? 1 : (a.title|lower < b.title|lower ? -1 : 0))|merge([]) %}
+{% set list_title = settings.list_title|default('Places on the map') %}
+{% set json_id = 'cl-map-markers' %}
+
+<div class="{{ cl.cls('cl-map-page', c.root) }}">
+    <div id="map" class="{{ cl.cls('cl-map-page__map', c.map) }}" data-markers="{{ json_id }}" data-datalayer-event="map_view"
+         aria-label="Interactive map{% if markers|length %}: {{ list_title|e }}. Every place is also listed below the map{% endif %}"></div>
+    {# Only what the map script needs; 15 = JSON_HEX_TAG | HEX_AMP | HEX_APOS | HEX_QUOT. #}
+    <script type="application/json" id="{{ json_id }}">{{ markers|map(m => { title: m.title, url: m.url, latitude: m.latitude, longitude: m.longitude, summary: m.summary })|json_encode(15)|raw }}</script>
+
+    {% if markers|length %}
+        <section class="cl-map-page__places" aria-labelledby="cl-map-places-title">
+            <h{{ h }} id="cl-map-places-title" class="{{ cl.cls('cl-map-page__heading', c.heading) }}">{{ list_title|e }}</h{{ h }}>
+            <ul class="{{ cl.cls('cl-map-page__list', c.list) }}">
+                {% for m in markers %}
+                    <li class="{{ cl.cls('cl-map-page__place', c.item) }}">
+                        <div class="cl-map-page__place-text">
+                            {% if m.url %}
+                                <a class="cl-map-page__place-link" href="{{ m.url|e }}">{{ m.title|e }}</a>
+                            {% else %}
+                                <span class="cl-map-page__place-name">{{ m.title|e }}</span>
+                            {% endif %}
+                            {% if m.summary %}<p class="cl-map-page__place-summary">{{ m.summary|e }}</p>{% endif %}
+                        </div>
+                        {# Revealed by map-here.js once the map and this pin exist. #}
+                        <button type="button" class="{{ cl.cls('cl-map-page__locate', c.button) }}" data-marker-index="{{ loop.index0 }}" aria-label="Show on map: {{ m.title|e }}" hidden>Show on map</button>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        {# The same places as structured data, linked to the page entity from theme/schema-graph. #}
+        {% set page_url = page.canonical(true)|default(page.url(true)) %}
+        {% set items = [] %}
+        {% for m in markers %}
+            {% set place = { '@type': 'Place', 'name': m.title, 'geo': { '@type': 'GeoCoordinates', 'latitude': m.latitude, 'longitude': m.longitude } } %}
+            {% if m.summary %}{% set place = place|merge({ 'description': m.summary }) %}{% endif %}
+            {% if m.abs %}{% set place = place|merge({ 'url': m.abs }) %}{% endif %}
+            {% set items = items|merge([{ '@type': 'ListItem', 'position': loop.index, 'item': place }]) %}
+        {% endfor %}
+        <script type="application/ld+json">{{ {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            '@id': page_url ~ '#places',
+            'name': list_title,
+            'mainEntityOfPage': { '@id': page_url ~ '#webpage' },
+            'numberOfItems': markers|length,
+            'itemListElement': items
+        }|json_encode(321)|raw }}</script>
+    {% endif %}
+</div>

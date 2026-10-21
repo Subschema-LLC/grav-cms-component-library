@@ -1,0 +1,55 @@
+name: Component Library Test
+slug: cl-test
+type: theme
+version: 1.0.0
+description: Fixture theme that wires every pattern of the component library, used by tests/run.sh.
+author: { name: Subschema LLC }
+license: MIT
+compatibility:
+  grav: ['1.7', '2.0']
+dependencies:
+  - { name: grav, version: '>=1.7.0' }
+  - { name: component-library, version: '>=1.0.0' }
+
+form:
+  validation: loose
+  fields:
+    branding_section:
+      type: section
+      title: Branding
+      import@:
+        type: theme/site-logo/blueprint
+        context: 'plugin://component-library/patterns'
+    authors_section:
+      type: section
+      title: Authors
+      import@:
+        type: theme/author-registry/blueprint
+        context: 'plugin://component-library/patterns'
+    footer_section:
+      type: section
+      title: Footer
+      import@:
+        type: theme/footer-columns/blueprint
+        context: 'plugin://component-library/patterns'
+    scripts_section:
+      type: section
+      title: Tracking & Scripts
+      import@1:
+        type: theme/datalayer/blueprint
+        context: 'plugin://component-library/patterns'
+      import@2:
+        type: theme/head-scripts/blueprint
+        context: 'plugin://component-library/patterns'
+    map_section:
+      type: section
+      title: Map
+      import@:
+        type: theme/map-here/blueprint
+        context: 'plugin://component-library/patterns'
+    schema_section:
+      type: section
+      title: Structured Data
+      import@:
+        type: theme/schema-graph/blueprint
+        context: 'plugin://component-library/patterns'

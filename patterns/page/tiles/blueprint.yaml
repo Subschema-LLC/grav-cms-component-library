@@ -1,0 +1,93 @@
+# Pattern: page/tiles — page blueprint fragment
+# Import on the tab or section that should hold the tiles:
+#   import@:
+#     type: page/tiles/blueprint
+#     context: 'plugin://component-library/patterns'
+#
+# Adding a tile type (for example one a plugin renders) from your theme's
+# blueprint, after the import:
+#   header.tiles:
+#     fields:
+#       .tile_type:
+#         options:
+#           weather: Weather (needs the weather plugin)
+form:
+  fields:
+    header_tiles_section:
+      type: section
+      title: Tiles
+      text: A grid of cards. Drag tiles to reorder them.
+      underline: true
+
+    header.tiles:
+      type: list
+      style: vertical
+      label: Tiles
+      collapsed: true
+      fields:
+        .tile_type:
+          type: select
+          label: Tile Type
+          default: content
+          options:
+            content: Content
+        .tile_width:
+          type: select
+          label: Width on Tablets and Up
+          help: Tiles always take the full width on phones.
+          default: is-half
+          options:
+            is-one-quarter: One quarter
+            is-one-third: One third
+            is-half: One half
+            is-two-thirds: Two thirds
+            is-full: Full width
+        .title:
+          type: text
+          label: Title
+          validate:
+            max: 120
+        .tile_icon:
+          type: iconpicker
+          label: Icon
+        .content:
+          type: markdown
+          label: Text
+        .tile_image_file:
+          type: filepicker
+          label: Image
+          help: Choose an image from this page's media.
+          preview_images: true
+          accept:
+            - .jpg
+            - .jpeg
+            - .png
+            - .webp
+            - .avif
+            - .svg
+        .tile_image_alt:
+          type: text
+          label: Image Alt Text
+          help: Describe what the image shows. Leave it empty only when the image is decorative.
+        .tile_image_fit:
+          type: select
+          label: Image Fit
+          help: Cover crops photographs to fill equal-height tiles. Natural keeps logos and diagrams uncropped.
+          default: natural
+          options:
+            natural: Natural
+            cover: Cover
+        .card_link:
+          type: text
+          label: Whole-Tile Link
+          help: Optional. Makes the entire tile clickable; links and buttons inside it keep working.
+          placeholder: /explore/example-place
+        .button_text:
+          type: text
+          label: Button Label
+          validate:
+            max: 60
+        .button_link:
+          type: text
+          label: Button Link
+          placeholder: /some-page

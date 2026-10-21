@@ -1,0 +1,23 @@
+{#
+    Pattern: theme/site-logo — helpers shared with theme/schema-graph.
+    {% import 'patterns/theme/site-logo/logo.macros.twig' as logo %}
+
+    src(absolute): the logo URL, or an empty string when none is set.
+      1. site_logo      (file field; value is a map of path => {name, path, type, size})
+      2. picked_site_logo_image  (legacy filepicker value in theme://assets/images/global)
+#}
+{% macro src(absolute) -%}
+    {%- set value = theme_var('site_logo') -%}
+    {%- set file = value is iterable ? value|first : null -%}
+    {%- set path = file is iterable ? file.path|default('') : (value is not iterable ? value|default('') : '') -%}
+    {%- if path is not empty -%}
+        {{- url(path, absolute|default(false))|e -}}
+    {%- elseif theme_var('picked_site_logo_image') -%}
+        {{- url('theme://assets/images/global/' ~ theme_var('picked_site_logo_image'), absolute|default(false))|e -}}
+    {%- endif -%}
+{%- endmacro %}
+
+{# alt(): the logo's alt text: site_logo_alt, else the site title. #}
+{% macro alt() -%}
+    {{- theme_var('site_logo_alt')|default(grav.config.get('site.title'))|e -}}
+{%- endmacro %}

@@ -1,0 +1,19 @@
+{#
+    Pattern: page/page-heading — the <title> element
+
+    In <head>, replacing the theme's own <title>:
+        {% include 'patterns/page/page-heading/title-tag.html.twig' with { separator: ' | ' } %}
+
+    "<SEO title or page title> | <site title>"; the home page shows the page
+    title only when it differs from the site title.
+#}
+{% set sep = separator|default(' | ') %}
+{% set site_title = grav.config.get('site.title')|default('') %}
+{% set own = page.header.seo_page_title|default(page.title) %}
+{% if page.home and (own is empty or own == site_title or own == 'Home') %}
+    <title>{{ site_title|e }}</title>
+{% elseif own is empty %}
+    <title>{{ site_title|e }}</title>
+{% else %}
+    <title>{{ own|e }}{% if site_title and own != site_title %}{{ sep|e }}{{ site_title|e }}{% endif %}</title>
+{% endif %}

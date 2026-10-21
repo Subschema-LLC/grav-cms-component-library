@@ -1,0 +1,59 @@
+# Pattern: theme/footer-columns — theme blueprint fragment
+# Import on a section in the theme's blueprints.yaml:
+#   footer_section:
+#     type: section
+#     title: Footer
+#     underline: true
+#     import@:
+#       type: theme/footer-columns/blueprint
+#       context: 'plugin://component-library/patterns'
+form:
+  fields:
+    footer_columns:
+      type: list
+      style: vertical
+      label: Footer Columns
+      help: Each column has a heading and its own links. Drag columns, or links inside a column, to reorder them.
+      collapsed: true
+      fields:
+        .title:
+          type: text
+          label: Column Heading
+          validate:
+            required: true
+            max: 60
+        .links:
+          type: list
+          style: vertical
+          label: Links
+          fields:
+            .label:
+              type: text
+              label: Link Text
+              validate:
+                required: true
+            .url:
+              type: text
+              label: Link
+              help: A site path such as /about, or a full https:// URL.
+              validate:
+                required: true
+            .target:
+              type: select
+              label: Open In
+              default: _self
+              options:
+                _self: Same tab
+                _blank: New tab
+
+    footer_embed:
+      type: textarea
+      label: Embed Column (trusted HTML)
+      help: Shown as the last column, exactly as pasted, on every page; for example a newsletter sign-up form. Anyone who can edit theme settings can add scripts here.
+      rows: 6
+
+    footer_note:
+      type: text
+      label: Footer Note
+      help: "The line under the columns. {year} becomes the current year and {site} the site title."
+      placeholder: "© {year} {site}"

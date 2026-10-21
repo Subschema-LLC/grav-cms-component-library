@@ -1,0 +1,13 @@
+{#
+    Pattern: page-type/job-listing — theme template scaffold for the list page
+    Copy to your theme as templates/jobs.html.twig; adjust extends/blocks.
+#}
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <article class="jobs-page">
+        {% include 'patterns/page/page-heading/page-heading.html.twig' %}
+        {% if page.content|striptags|trim is not empty %}<div class="jobs-page__intro">{{ page.content|raw }}</div>{% endif %}
+        {% include 'patterns/page-type/job-listing/job-listing.html.twig' with { heading_level: 2 } %}
+    </article>
+{% endblock %}

@@ -1,0 +1,221 @@
+{#
+    Pattern: theme/schema-graph
+
+    In the theme's <head>:
+        {% include 'patterns/theme/schema-graph/schema-graph.html.twig' with {
+            page_types: { contact: 'ContactPage', blog: 'CollectionPage' },   -- template => @type
+            article_templates: ['item', 'blogpost']                            -- templates that get a BlogPosting
+        } %}
+
+    Outputs one <script type="application/ld+json"> with a linked @graph:
+      Organization (#organization), WebSite (#website), BreadcrumbList (#breadcrumb),
+      the page entity (#webpage), plus BlogPosting (#article) and Place (#place)
+      when they apply, plus any custom JSON.
+
+    Page types add their own entities in their own JSON-LD block and link to
+    #webpage and #organization by @id (see page-type/job-listing).
+
+    Set `schema: { enabled: false }` in a page's front matter to output nothing.
+#}
+{% set schema_config = page.header.schema|default({}) %}
+{% if schema_config.enabled is not defined or schema_config.enabled %}
+
+{% set defaults = grav.config.get('theme.schema_defaults')|default({}) %}
+{% set page_types = { contact: 'ContactPage', blog: 'CollectionPage', map: 'CollectionPage', faq: 'FAQPage' }|merge(page_types|default({})) %}
+{% set article_templates = article_templates|default(['item', 'blogpost', 'post']) %}
+
+{% set site_title = grav.config.get('site.title')|default('') %}
+{% set site_desc = grav.config.get('site.metadata.description')|default(grav.config.get('site.description')|default('')) %}
+{% set page_url = page.canonical(true)|default(page.url(true)) %}
+{% set site_url = (base_url_absolute|default(page_url|split('/')|slice(0, 3)|join('/')))|trim('/', 'right') %}
+{% set page_lang = grav.language.getActive ?: grav.config.get('site.default_lang')|default('en') %}
+
+{% set page_title = schema_config.name|default(page.header.seo_page_title|default(page.title)) %}
+{% set page_desc = schema_config.description|default(page.header.metadata.description|default(page.summary|striptags|trim|default(site_desc))) %}
+
+{# Primary image: schema override, preview image, then header image. #}
+{% set primary_image_url = null %}
+{% set img = schema_config.image|default('') %}
+{% if img is not empty %}
+    {% if img starts with 'http://' or img starts with 'https://' %}
+        {% set primary_image_url = img %}
+    {% elseif page.media[img] %}
+        {# media.url(true) is NOT absolute (its argument means "reset"); url(…, true) adds the host. #}
+        {% set primary_image_url = url(page.media[img].url, true) %}
+    {% elseif img starts with '/' %}
+        {% set primary_image_url = site_url ~ img %}
+    {% endif %}
+{% elseif page.header.header_image_file and page.media[page.header.header_image_file] %}
+    {% set primary_image_url = url(page.media[page.header.header_image_file].url, true) %}
+{% endif %}
+
+{% set org_id = site_url ~ '/#organization' %}
+{% set graph = [] %}
+
+{# 1. Organization (or Person) #}
+{% set org_node = {
+    '@type': defaults.organization_type|default('Organization'),
+    '@id': org_id,
+    'name': defaults.organization_name|default(site_title),
+    'url': site_url ~ '/'
+} %}
+{% if site_desc %}{% set org_node = org_node|merge({ 'description': site_desc }) %}{% endif %}
+{# Logo (theme/site-logo keys). Built inline, not with logo.src(): a macro's
+   output is HTML-escaped, which is right in an attribute and wrong in JSON. #}
+{% set logo_value = grav.config.get('theme.site_logo') %}
+{% set logo_file = logo_value is iterable ? logo_value|first : null %}
+{% set logo_path = logo_file is iterable ? logo_file.path|default('') : '' %}
+{% set legacy_logo = grav.config.get('theme.picked_site_logo_image') %}
+{% set logo_url = logo_path is not empty ? url(logo_path, true) : (legacy_logo ? url('theme://assets/images/global/' ~ legacy_logo, true) : '') %}
+{% if logo_url and org_node['@type'] != 'Person' %}
+    {% set org_node = org_node|merge({ 'logo': { '@type': 'ImageObject', 'url': logo_url } }) %}
+{% endif %}
+{% if defaults.telephone %}{% set org_node = org_node|merge({ 'telephone': defaults.telephone }) %}{% endif %}
+{% set same_as = (grav.config.get('site.social')|default([]))|map(s => s.url|default(''))|filter(u => u is not empty) %}
+{% if same_as|length %}{% set org_node = org_node|merge({ 'sameAs': same_as|merge([]) }) %}{% endif %}
+{% set graph = graph|merge([org_node]) %}
+
+{# 2. WebSite #}
+{% set graph = graph|merge([{
+    '@type': 'WebSite',
+    '@id': site_url ~ '/#website',
+    'url': site_url ~ '/',
+    'name': site_title,
+    'inLanguage': page_lang,
+    'publisher': { '@id': org_id }
+}]) %}
+
+{# 3. BreadcrumbList: home, routable ancestors, this page #}
+{% set crumbs = [{ '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': site_url ~ '/' }] %}
+{% if not page.home %}
+    {% set ancestors = [] %}
+    {% set cursor = page.parent %}
+    {% for i in 1..10 %}
+        {% if cursor and not cursor.root and cursor.routable and not cursor.home %}
+            {% set ancestors = [cursor]|merge(ancestors) %}
+            {% set cursor = cursor.parent %}
+        {% endif %}
+    {% endfor %}
+    {% for p in ancestors %}
+        {% set crumbs = crumbs|merge([{ '@type': 'ListItem', 'position': loop.index + 1, 'name': p.menu|default(p.title), 'item': p.canonical(true)|default(p.url(true)) }]) %}
+    {% endfor %}
+    {% set crumbs = crumbs|merge([{ '@type': 'ListItem', 'position': crumbs|length + 1, 'name': page.menu|default(page.title), 'item': page_url }]) %}
+{% endif %}
+{% set graph = graph|merge([{ '@type': 'BreadcrumbList', '@id': page_url ~ '#breadcrumb', 'itemListElement': crumbs }]) %}
+
+{# 4. The page entity #}
+{% set webpage_type = page_types[page.template] ?? 'WebPage' %}
+{% if schema_config.type is defined and schema_config.type and schema_config.type != 'auto' %}
+    {% set webpage_type = schema_config.type %}
+{% endif %}
+{% set is_article = webpage_type == 'BlogPosting' or page.template in article_templates %}
+{% if webpage_type == 'BlogPosting' %}{% set webpage_type = 'WebPage' %}{% endif %}
+
+{% set date_published = schema_config.date_published ? schema_config.date_published|date('c') : page.date|date('c') %}
+{% set webpage = {
+    '@type': webpage_type,
+    '@id': page_url ~ '#webpage',
+    'url': page_url,
+    'name': page_title,
+    'isPartOf': { '@id': site_url ~ '/#website' },
+    'breadcrumb': { '@id': page_url ~ '#breadcrumb' },
+    'inLanguage': page_lang,
+    'datePublished': date_published,
+    'dateModified': page.modified|date('c')
+} %}
+{% if page_desc %}{% set webpage = webpage|merge({ 'description': page_desc }) %}{% endif %}
+{% if primary_image_url %}{% set webpage = webpage|merge({ 'image': primary_image_url }) %}{% endif %}
+
+{% set about = defaults.home_about|default({}) %}
+{% if page.home and about.name|default('') %}
+    {% set about_node = { '@type': 'Place', 'name': about.name } %}
+    {% if about.description|default('') %}{% set about_node = about_node|merge({ 'description': about.description }) %}{% endif %}
+    {% if about.latitude|default('') is not empty and about.longitude|default('') is not empty %}
+        {% set about_node = about_node|merge({ 'geo': { '@type': 'GeoCoordinates', 'latitude': about.latitude|float, 'longitude': about.longitude|float } }) %}
+    {% endif %}
+    {% set webpage = webpage|merge({ 'about': about_node }) %}
+{% endif %}
+
+{# 5. BlogPosting #}
+{% if is_article %}
+    {% set author_name = schema_config.author_name|default('') %}
+    {% set author_url = schema_config.author_url|default('') %}
+    {% if author_name is empty %}
+        {% for a in grav.config.get('theme.authors')|default([]) %}
+            {% if page.header.author and a.authorid|default('') == page.header.author %}
+                {% set author_name = a.authorname|default('') %}
+                {% if author_url is empty and a.authorpageurl|default('') %}
+                    {% set author_url = a.authorpageurl starts with 'http' ? a.authorpageurl : site_url ~ a.authorpageurl %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% set author_name = author_name|default(grav.config.get('site.author.name')|default(site_title)) %}
+    {% set author = { '@type': 'Person', 'name': author_name } %}
+    {% if author_url %}{% set author = author|merge({ 'url': author_url }) %}{% endif %}
+    {% set post = {
+        '@type': 'BlogPosting',
+        '@id': page_url ~ '#article',
+        'isPartOf': { '@id': page_url ~ '#webpage' },
+        'mainEntityOfPage': { '@id': page_url ~ '#webpage' },
+        'headline': page_title|slice(0, 110),
+        'url': page_url,
+        'datePublished': date_published,
+        'dateModified': page.modified|date('c'),
+        'publisher': { '@id': org_id },
+        'author': author
+    } %}
+    {% if page_desc %}{% set post = post|merge({ 'description': page_desc }) %}{% endif %}
+    {% if primary_image_url %}{% set post = post|merge({ 'image': primary_image_url }) %}{% endif %}
+    {% set webpage = webpage|merge({ 'mainEntity': { '@id': page_url ~ '#article' } }) %}
+    {% set graph = graph|merge([post]) %}
+{% endif %}
+
+{# 6. Place, from schema overrides or the page's Map Location #}
+{% set marker = page.header.map_marker|default({}) %}
+{% set place_lat = schema_config.latitude|default(marker.latitude|default('')) %}
+{% set place_lng = schema_config.longitude|default(marker.longitude|default('')) %}
+{% if place_lat is not empty and place_lng is not empty %}
+    {% set place = {
+        '@type': schema_config.place_type|default('Place'),
+        '@id': page_url ~ '#place',
+        'name': schema_config.place_name|default(marker.title|default(page_title)),
+        'url': page_url,
+        'geo': { '@type': 'GeoCoordinates', 'latitude': place_lat|float, 'longitude': place_lng|float }
+    } %}
+    {% set place_desc = schema_config.place_description|default(marker.summary|default(page_desc)) %}
+    {% if place_desc %}{% set place = place|merge({ 'description': place_desc }) %}{% endif %}
+    {% if primary_image_url %}{% set place = place|merge({ 'image': primary_image_url }) %}{% endif %}
+    {% if schema_config.telephone %}{% set place = place|merge({ 'telephone': schema_config.telephone }) %}{% endif %}
+    {% if schema_config.street_address or schema_config.address_locality or schema_config.postal_code %}
+        {% set address = {
+            '@type': 'PostalAddress',
+            'addressLocality': schema_config.address_locality|default(defaults.address_locality|default('')),
+            'addressRegion': schema_config.address_region|default(defaults.address_region|default('')),
+            'postalCode': schema_config.postal_code|default(defaults.postal_code|default('')),
+            'addressCountry': defaults.address_country|default('US')
+        }|filter(v => v is not empty) %}
+        {% if schema_config.street_address %}{% set address = address|merge({ 'streetAddress': schema_config.street_address }) %}{% endif %}
+        {% set place = place|merge({ 'address': address }) %}
+    {% endif %}
+    {% if not is_article %}{% set webpage = webpage|merge({ 'mainEntity': { '@id': page_url ~ '#place' } }) %}{% endif %}
+    {% set graph = graph|merge([place]) %}
+{% endif %}
+
+{# 7. Custom JSON from the page #}
+{% if schema_config.custom_json|default('') is not empty %}
+    {% set custom = schema_config.custom_json|json_decode(true) %}
+    {% if custom is iterable and custom|length %}
+        {% if custom['@type'] is defined %}
+            {% set graph = graph|merge([custom]) %}
+        {% else %}
+            {% set webpage = webpage|merge(custom) %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+{% set graph = graph|merge([webpage]) %}
+{# 321 = JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE. HEX_TAG keeps a
+   "</script>" inside any value from closing the tag. #}
+<script type="application/ld+json">{{ { '@context': 'https://schema.org', '@graph': graph }|json_encode(321)|raw }}</script>
+{% endif %}

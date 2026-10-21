@@ -1,0 +1,15 @@
+# Pattern: page-type/map-page — page blueprint scaffold
+# Copy to your theme as blueprints/map.yaml (the file name is the template name).
+title: Map
+extends@: default
+
+form:
+  fields:
+    tabs:
+      fields:
+        map:
+          type: tab
+          title: Map
+          import@:
+            type: page-type/map-page/fields
+            context: 'plugin://component-library/patterns'

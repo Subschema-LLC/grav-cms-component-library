@@ -1,0 +1,50 @@
+{#
+    Pattern: theme/author-registry — author card
+
+    {% include 'patterns/theme/author-registry/author-bio.html.twig' with {
+        author_id: page.header.author,   -- default
+        heading: 'About the author',     -- optional visible heading
+        heading_level: 2
+    } %}
+
+    Renders nothing when the page has no author or the ID is not in the registry.
+    Slots for `classes`: root, image, name, role, bio, social.
+#}
+{% import 'patterns/_shared/macros.html.twig' as cl %}
+{% set c = { root: '', image: '', name: '', role: '', bio: '', social: '' }|merge(classes|default({})) %}
+{% set id = author_id|default(page.header.author|default('')) %}
+{% set author = null %}
+{% for a in theme_var('authors')|default([]) %}
+    {% if id is not empty and a.authorid|default('') == id %}{% set author = a %}{% endif %}
+{% endfor %}
+
+{% if author %}
+    {% set h = heading_level|default(2) %}
+    {% set image_file = author.image is iterable ? author.image|first : null %}
+    {% set image_src = image_file is iterable and image_file.path|default('') ? url(image_file.path) : (author.picked_image ? url('theme://assets/images/authors/' ~ author.picked_image) : '') %}
+    {% set name = author.authorname|default(author.authorid) %}
+    <aside class="{{ cl.cls('cl-author', c.root) }}"{% if heading is not defined or not heading %} aria-label="About {{ name|e }}"{% endif %}>
+        {% if heading is defined and heading %}
+            <h{{ h }} class="cl-author__heading">{{ heading|e }}</h{{ h }}>
+        {% endif %}
+        {% if image_src %}
+            <img class="{{ cl.cls('cl-author__image', c.image) }}" src="{{ image_src|e }}" alt="" width="96" height="96" loading="lazy" decoding="async">
+        {% endif %}
+        <div class="cl-author__text">
+            <p class="{{ cl.cls('cl-author__name', c.name) }}">
+                {% if author.authorpageurl %}<a href="{{ author.authorpageurl|e }}" rel="author">{{ name|e }}</a>{% else %}{{ name|e }}{% endif %}
+            </p>
+            {% if author.jobtitle %}<p class="{{ cl.cls('cl-author__role', c.role) }}">{{ author.jobtitle|e }}</p>{% endif %}
+            {% if author.bio %}<div class="{{ cl.cls('cl-author__bio', c.bio) }}">{{ author.bio|markdown }}</div>{% endif %}
+            {% set profiles = author.socialmedia|default([])|filter(s => s.socialurl|default('') is not empty) %}
+            {% if profiles|length %}
+                <ul class="{{ cl.cls('cl-author__social', c.social) }}">
+                    {% for s in profiles %}
+                        {% set label = s.label|default(name ~ ' on ' ~ (s.socialurl|split('/')[2]|default(s.socialurl))|replace({'www.': ''})) %}
+                        <li><a href="{{ s.socialurl|e }}" rel="me noopener noreferrer" target="_blank" aria-label="{{ label|e }}">{{ s.icon ? cl.icon(s.icon) : label|e }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </aside>
+{% endif %}
