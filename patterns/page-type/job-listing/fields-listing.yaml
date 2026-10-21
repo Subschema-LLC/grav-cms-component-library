@@ -2,17 +2,20 @@
 form:
   fields:
     header_jobs_section:
+      cl_pattern: page-type/job-listing
       type: section
       title: Job List
       text: Lists this page's child pages that use the Job template, newest first. Postings past their closing date drop off automatically.
       underline: true
 
     header.jobs.empty_message:
+      cl_pattern: page-type/job-listing
       type: text
       label: Message When There Are No Openings
       placeholder: There are no openings right now.
 
     header.jobs.show_summary:
+      cl_pattern: page-type/job-listing
       type: toggle
       label: Show a Short Description Under Each Title
       highlight: 1

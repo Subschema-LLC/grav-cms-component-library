@@ -11,12 +11,14 @@
 form:
   fields:
     header_embeds_section:
+      cl_pattern: page/embed-block
       type: section
       title: Embeds
       text: Booking calendars, videos, forms and other third-party widgets. Use these fields instead of putting embed code or Twig in the page content.
       underline: true
 
     header.embeds:
+      cl_pattern: page/embed-block
       type: list
       style: vertical
       label: Embeds
@@ -70,6 +72,7 @@ form:
           label: Caption
 
     header.page_scripts:
+      cl_pattern: page/embed-block
       type: textarea
       label: Page Scripts (super admins only)
       help: Scripts added before </body> on this page only.

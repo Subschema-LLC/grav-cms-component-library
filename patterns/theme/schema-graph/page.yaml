@@ -9,12 +9,14 @@
 form:
   fields:
     header_schema_general:
+      cl_pattern: theme/schema-graph
       type: section
       title: Structured Data
       text: Schema.org JSON-LD for search engines. Every field is optional; empty fields fall back to the page's own title, description and images.
       underline: true
 
     header.schema.enabled:
+      cl_pattern: theme/schema-graph
       type: toggle
       label: Output Structured Data
       highlight: 1
@@ -26,6 +28,7 @@ form:
         type: bool
 
     header.schema.type:
+      cl_pattern: theme/schema-graph
       type: select
       label: Page Type
       help: Auto picks a type from the page template.
@@ -41,28 +44,33 @@ form:
         BlogPosting: BlogPosting (an article or story)
 
     header.schema.name:
+      cl_pattern: theme/schema-graph
       type: text
       label: Name or Headline
       help: Defaults to the SEO title, then the page title.
 
     header.schema.description:
+      cl_pattern: theme/schema-graph
       type: textarea
       rows: 2
       label: Description
       help: Defaults to the meta description, then the page summary.
 
     header.schema.image:
+      cl_pattern: theme/schema-graph
       type: text
       label: Image
       help: A page media filename, a site path or a full URL. Defaults to the header image.
 
     header_schema_place:
+      cl_pattern: theme/schema-graph
       type: section
       title: Place
       text: When the page describes a place. Coordinates fall back to the page's Map Location.
       underline: true
 
     header.schema.place_type:
+      cl_pattern: theme/schema-graph
       type: select
       label: Place Type
       default: Place
@@ -83,16 +91,19 @@ form:
         GasStation: Gas station
 
     header.schema.place_name:
+      cl_pattern: theme/schema-graph
       type: text
       label: Place Name
       help: Defaults to the Map Location title, then the page title.
 
     header.schema.place_description:
+      cl_pattern: theme/schema-graph
       type: textarea
       rows: 2
       label: Place Description
 
     header.schema.latitude:
+      cl_pattern: theme/schema-graph
       type: text
       label: Latitude
       validate:
@@ -101,6 +112,7 @@ form:
         max: 90
 
     header.schema.longitude:
+      cl_pattern: theme/schema-graph
       type: text
       label: Longitude
       validate:
@@ -109,53 +121,64 @@ form:
         max: 180
 
     header.schema.telephone:
+      cl_pattern: theme/schema-graph
       type: text
       label: Phone
       placeholder: '+1-555-555-0100'
 
     header.schema.street_address:
+      cl_pattern: theme/schema-graph
       type: text
       label: Street Address
 
     header.schema.address_locality:
+      cl_pattern: theme/schema-graph
       type: text
       label: City or Town
       help: Defaults to the theme's default city.
 
     header.schema.address_region:
+      cl_pattern: theme/schema-graph
       type: text
       label: State or Region
 
     header.schema.postal_code:
+      cl_pattern: theme/schema-graph
       type: text
       label: Postal Code
 
     header_schema_article:
+      cl_pattern: theme/schema-graph
       type: section
       title: Article
       text: When the page is a story or article.
       underline: true
 
     header.schema.author_name:
+      cl_pattern: theme/schema-graph
       type: text
       label: Author Name
       help: Defaults to the page's author from the author registry, then the site author.
 
     header.schema.author_url:
+      cl_pattern: theme/schema-graph
       type: text
       label: Author URL
 
     header.schema.date_published:
+      cl_pattern: theme/schema-graph
       type: datetime
       label: Date Published
       help: Defaults to the page date.
 
     header_schema_advanced:
+      cl_pattern: theme/schema-graph
       type: section
       title: Custom JSON-LD
       underline: true
 
     header.schema.custom_json:
+      cl_pattern: theme/schema-graph
       type: textarea
       rows: 5
       label: Extra JSON

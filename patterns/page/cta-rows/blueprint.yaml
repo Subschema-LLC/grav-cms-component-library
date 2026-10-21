@@ -6,12 +6,14 @@
 form:
   fields:
     header_cta_rows_section:
+      cl_pattern: page/cta-rows
       type: section
       title: Call-to-Action Rows
       text: Full-width rows with a heading, text, an optional image and one button. Drag rows to reorder them.
       underline: true
 
     header.info_cta_section:
+      cl_pattern: page/cta-rows
       type: list
       style: vertical
       label: Rows

@@ -39,6 +39,7 @@ This file tells an agent how to choose, apply and verify them.
   under the theme's `templates/patterns/...` keeping their paths (so the
   includes still resolve), and copy `patterns/_shared/macros.html.twig` too.
   Replace `plugin://component-library/...` asset paths with `theme://...`.
+  Keep each field's `cl_pattern` tag, which is how usage is traced.
   Patterns whose `requires.plugins` lists `component-library` need their PHP
   pieces moved into the theme class (the pattern's `apply.php` shows how).
 
@@ -114,6 +115,10 @@ Then check each item in the pattern's `verify` list. Useful probes:
   `header.*` fields exist and no field is named `fields`.
 - Rendered page: fetch it and check the `cl-*` markup, the absence of raw
   `{{ }}`, and that every JSON-LD block parses.
+- Where patterns are used: `bin/plugin component-library usage` (add
+  `--page=/route` or `--json`), `GET /api/v1/component-library/usage`, or the
+  `component_library_usage` MCP tool. Check it before changing a pattern a
+  site already uses, or a theme template that includes one.
 
 If you changed this repository itself:
 
@@ -140,6 +145,7 @@ test installs (`tests/setup-grav.sh`). In short:
    `docs/PATTERN_SPEC.md` and `schema/pattern.schema.json`), the blueprint
    fragment, the template, and `example.md` (or `example.yaml`).
 2. Record real problems in `solves` with `seen_in`. Do not invent them.
+   Give every top-level fragment field `cl_pattern: <level>/<name>`.
 3. Add the example to `tests/build-site.sh` and assertions to `tests/check.py`.
 4. Run `validate`, `catalog`, and `tests/run.sh`. Commit the regenerated files.
 5. Never put client names, real addresses, keys or salts in this public repo.

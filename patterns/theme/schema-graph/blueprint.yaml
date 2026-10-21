@@ -11,6 +11,7 @@
 form:
   fields:
     schema_defaults.organization_type:
+      cl_pattern: theme/schema-graph
       type: select
       label: Publisher Type
       help: The Schema.org type of the organization behind the site.
@@ -25,30 +26,36 @@ form:
         Person: A person (personal site)
 
     schema_defaults.organization_name:
+      cl_pattern: theme/schema-graph
       type: text
       label: Publisher Name
       help: Leave empty to use the site title.
 
     schema_defaults.telephone:
+      cl_pattern: theme/schema-graph
       type: text
       label: Publisher Phone
       placeholder: '+1-555-555-0100'
 
     schema_defaults.address_locality:
+      cl_pattern: theme/schema-graph
       type: text
       label: Default City or Town
       help: Filled into a page's address when the page gives a street but no city.
 
     schema_defaults.address_region:
+      cl_pattern: theme/schema-graph
       type: text
       label: Default State or Region
       placeholder: MN
 
     schema_defaults.postal_code:
+      cl_pattern: theme/schema-graph
       type: text
       label: Default Postal Code
 
     schema_defaults.address_country:
+      cl_pattern: theme/schema-graph
       type: text
       label: Default Country Code
       help: Two-letter ISO code.
@@ -58,21 +65,25 @@ form:
         message: Two capital letters, such as US or CA.
 
     schema_home_section:
+      cl_pattern: theme/schema-graph
       type: section
       title: Home Page Subject
       text: Optional. The place the site is about, added to the home page as WebPage "about".
       underline: false
 
     schema_defaults.home_about.name:
+      cl_pattern: theme/schema-graph
       type: text
       label: Place Name
 
     schema_defaults.home_about.description:
+      cl_pattern: theme/schema-graph
       type: textarea
       rows: 2
       label: Place Description
 
     schema_defaults.home_about.latitude:
+      cl_pattern: theme/schema-graph
       type: text
       label: Latitude
       validate:
@@ -81,6 +92,7 @@ form:
         max: 90
 
     schema_defaults.home_about.longitude:
+      cl_pattern: theme/schema-graph
       type: text
       label: Longitude
       validate:

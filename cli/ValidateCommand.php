@@ -186,6 +186,18 @@ class ValidateCommand extends ConsoleCommand
         $name = basename($file);
         $tmp = null;
 
+        // Every field a fragment contributes says which pattern it came from, so
+        // Admin2 can label it and the usage report can find it after Grav merges
+        // the fragment into a theme's form (classes/Usage.php).
+        // System patterns ship snippets for a plugin's own blueprint, not fragments to import.
+        if (!isset($data['extends@']) && strpos($id, 'system/') !== 0) {
+            foreach ((array) ($data['form']['fields'] ?? []) as $field => $def) {
+                if (\is_array($def) && ($def['cl_pattern'] ?? null) !== $id) {
+                    $this->fail("{$name}: field '{$field}' needs cl_pattern: {$id}");
+                }
+            }
+        }
+
         if (isset($data['extends@'])) {
             $bp = new Blueprint($file);
             $bp->setContext('blueprints://pages');

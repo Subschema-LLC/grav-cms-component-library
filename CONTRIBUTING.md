@@ -95,7 +95,8 @@ writing one, check whether composing existing patterns already covers it.
 1. Create `patterns/<level>/<name>/` with:
    - `pattern.yaml`, valid against
      [schema/pattern.schema.json](schema/pattern.schema.json);
-   - the blueprint fragment, the Twig partial, or both;
+   - the blueprint fragment (every top-level field tagged
+     `cl_pattern: <level>/<name>`), the Twig partial, or both;
    - `example.md` (or `example.yaml`) with front matter that exercises every
      field.
 2. Fill in `solves` with the problems you actually hit, each with its fix and

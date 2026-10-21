@@ -3,16 +3,19 @@
 form:
   fields:
     header_tour_section:
+      cl_pattern: page-type/bookable-tour
       type: section
       title: Tour
       underline: true
 
     header.tour.name:
+      cl_pattern: page-type/bookable-tour
       type: text
       label: Tour Name
       help: Defaults to the page title.
 
     header.tour.summary:
+      cl_pattern: page-type/bookable-tour
       type: textarea
       rows: 3
       label: Short Description
@@ -21,6 +24,7 @@ form:
         max: 300
 
     header.tour.image:
+      cl_pattern: page-type/bookable-tour
       type: filepicker
       label: Tour Image
       help: From this page's media. Defaults to the header image.
@@ -32,6 +36,7 @@ form:
         - .webp
 
     header.tour.duration_minutes:
+      cl_pattern: page-type/bookable-tour
       type: number
       label: Duration (minutes)
       validate:
@@ -40,12 +45,14 @@ form:
         max: 10080
 
     header_tour_schedule_section:
+      cl_pattern: page-type/bookable-tour
       type: section
       title: Schedule
       text: Regular departures. Add one row per weekday and start time.
       underline: true
 
     header.tour.schedule:
+      cl_pattern: page-type/bookable-tour
       type: list
       style: vertical
       label: Departures
@@ -79,11 +86,13 @@ form:
             message: Use 24-hour time, such as 17:00.
 
     header_tour_offer_section:
+      cl_pattern: page-type/bookable-tour
       type: section
       title: Price
       underline: true
 
     header.tour.price:
+      cl_pattern: page-type/bookable-tour
       type: text
       label: Price per Person
       validate:
@@ -91,6 +100,7 @@ form:
         min: 0
 
     header.tour.currency:
+      cl_pattern: page-type/bookable-tour
       type: text
       label: Currency
       default: USD
@@ -98,6 +108,7 @@ form:
         pattern: '^[A-Z]{3}$'
 
     header.tour.availability:
+      cl_pattern: page-type/bookable-tour
       type: select
       label: Availability
       default: InStock
@@ -108,21 +119,25 @@ form:
         PreOrder: Not yet open for booking
 
     header.tour.price_valid_until:
+      cl_pattern: page-type/bookable-tour
       type: date
       label: Price Valid Until
       help: Optional.
 
     header.tour.sku:
+      cl_pattern: page-type/bookable-tour
       type: text
       label: Product ID
       help: The booking system's product code, if any.
 
     header_tour_stops_section:
+      cl_pattern: page-type/bookable-tour
       type: section
       title: Stops
       underline: true
 
     header.tour.stops:
+      cl_pattern: page-type/bookable-tour
       type: list
       style: vertical
       label: Stops
