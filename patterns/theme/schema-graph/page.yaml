@@ -78,6 +78,7 @@ form:
         TouristDestination: Tourist destination
         CivicStructure: Civic or community building
         PlaceOfWorship: Place of worship
+        Church: Church
         Museum: Museum
         GasStation: Gas station
 

@@ -53,6 +53,15 @@ form:
         .content:
           type: markdown
           label: Text
+        .tile_image:
+          type: toggle
+          label: Show Image
+          help: Turn off to hide the image without removing it.
+          highlight: 1
+          default: 1
+          options:
+            1: PLUGIN_ADMIN.ENABLED
+            0: PLUGIN_ADMIN.DISABLED
         .tile_image_file:
           type: filepicker
           label: Image

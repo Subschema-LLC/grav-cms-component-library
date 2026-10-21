@@ -221,6 +221,9 @@ lg = pages["/legacy"]
 check("/legacy", count(lg, r'cl-cta-rows__media') == 1, "legacy image toggle respected, missing media skipped")
 check("/legacy", "Legacy keys &lt;b&gt;&amp;&lt;/b&gt; escaping" in lg, "title escaped")
 check("/legacy", "cl-tiles__media" not in lg, "legacy tile image toggle respected")
+lgg = graph(lg) or []
+check("/legacy", lgg and lgg[-1].get("@type") == "AboutPage", "legacy schema_type read")
+check("/legacy", lgg and str(lgg[-1].get("image", "")).startswith("http") and "example-photo.jpg" in str(lgg[-1].get("image")), "preview_image_selected used as the absolute page image")
 
 # The optional stylesheet must only style the library's own classes, because it
 # loads on every page of any site that installs the plugin.

@@ -1,7 +1,7 @@
 <!-- Generated from pattern.yaml by `bin/plugin component-library catalog`. Edit pattern.yaml, not this file. -->
 # Call-to-action rows
 
-`page/cta-rows` · v1.0.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
+`page/cta-rows` · v1.1.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
 
 Editor-managed full-width rows, each with a heading, markdown text, an optional image and one button.
 
@@ -48,11 +48,10 @@ Scope: `page.header`
 
 | Key | Type | Notes |
 |---|---|---|
-| `info_cta_section` | list | `title` string; `content` markdown; `cta_section_image_file` page media filename; `cta_section_image_alt` string (empty = decorative); `button_text` string; `button_link` path or URL; `button_new_tab` _self \| _blank |
+| `info_cta_section` | list | `title` string; `content` markdown; `cta_section_image` bool (default on): show the image; `cta_section_image_file` page media filename; `cta_section_image_alt` string (empty = decorative); `button_text` string; `button_link` path or URL; `button_new_tab` _self \| _blank |
 
 ## Older keys
 
-- `info_cta_section.*.cta_section_image`: The old "Display image" toggle is no longer in the blueprint (an image now shows whenever a file is chosen). Pages that still store '0' keep their image hidden.
 - `info_cta_section.*.contentid`: Ignored. Rows render in list order; the cid0–cid10 position select is gone.
 
 ## Markup classes

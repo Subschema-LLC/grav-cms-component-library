@@ -2,7 +2,7 @@
     "name": "Grav CMS Component Library",
     "plugin": {
         "slug": "component-library",
-        "version": "1.0.1",
+        "version": "1.1.0",
         "compatibility": {
             "grav": [
                 "1.7",
@@ -558,7 +558,7 @@
         {
             "id": "page/cta-rows",
             "name": "Call-to-action rows",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "level": "page",
             "touches": [],
             "status": "stable",
@@ -594,6 +594,7 @@
                         "item": {
                             "title": "string",
                             "content": "markdown",
+                            "cta_section_image": "bool (default on): show the image",
                             "cta_section_image_file": "page media filename",
                             "cta_section_image_alt": "string (empty = decorative)",
                             "button_text": "string",
@@ -604,10 +605,6 @@
                 }
             },
             "legacy_keys": [
-                {
-                    "key": "info_cta_section.*.cta_section_image",
-                    "handling": "The old \"Display image\" toggle is no longer in the blueprint (an image now shows whenever a file is chosen). Pages that still store '0' keep their image hidden."
-                },
                 {
                     "key": "info_cta_section.*.contentid",
                     "handling": "Ignored. Rows render in list order; the cid0–cid10 position select is gone."
@@ -1298,7 +1295,7 @@
         {
             "id": "page/tiles",
             "name": "Tiles (card grid)",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "level": "page",
             "touches": [],
             "status": "stable",
@@ -1336,6 +1333,7 @@
                             "title": "string",
                             "tile_icon": "icon class (Admin2 saves fa-name or fa-brands fa-name)",
                             "content": "markdown",
+                            "tile_image": "bool (default on): show the image",
                             "tile_image_file": "page media filename",
                             "tile_image_alt": "string (empty = decorative)",
                             "tile_image_fit": "natural | cover",
@@ -1347,10 +1345,6 @@
                 }
             },
             "legacy_keys": [
-                {
-                    "key": "tiles.*.tile_image",
-                    "handling": "The \"Display image\" toggle is gone; an explicit '0' still hides the image."
-                },
                 {
                     "key": "tiles.*.tile_type = weather",
                     "handling": "Rendered by the template you map in tile_types (for example { weather: 'partials/weather-tile.html.twig' } calling the plugin's Twig function). Without a mapping it renders as a content tile."
@@ -2106,7 +2100,7 @@
         {
             "id": "theme/datalayer",
             "name": "Data layer",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "level": "theme",
             "touches": [],
             "status": "stable",
@@ -2142,7 +2136,8 @@
                         "description": "customData.app; default site.title"
                     },
                     "datalayer.env": {
-                        "type": "production | staging | development"
+                        "type": "string",
+                        "description": "Free text, such as production, staging, development (or an existing value like PROD)"
                     },
                     "datalayer.collection_method": {
                         "type": "string"
@@ -2549,7 +2544,7 @@
         {
             "id": "theme/schema-graph",
             "name": "Schema.org graph",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "level": "theme",
             "touches": [
                 "page"
@@ -2636,7 +2631,15 @@
             "legacy_keys": [
                 {
                     "key": "page.header.schema_type",
-                    "handling": "Not read. Move the value to schema.type."
+                    "handling": "Read when schema.type is auto or empty."
+                },
+                {
+                    "key": "page.header.place_type",
+                    "handling": "Read when schema.place_type is empty."
+                },
+                {
+                    "key": "page.header.preview_image_selected",
+                    "handling": "A preview image chosen for a post is the page image when schema.image is empty (before the header image)."
                 }
             ],
             "import": {

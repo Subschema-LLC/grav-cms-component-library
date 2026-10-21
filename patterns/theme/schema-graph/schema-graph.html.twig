@@ -45,6 +45,9 @@
     {% elseif img starts with '/' %}
         {% set primary_image_url = site_url ~ img %}
     {% endif %}
+{% elseif page.header.preview_image_selected|default('') is not empty %}
+    {% set preview = page.header.preview_image_selected %}
+    {% set primary_image_url = preview starts with 'http' ? preview : url(preview, true) %}
 {% elseif page.header.header_image_file and page.media[page.header.header_image_file] %}
     {% set primary_image_url = url(page.media[page.header.header_image_file].url, true) %}
 {% endif %}
@@ -107,6 +110,9 @@
 {% set webpage_type = page_types[page.template] ?? 'WebPage' %}
 {% if schema_config.type is defined and schema_config.type and schema_config.type != 'auto' %}
     {% set webpage_type = schema_config.type %}
+{% elseif page.header.schema_type|default('') is not empty %}
+    {# Older key, kept for pages that still store it. #}
+    {% set webpage_type = page.header.schema_type %}
 {% endif %}
 {% set is_article = webpage_type == 'BlogPosting' or page.template in article_templates %}
 {% if webpage_type == 'BlogPosting' %}{% set webpage_type = 'WebPage' %}{% endif %}
@@ -177,7 +183,7 @@
 {% set place_lng = schema_config.longitude|default(marker.longitude|default('')) %}
 {% if place_lat is not empty and place_lng is not empty %}
     {% set place = {
-        '@type': schema_config.place_type|default('Place'),
+        '@type': schema_config.place_type|default(page.header.place_type|default('Place')),
         '@id': page_url ~ '#place',
         'name': schema_config.place_name|default(marker.title|default(page_title)),
         'url': page_url,

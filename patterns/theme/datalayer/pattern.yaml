@@ -1,6 +1,6 @@
 id: theme/datalayer
 name: Data layer
-version: 1.0.0
+version: 1.1.0
 level: theme
 status: stable
 summary: A site-agnostic window.dataLayer helper loaded in the head, configured from theme settings through a JSON block, with declarative data-datalayer-event attributes instead of inline scripts.
@@ -17,7 +17,7 @@ data:
   keys:
     datalayer.enabled: { type: bool }
     datalayer.app: { type: string, description: "customData.app; default site.title" }
-    datalayer.env: { type: "production | staging | development" }
+    datalayer.env: { type: string, description: "Free text, such as production, staging, development (or an existing value like PROD)" }
     datalayer.collection_method: { type: string }
 files:
   blueprint: blueprint.yaml

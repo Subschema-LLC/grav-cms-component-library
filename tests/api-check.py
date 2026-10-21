@@ -41,7 +41,8 @@ def names(fields, out=None):
 EXPECT = {
     "/blueprints/pages/default": ["header.seo_page_title", "header.header_image_file", "header.author", "header.map_marker.latitude",
                                   "header.map_enabled", "header.primary_cta_text", "header.quick_actions", "header.tiles",
-                                  "header.info_cta_section", "header.embeds", "header.schema.type", "header.schema.custom_json"],
+                                  "header.info_cta_section", "header.info_cta_section.cta_section_image", "header.tiles.tile_image",
+                                  "header.embeds", "header.schema.type", "header.schema.custom_json"],
     "/blueprints/pages/map": ["header.map_page.include_pages", "header.map_markers"],
     "/blueprints/pages/job": ["header.jobtitle", "header.job.salary.min", "header.job.valid_through"],
     "/blueprints/pages/jobs": ["header.jobs.empty_message"],

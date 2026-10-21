@@ -98,6 +98,8 @@ EOF
 page 15.legacy default.md - <<'EOF'
 ---
 title: 'Legacy keys <b>&</b> escaping'
+schema_type: AboutPage
+preview_image_selected: /user/pages/15.legacy/example-photo.jpg
 info_cta_section:
   - { title: Hidden image row, cta_section_image: '0', cta_section_image_file: example-photo.jpg }
   - { title: Visible image row, cta_section_image: '1', cta_section_image_file: example-photo.jpg }

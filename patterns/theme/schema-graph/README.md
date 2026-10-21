@@ -1,7 +1,7 @@
 <!-- Generated from pattern.yaml by `bin/plugin component-library catalog`. Edit pattern.yaml, not this file. -->
 # Schema.org graph
 
-`theme/schema-graph` · v1.0.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
+`theme/schema-graph` · v1.1.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
 
 One linked JSON-LD @graph per page (Organization, WebSite, BreadcrumbList, the page, plus BlogPosting and Place when they apply), with site-wide defaults in the theme and a per-page Schema.org tab.
 
@@ -70,7 +70,9 @@ Scope: `theme`
 
 ## Older keys
 
-- `page.header.schema_type`: Not read. Move the value to schema.type.
+- `page.header.schema_type`: Read when schema.type is auto or empty.
+- `page.header.place_type`: Read when schema.place_type is empty.
+- `page.header.preview_image_selected`: A preview image chosen for a post is the page image when schema.image is empty (before the header image).
 
 ## Problems this solves
 

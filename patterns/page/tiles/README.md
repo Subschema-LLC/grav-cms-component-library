@@ -1,7 +1,7 @@
 <!-- Generated from pattern.yaml by `bin/plugin component-library catalog`. Edit pattern.yaml, not this file. -->
 # Tiles (card grid)
 
-`page/tiles` · v1.0.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
+`page/tiles` · v1.1.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
 
 An editor-managed grid of cards with widths, icons, markdown text, images, an optional whole-card link and a button, plus a hook for tile types that other templates render.
 
@@ -46,11 +46,10 @@ Scope: `page.header`
 
 | Key | Type | Notes |
 |---|---|---|
-| `tiles` | list | `tile_type` content, or a type the theme maps in tile_types; `tile_width` is-one-quarter \| is-one-third \| is-half \| is-two-thirds \| is-full; `title` string; `tile_icon` icon class (Admin2 saves fa-name or fa-brands fa-name); `content` markdown; `tile_image_file` page media filename; `tile_image_alt` string (empty = decorative); `tile_image_fit` natural \| cover; `card_link` path or URL; `button_text` string; `button_link` path or URL |
+| `tiles` | list | `tile_type` content, or a type the theme maps in tile_types; `tile_width` is-one-quarter \| is-one-third \| is-half \| is-two-thirds \| is-full; `title` string; `tile_icon` icon class (Admin2 saves fa-name or fa-brands fa-name); `content` markdown; `tile_image` bool (default on): show the image; `tile_image_file` page media filename; `tile_image_alt` string (empty = decorative); `tile_image_fit` natural \| cover; `card_link` path or URL; `button_text` string; `button_link` path or URL |
 
 ## Older keys
 
-- `tiles.*.tile_image`: The "Display image" toggle is gone; an explicit '0' still hides the image.
 - `tiles.*.tile_type = weather`: Rendered by the template you map in tile_types (for example { weather: 'partials/weather-tile.html.twig' } calling the plugin's Twig function). Without a mapping it renders as a content tile.
 
 ## Markup classes

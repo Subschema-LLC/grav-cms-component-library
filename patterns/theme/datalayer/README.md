@@ -1,7 +1,7 @@
 <!-- Generated from pattern.yaml by `bin/plugin component-library catalog`. Edit pattern.yaml, not this file. -->
 # Data layer
 
-`theme/datalayer` · v1.0.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
+`theme/datalayer` · v1.1.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
 
 A site-agnostic window.dataLayer helper loaded in the head, configured from theme settings through a JSON block, with declarative data-datalayer-event attributes instead of inline scripts.
 
@@ -59,7 +59,7 @@ Scope: `theme`
 |---|---|---|
 | `datalayer.enabled` | bool |  |
 | `datalayer.app` | string | customData.app; default site.title |
-| `datalayer.env` | production \| staging \| development |  |
+| `datalayer.env` | string | Free text, such as production, staging, development (or an existing value like PROD) |
 | `datalayer.collection_method` | string |  |
 
 ## Problems this solves

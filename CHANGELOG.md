@@ -1,3 +1,11 @@
+# v1.1.0
+## 10/21/2026
+
+1. [](#improved)
+    * `page/cta-rows` and `page/tiles` keep a "Show Image" toggle per row and tile, so an image can be hidden without removing it (sites already store these values)
+    * `theme/schema-graph`: Church added to place types; reads the older `schema_type` and `place_type` keys and a post's `preview_image_selected` as the page image
+    * `theme/datalayer`: the environment is free text, so existing tag-manager filters (for example `PROD`) keep matching
+
 # v1.0.1
 ## 10/21/2026
 

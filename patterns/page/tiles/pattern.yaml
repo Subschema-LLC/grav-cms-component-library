@@ -1,6 +1,6 @@
 id: page/tiles
 name: Tiles (card grid)
-version: 1.0.0
+version: 1.1.0
 level: page
 status: stable
 summary: An editor-managed grid of cards with widths, icons, markdown text, images, an optional whole-card link and a button, plus a hook for tile types that other templates render.
@@ -25,6 +25,7 @@ data:
         title: string
         tile_icon: icon class (Admin2 saves fa-name or fa-brands fa-name)
         content: markdown
+        tile_image: "bool (default on): show the image"
         tile_image_file: page media filename
         tile_image_alt: string (empty = decorative)
         tile_image_fit: "natural | cover"
@@ -32,8 +33,6 @@ data:
         button_text: string
         button_link: path or URL
 legacy_keys:
-  - key: tiles.*.tile_image
-    handling: The "Display image" toggle is gone; an explicit '0' still hides the image.
   - key: tiles.*.tile_type = weather
     handling: Rendered by the template you map in tile_types (for example { weather: 'partials/weather-tile.html.twig' } calling the plugin's Twig function). Without a mapping it renders as a content tile.
 files:

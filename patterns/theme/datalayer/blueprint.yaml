@@ -23,14 +23,10 @@ form:
       help: Sent as customData.app. Leave empty to use the site title.
 
     datalayer.env:
-      type: select
+      type: text
       label: Environment
-      help: Sent as customData.app_env, so test traffic can be filtered out. Set it per environment in user/env/<host>/config/themes/<theme>.yaml (see system/environments-and-secrets).
-      default: production
-      options:
-        production: Production
-        staging: Staging
-        development: Development
+      help: Sent as customData.app_env so test traffic can be filtered out, for example production, staging or development. Keep the exact value your tag-manager filters expect. Set it per environment in user/env/<host>/config/themes/<theme>.yaml (see system/environments-and-secrets).
+      placeholder: production
 
     datalayer.collection_method:
       type: text
