@@ -49,7 +49,7 @@ page_info:
 {% include 'patterns/theme/author-registry/author-bio.html.twig' with { heading: 'About the author', heading_level: 2 } %}
 ```
 
-**Php**
+**PHP or shell**
 
 ```php
 // Only needed WITHOUT the component-library plugin. In your theme class:

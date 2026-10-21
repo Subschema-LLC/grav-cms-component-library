@@ -20,7 +20,7 @@ How a plugin's settings form behaves in Grav 2's Admin2 (an API client that read
 
 ## Apply
 
-**Php**
+**PHP or shell**
 
 ```php
 // getSubscribedEvents(): subscribe form events unconditionally

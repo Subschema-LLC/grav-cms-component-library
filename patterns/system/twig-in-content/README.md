@@ -20,7 +20,7 @@ twig_sandbox:
   allowed_functions: [my_safe_function]
 ```
 
-**Php**
+**PHP or shell**
 
 ```php
 // Plugin: allow its own safe function inside page content

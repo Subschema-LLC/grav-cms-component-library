@@ -20,7 +20,7 @@ datalayer:
   env: staging
 ```
 
-**Php**
+**PHP or shell**
 
 ```bash
 # Run locally with production's environment config:

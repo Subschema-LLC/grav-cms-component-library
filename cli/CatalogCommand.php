@@ -170,7 +170,7 @@ class CatalogCommand extends ConsoleCommand
                 $lang = 'bash';
             }
             $md[] = '';
-            $md[] = '**' . ucfirst($kind) . '**';
+            $md[] = '**' . (['php' => 'PHP or shell'][$kind] ?? ucfirst($kind)) . '**';
             $md[] = '';
             $md[] = "```{$lang}";
             $md[] = rtrim($snippet);

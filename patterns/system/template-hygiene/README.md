@@ -16,7 +16,7 @@ The template rules every pattern here follows, checkable on any theme with `bin/
 
 ## Apply
 
-**Php**
+**PHP or shell**
 
 ```bash
 # From the Grav root, against a theme or plugin folder:

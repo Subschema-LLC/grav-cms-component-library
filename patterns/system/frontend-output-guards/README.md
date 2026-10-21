@@ -15,7 +15,7 @@ The checks a plugin should pass before injecting scripts into rendered pages, HT
 
 ## Apply
 
-**Php**
+**PHP or shell**
 
 ```php
 // HTML only

@@ -30,7 +30,7 @@ header.category:
   data-options@: '\Grav\Theme\Mytheme::categoryOptions'
 ```
 
-**Php**
+**PHP or shell**
 
 ```php
 // In onThemeInitialized (theme) or onPluginsInitialized (plugin), not behind isAdmin():
