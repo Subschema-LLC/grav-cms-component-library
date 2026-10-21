@@ -4,34 +4,44 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   grav:
     name: Grav ${{ matrix.grav }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        grav: ['2.2.11', '1.7.53']
+        include:
+          - grav: '2.2.11'
+            setup: '--api'   # also runs the Admin2 API checks
+          - grav: '1.7.53'
+            setup: ''
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: library
+          persist-credentials: false
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.3'
           extensions: gd, zip, mbstring, curl, xml, intl
           tools: composer
 
       - name: Install Grav ${{ matrix.grav }}
-        run: |
-          git clone --depth 1 --branch "${{ matrix.grav }}" https://github.com/getgrav/grav grav
-          cd grav
-          composer install --no-dev --no-interaction --prefer-dist
-          mkdir -p logs cache tmp images assets backup
+        run: library/tests/setup-grav.sh "$GITHUB_WORKSPACE/grav" "${{ matrix.grav }}" ${{ matrix.setup }}
 
-      - name: Validate, check the catalog, render the fixture site
+      - name: Validate, check the catalog, render the fixture site, read blueprints through the API
         run: library/tests/run.sh "$GITHUB_WORKSPACE/grav" 8765
 
       - name: Server log on failure

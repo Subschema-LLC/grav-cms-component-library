@@ -1,0 +1,75 @@
+name: Bug report
+description: A pattern, the plugin or the docs doing the wrong thing.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. This is a public repository: leave out site names, real addresses, keys and private content. Security problems go through [Report a vulnerability](https://github.com/Subschema-LLC/grav-cms-component-library/security/advisories/new) instead.
+  - type: input
+    id: pattern
+    attributes:
+      label: Pattern or file
+      description: The pattern id, or "plugin", "CLI" or "docs".
+      placeholder: page/tiles
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what you expected
+      placeholder: The tile image doesn't render when ..., expected ...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+      description: Page front matter, the blueprint import and the template include you used. Trimmed is fine.
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Error message or rendered HTML
+      description: From the page, `logs/grav.log`, or `bin/plugin component-library validate` / `lint`.
+      render: text
+  - type: input
+    id: grav
+    attributes:
+      label: Grav version
+      placeholder: 2.2.11
+    validations:
+      required: true
+  - type: dropdown
+    id: admin
+    attributes:
+      label: Admin
+      options:
+        - Admin2 (Grav 2)
+        - Admin (Grav 1.7)
+        - None / not relevant
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How the library is installed
+      options:
+        - Plugin (user/plugins/component-library)
+        - Copied into the theme
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Library version and PHP version
+      placeholder: component-library 1.2.1, PHP 8.3
+  - type: checkboxes
+    id: private
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed site names, real addresses, keys and other private details.
+          required: true

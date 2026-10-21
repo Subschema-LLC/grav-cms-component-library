@@ -4,7 +4,9 @@
 #
 # 1. builds the fixture site, 2. validates every pattern (spec, blueprints,
 # Twig, lint), 3. checks the generated catalog is current, 4. renders every
-# fixture page and runs tests/check.py.
+# fixture page and runs tests/check.py, 5. reads the blueprints through the
+# API (tests/api-check.py) when CL_API_KEY is set or tests/setup-grav.sh --api
+# left a key in <grav>/cl-api-key.txt.
 set -euo pipefail
 
 GRAV_ROOT="$(cd "${1:?usage: run.sh /path/to/grav [port]}" && pwd)"
@@ -30,3 +32,10 @@ for _ in $(seq 1 50); do
     sleep 0.2
 done
 python3 "$LIB/tests/check.py" "http://127.0.0.1:${PORT}"
+
+echo "== api"
+if [ -z "${CL_API_KEY:-}" ] && [ -s "$GRAV_ROOT/cl-api-key.txt" ]; then
+    CL_API_KEY="$(cat "$GRAV_ROOT/cl-api-key.txt")"
+    export CL_API_KEY
+fi
+python3 "$LIB/tests/api-check.py" "http://127.0.0.1:${PORT}"

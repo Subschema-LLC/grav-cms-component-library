@@ -1,0 +1,56 @@
+name: Pattern proposal
+description: Suggest a new pattern, or a change to a pattern's stored keys or markup.
+labels: [pattern proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Patterns come from problems people actually solved on Grav sites. Describe the problem first; the shape of the pattern follows from it. Leave out site names and private details.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What went wrong or kept being rebuilt, and where you saw it, in general terms (for example "a community-guide theme's map page").
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: How you solved it
+      description: The blueprint fields, template or PHP that fixed it. Snippets help.
+    validations:
+      required: true
+  - type: dropdown
+    id: level
+    attributes:
+      label: Level
+      options:
+        - theme (site-wide setting)
+        - page (content block per page)
+        - page-type (whole page template)
+        - system (plugin, security, environment or template practice)
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: keys
+    attributes:
+      label: Stored data
+      description: The front matter or config keys it would store. Mention keys sites already use, so the pattern can keep them.
+      render: yaml
+  - type: textarea
+    id: existing
+    attributes:
+      label: Existing patterns
+      description: Could composing existing patterns cover this? Why or why not?
+  - type: input
+    id: grav
+    attributes:
+      label: Grav versions you've used it on
+      placeholder: 2.2.11, 1.7.53
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contributing
+      options:
+        - label: I'd like to open the pull request for this.
