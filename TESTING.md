@@ -9,6 +9,8 @@ Every release is tested on real Grav installs, not just linted.
 
 ## What runs
 
+Make throwaway installs with `tests/setup-grav.sh` (see
+[CONTRIBUTING.md](CONTRIBUTING.md#set-up)), then
 `tests/run.sh /path/to/grav [port]`:
 
 1. **Builds a fixture site** (`tests/build-site.sh`): links this plugin and the
@@ -37,13 +39,16 @@ Every release is tested on real Grav installs, not just linted.
 `/api/v1/blueprints/...`, the path Admin2 uses, and checks the imported
 fields, the absence of phantom fields, and the options filled by the plugin's
 and the theme's `data-options@` providers. It needs the API, Login and Form
-plugins, an account with API access and an API key:
+plugins, an account with API access and an API key.
+`tests/setup-grav.sh <dir> 2.2.11 --api` sets all of that up and leaves the
+key in `<dir>/cl-api-key.txt`, which `tests/run.sh` picks up; CI does the same
+on Grav 2.2.11. Against another install:
 
 ```bash
 CL_API_KEY=grav_... python3 tests/api-check.py http://127.0.0.1:8765
 ```
 
-It is skipped when `CL_API_KEY` is not set, so CI runs it only when configured.
+It is skipped when no key is available (always on Grav 1.7, which has no API).
 
 ## System snippets
 

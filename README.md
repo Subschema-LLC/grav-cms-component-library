@@ -1,5 +1,9 @@
 # Grav CMS Component Library
 
+[![Test](https://github.com/Subschema-LLC/grav-cms-component-library/actions/workflows/test.yml/badge.svg)](https://github.com/Subschema-LLC/grav-cms-component-library/actions/workflows/test.yml)
+[![Grav 1.7 | 2.x](https://img.shields.io/badge/Grav-1.7%20%7C%202.x-2b6cb0)](TESTING.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 Reusable, tested patterns for [Grav CMS](https://getgrav.org) themes, pages and
 plugins: blueprint fragments, Twig partials, page types, and the Grav 2
 practices behind them. Each pattern records the real problems it solves, and
@@ -11,7 +15,7 @@ apply patterns the same way.
   and [system](docs/CATALOG.md#system-level).
 - **Tested on Grav 2.2.11 and 1.7.53**: every blueprint resolves through
   Grav's own loader and through the API that Admin2 uses, every template
-  compiles and renders, and 300+ render checks run in CI. See [TESTING.md](TESTING.md).
+  compiles and renders, and 450+ render checks run in CI on every pull request. See [TESTING.md](TESTING.md).
 - **Framework-neutral markup** (`cl-*` BEM classes) with a small optional
   stylesheet, and a `classes` parameter on every partial to add Bulma,
   Bootstrap or Tailwind classes without overriding templates.
@@ -109,18 +113,16 @@ The full list with summaries is in [docs/CATALOG.md](docs/CATALOG.md).
   read a site's blueprints with `get_blueprint`, apply patterns, and confirm
   the fields resolved.
 
-## Maintaining the library
+## Contributing
 
-```bash
-bin/plugin component-library validate   # manifests, blueprints, Twig, lint, PHP syntax
-bin/plugin component-library catalog    # regenerate catalog.json, llms.txt and READMEs
-tests/run.sh /path/to/grav              # build the fixture site and run the render checks
-```
+Bug reports, fixes and new patterns are welcome. [CONTRIBUTING.md](CONTRIBUTING.md)
+covers setting up throwaway Grav installs (`tests/setup-grav.sh`), running the
+tests, and what a new pattern needs: real problems in `solves`, a fixture page
+and checks, and passing CI on Grav 1.7 and 2.x. The pattern format is in
+[docs/PATTERN_SPEC.md](docs/PATTERN_SPEC.md).
 
-Pattern format: [docs/PATTERN_SPEC.md](docs/PATTERN_SPEC.md) and
-[schema/pattern.schema.json](schema/pattern.schema.json). Contributions should
-record real problems in `solves`, add a fixture page and checks under
-`tests/`, and pass all three commands.
+Please follow the [code of conduct](CODE_OF_CONDUCT.md), and report security
+problems privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 

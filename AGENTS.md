@@ -133,6 +133,9 @@ tests/run.sh /path/to/grav               # full render suite
 
 ## 6. Adding or changing a pattern
 
+[CONTRIBUTING.md](CONTRIBUTING.md) has the full checklist and how to set up
+test installs (`tests/setup-grav.sh`). In short:
+
 1. Create `patterns/<level>/<name>/` with `pattern.yaml` (see
    `docs/PATTERN_SPEC.md` and `schema/pattern.schema.json`), the blueprint
    fragment, the template, and `example.md` (or `example.yaml`).
