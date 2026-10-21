@@ -6,18 +6,21 @@
 form:
   fields:
     header_quick_actions_section:
+      cl_pattern: page/quick-actions
       type: section
       title: Quick Actions
       text: Shortcuts to common tasks. Drag them into the order visitors should see.
       underline: true
 
     header.quick_actions_title:
+      cl_pattern: page/quick-actions
       type: text
       label: Heading
       help: Shown above the shortcuts. Leave empty for no visible heading.
       placeholder: Plan your visit
 
     header.quick_actions_columns:
+      cl_pattern: page/quick-actions
       type: select
       label: Columns on Wide Screens
       default: 3
@@ -29,6 +32,7 @@ form:
         type: int
 
     header.quick_actions:
+      cl_pattern: page/quick-actions
       type: list
       style: vertical
       label: Shortcuts

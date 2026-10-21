@@ -6,4 +6,5 @@
 /tests export-ignore
 /.github export-ignore
 /.editorconfig export-ignore
+/docs/images export-ignore
 /CLAUDE.md export-ignore

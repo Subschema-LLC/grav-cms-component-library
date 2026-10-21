@@ -6,12 +6,14 @@
 form:
   fields:
     header_map_page_section:
+      cl_pattern: page-type/map-page
       type: section
       title: Map Pins
       text: Every published page with a Map Location (Page Info tab) appears on this map automatically, linked to that page. Use Additional Pins for anything else.
       underline: true
 
     header.map_page.include_pages:
+      cl_pattern: page-type/map-page
       type: toggle
       label: Pin Pages That Have a Map Location
       help: Turn off to show only the Additional Pins below.
@@ -24,12 +26,14 @@ form:
         type: bool
 
     header.map_page.list_title:
+      cl_pattern: page-type/map-page
       type: text
       label: Places List Heading
       help: The heading of the list under the map, which also serves keyboard and screen-reader users.
       placeholder: Places on the map
 
     header.map_markers:
+      cl_pattern: page-type/map-page
       type: list
       style: vertical
       label: Additional Pins

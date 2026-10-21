@@ -10,6 +10,7 @@
 form:
   fields:
     site_logo:
+      cl_pattern: theme/site-logo
       type: file
       label: Site Logo
       help: SVG, PNG, WebP or JPEG, up to 2 MB. Saved in user/assets/site-logo, so a theme update never removes it.
@@ -24,11 +25,13 @@ form:
         - image/jpeg
 
     site_logo_alt:
+      cl_pattern: theme/site-logo
       type: text
       label: Logo Alt Text
       help: What the logo says, usually the organization's name. Leave empty to use the site title.
 
     site_logo_width:
+      cl_pattern: theme/site-logo
       type: number
       label: Logo Display Width (px)
       help: Optional. Sets the width attribute so the header does not shift while the logo loads. Height scales to match.

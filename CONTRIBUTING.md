@@ -36,7 +36,7 @@ You need git, PHP 8.3 (with gd, zip, mbstring, curl, xml and intl), Composer,
 Python 3 and curl. No Python packages are needed.
 
 ```bash
-git clone https://github.com/<you>/grav-cms-component-library
+git clone https://github.com/<you>/grav-cms-component-library   # your fork
 cd grav-cms-component-library
 
 # Throwaway Grav installs next to the repo, the same way CI makes them.
@@ -95,7 +95,8 @@ writing one, check whether composing existing patterns already covers it.
 1. Create `patterns/<level>/<name>/` with:
    - `pattern.yaml`, valid against
      [schema/pattern.schema.json](schema/pattern.schema.json);
-   - the blueprint fragment, the Twig partial, or both;
+   - the blueprint fragment (every top-level field tagged
+     `cl_pattern: <level>/<name>`), the Twig partial, or both;
    - `example.md` (or `example.yaml`) with front matter that exercises every
      field.
 2. Fill in `solves` with the problems you actually hit, each with its fix and
@@ -108,6 +109,9 @@ writing one, check whether composing existing patterns already covers it.
 5. Run `catalog`, then `tests/run.sh` on both Grav versions.
 
 ## Pull requests
+
+Open pull requests against `development`, the default branch. `main` holds
+released versions and only receives merges from `development`.
 
 - One change per pull request, with a description of the problem it solves.
   Link the issue if there is one.
@@ -132,6 +136,6 @@ rest of the library.
 
 1. Update `version` in `blueprints.yaml`, the result table in `TESTING.md` if
    the counts changed, and add a `CHANGELOG.md` entry in Grav's format.
-2. Merge to `main` and wait for CI.
-3. Tag and publish:
+2. Merge `development` into `main` and wait for CI.
+3. Tag `main` and publish:
    `gh release create vX.Y.Z --title vX.Y.Z --notes "<changelog entry>"`.

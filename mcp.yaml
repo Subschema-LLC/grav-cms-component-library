@@ -1,0 +1,29 @@
+# Tools for the Grav MCP server (grav-mcp), served by the API plugin at GET /mcp/tools.
+# They read the same data as the Admin2 panel and report (classes/Usage.php).
+version: 1
+prefix: component_library
+tools:
+  - name: usage
+    title: Component Library usage
+    description: >
+      Where every Component Library pattern is used on this site: the page templates and theme settings whose
+      forms include its fields (and on which tab), the pages with content in it, the theme templates that include
+      its partials, and pattern templates the theme has its own copy of. Check this before changing a pattern or
+      a theme template. Fields a theme defines itself, without importing a pattern, are not counted.
+    method: GET
+    path: /component-library/usage
+    permission: api.pages.read
+
+  - name: page_components
+    title: Components on a page
+    description: >
+      The Component Library patterns a page's template offers, whether this page has content in each (any field
+      holding a value other than its default), the tab each lives on, and how the theme renders it.
+    method: GET
+    path: /component-library/page
+    permission: api.pages.read
+    input:
+      type: object
+      required: [route]
+      properties:
+        route: { type: string, description: "The page's route, such as /about or /blog/my-post" }

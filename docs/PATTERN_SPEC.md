@@ -73,6 +73,11 @@ fragment and a page fragment). `level` is where it starts; `touches` lists the r
 8. Option lists that come from data (authors, pages) use `data-options@` with a
    registered provider, never a hard-coded copy of the data.
 9. Every coordinate, count and length field has `validate` limits.
+10. Every top-level field of a fragment carries `cl_pattern: <id>` (its
+    pattern id). Grav keeps the property through `import@` and `extends@`, so
+    the plugin can label the fields in Admin2 and report where the pattern is
+    used. `validate` fails a fragment field without it. Keep the tags when
+    copying a fragment into a theme.
 
 **Templates**
 

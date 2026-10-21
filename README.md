@@ -27,10 +27,11 @@ apply patterns the same way.
 As a plugin (recommended), from your Grav root:
 
 ```bash
-git clone https://github.com/Subschema-LLC/grav-cms-component-library user/plugins/component-library
+git clone --branch main https://github.com/Subschema-LLC/grav-cms-component-library user/plugins/component-library
 bin/grav clearcache
 ```
 
+`main` holds released versions; `development` is where changes land first.
 The folder must be named `component-library`. The plugin adds the library to
 Twig's template paths (after your theme, so your theme can override any
 partial), registers the option providers some blueprints use, and loads an
@@ -90,6 +91,48 @@ Copy what you need into your theme: fragments to
 `type: partials/<name>`), templates under `templates/patterns/` with the same
 paths, and `patterns/_shared/macros.html.twig`. Patterns that list the plugin
 under **Requires** explain what to move into your theme class instead.
+
+## See where components are used
+
+In Grav 2's Admin the plugin shows where the library's components are used,
+so editors can tell shared components from the theme's own fields and
+developers can see what a change will touch:
+
+- **Labels in forms.** A line under each component's fields names it and its
+  version, and says when the theme renders it with its own template.
+- **A Components panel in the page editor.** A toolbar button, with the number
+  of components that have content on the page, opens a list of every
+  component the page's template offers: whether this page fills it in, which
+  tab it is on, how the theme renders it, and a link to its docs.
+- **A usage report under Tools → Reports.** Every component in use: the page
+  types and theme settings whose forms include it, the pages with content in
+  it (linked to their editor), the theme templates that include it and any
+  copies the theme keeps of its templates, plus the template checks on the
+  active theme.
+
+| Labels | Components panel | Usage report |
+|---|---|---|
+| ![Shared component labels in the page form](docs/images/admin2-field-labels.png) | ![The Components panel in the page editor](docs/images/admin2-components-panel.png) | ![The Component Library usage report](docs/images/admin2-usage-report.png) |
+
+Each can be turned off in the plugin's settings (Grav 2 Admin section). The
+same data is available from the command line and to AI agents:
+
+```bash
+bin/plugin component-library usage              # the whole site
+bin/plugin component-library usage --page=/about
+bin/plugin component-library usage --json
+```
+
+The plugin's `mcp.yaml` gives the [Grav MCP server](https://learn.getgrav.org/20/advanced/mcp-server)
+`component_library_usage` and `component_library_page_components` tools.
+
+A component counts as used on a page when one of its fields holds a value
+other than its default. Fields are traced through the `cl_pattern` tag every
+fragment field carries, so fields a theme defines itself are never counted,
+and fragments copied into a theme before 1.3.0 need the tags added. Grav 1.7's
+Admin shows none of this; the command works on both. Admin2 has no way for a
+plugin to add a column to the Pages list, so the panel and the report are
+where per-page usage appears.
 
 ## What's inside
 

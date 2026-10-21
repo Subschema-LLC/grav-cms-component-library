@@ -6,6 +6,7 @@
 form:
   fields:
     datalayer.enabled:
+      cl_pattern: theme/datalayer
       type: toggle
       label: Data Layer
       help: Adds window.dataLayer and emitToDatalayer() for tag managers, and pushes a "metadata" event on every page.
@@ -18,17 +19,20 @@ form:
         type: bool
 
     datalayer.app:
+      cl_pattern: theme/datalayer
       type: text
       label: App Name
       help: Sent as customData.app. Leave empty to use the site title.
 
     datalayer.env:
+      cl_pattern: theme/datalayer
       type: text
       label: Environment
       help: Sent as customData.app_env so test traffic can be filtered out, for example production, staging or development. Keep the exact value your tag-manager filters expect. Set it per environment in user/env/<host>/config/themes/<theme>.yaml (see system/environments-and-secrets).
       placeholder: production
 
     datalayer.collection_method:
+      cl_pattern: theme/datalayer
       type: text
       label: Collection Method
       help: Optional label sent as customData.collection_method, for example the tag manager's name.

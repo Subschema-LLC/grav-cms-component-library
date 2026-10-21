@@ -5,12 +5,14 @@
 form:
   fields:
     header_hero_actions_section:
+      cl_pattern: page/hero-actions
       type: section
       title: Hero Actions
       text: Up to two buttons under the page heading. Each shows only when both its label and link are set.
       underline: true
 
     header.primary_cta_text:
+      cl_pattern: page/hero-actions
       type: text
       label: Primary Button Label
       help: The main task, such as "Plan a visit".
@@ -18,16 +20,19 @@ form:
         max: 40
 
     header.primary_cta_link:
+      cl_pattern: page/hero-actions
       type: text
       label: Primary Button Link
       help: A site path such as /visit, or a full https:// URL.
 
     header.secondary_cta_text:
+      cl_pattern: page/hero-actions
       type: text
       label: Secondary Button Label
       validate:
         max: 40
 
     header.secondary_cta_link:
+      cl_pattern: page/hero-actions
       type: text
       label: Secondary Button Link

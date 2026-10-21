@@ -5,12 +5,14 @@
 form:
   fields:
     header_map_location_section:
+      cl_pattern: page/map-location
       type: section
       title: Map Location
       text: Give this page coordinates to show it as a linked pin on every Map page, and as a Place in structured data. In most map apps, right-click (or long-press) a spot to copy its latitude and longitude.
       underline: true
 
     header.map_marker.latitude:
+      cl_pattern: page/map-location
       type: text
       label: Latitude
       help: Decimal degrees, for example 44.9812.
@@ -20,6 +22,7 @@ form:
         max: 90
 
     header.map_marker.longitude:
+      cl_pattern: page/map-location
       type: text
       label: Longitude
       help: Decimal degrees, negative for west, for example -93.2689.
@@ -29,11 +32,13 @@ form:
         max: 180
 
     header.map_marker.title:
+      cl_pattern: page/map-location
       type: text
       label: Pin Title
       help: Optional. Defaults to the page's menu title.
 
     header.map_marker.summary:
+      cl_pattern: page/map-location
       type: textarea
       rows: 2
       label: Pin Summary

@@ -1,7 +1,7 @@
 name: Component Library
 slug: component-library
 type: plugin
-version: 1.2.1
+version: 1.3.0
 description: "Tested, reusable blueprint and Twig patterns for Grav themes, pages and plugins. Each pattern records the real problems it solves, and the catalog is machine-readable for AI agents."
 icon: puzzle-piece
 author:
@@ -53,3 +53,45 @@ form:
       help: "Added to icons that were saved without a family class. Grav 2's Admin saves solid Font Awesome icons as a bare 'fa-house', which renders only with a family class such as fa-solid (Font Awesome 6 or 7). Use 'fa' for a theme that loads Font Awesome 4."
       default: fa-solid
       placeholder: fa-solid
+
+    admin2_section:
+      type: section
+      title: Grav 2 Admin
+      text: Show editors and developers where the library's components are used. These have no effect in Grav 1.7's Admin.
+      underline: true
+
+    admin2.field_labels:
+      type: toggle
+      label: Label shared components in forms
+      help: A line under each component's fields in page and theme forms, naming the component and linking to its docs.
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    admin2.page_panel:
+      type: toggle
+      label: Components panel in the page editor
+      help: A Components button in the page editor's toolbar, counting the components with content on the page and listing all of them.
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    admin2.report:
+      type: toggle
+      label: Usage report
+      help: A Component Library report under Tools → Reports showing where every component is used, plus the template checks on the active theme.
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool

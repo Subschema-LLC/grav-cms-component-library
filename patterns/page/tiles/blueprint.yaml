@@ -14,12 +14,14 @@
 form:
   fields:
     header_tiles_section:
+      cl_pattern: page/tiles
       type: section
       title: Tiles
       text: A grid of cards. Drag tiles to reorder them.
       underline: true
 
     header.tiles:
+      cl_pattern: page/tiles
       type: list
       style: vertical
       label: Tiles

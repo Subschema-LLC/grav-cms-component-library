@@ -11,6 +11,7 @@
 form:
   fields:
     authors:
+      cl_pattern: theme/author-registry
       type: list
       style: vertical
       label: Authors

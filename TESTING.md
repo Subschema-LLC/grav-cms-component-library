@@ -4,8 +4,8 @@ Every release is tested on real Grav installs, not just linted.
 
 | Grav | PHP | Twig | Result |
 |---|---|---|---|
-| 2.2.11 | 8.3 | 3 (`twig3_compat: false`) | validate, catalog, 456 render checks, 44 API checks pass |
-| 1.7.53 | 8.3 | 1.x | validate, catalog, 456 render checks pass |
+| 2.2.11 | 8.3 | 3 (`twig3_compat: false`) | validate, catalog, 9 usage checks, 456 render checks, 72 API checks pass |
+| 1.7.53 | 8.3 | 1.x | validate, catalog, 9 usage checks, 456 render checks pass |
 
 ## What runs
 
@@ -33,12 +33,23 @@ Make throwaway installs with `tests/setup-grav.sh` (see
    and list in step, JobPosting and TouristTrip required properties, legacy
    keys, page front matter unable to inject trusted-HTML settings, and more.
 
+5. **Usage checks** (`tests/usage-check.py`): runs
+   `bin/plugin component-library usage --json` on the fixture site and checks
+   which pages have content in which components, the tab each sits on, theme
+   settings, and the templates that include them.
+
 ## Admin2 (API) checks
 
 `tests/api-check.py` reads the fixture blueprints through
 `/api/v1/blueprints/...`, the path Admin2 uses, and checks the imported
 fields, the absence of phantom fields, and the options filled by the plugin's
-and the theme's `data-options@` providers. It needs the API, Login and Form
+and the theme's `data-options@` providers. It also checks what the plugin
+adds to Admin2: the component labels in page and theme forms (position, text,
+none on the theme's own fields), the per-page and site-wide usage endpoints,
+the panel's badge count, the context panel and report registrations, the
+served panel and report scripts, the MCP tool manifest, detection of a theme's
+own copy of a pattern template, and the settings that turn each feature off.
+It needs the API, Login and Form
 plugins, an account with API access and an API key.
 `tests/setup-grav.sh <dir> 2.2.11 --api` sets all of that up and leaves the
 key in `<dir>/cl-api-key.txt`, which `tests/run.sh` picks up; CI does the same

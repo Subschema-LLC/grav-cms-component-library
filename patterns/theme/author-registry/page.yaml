@@ -11,6 +11,7 @@
 form:
   fields:
     header.author:
+      cl_pattern: theme/author-registry
       type: select
       label: Author
       help: Choose from the authors in the theme settings.

@@ -4,7 +4,7 @@
 #
 # 1. builds the fixture site, 2. validates every pattern (spec, blueprints,
 # Twig, lint), 3. checks the generated catalog is current, 4. renders every
-# fixture page and runs tests/check.py, 5. reads the blueprints through the
+# fixture page and runs tests/check.py, 5. checks the usage command, 6. reads the blueprints through the
 # API (tests/api-check.py) when CL_API_KEY is set or tests/setup-grav.sh --api
 # left a key in <grav>/cl-api-key.txt.
 set -euo pipefail
@@ -22,6 +22,9 @@ bin/plugin component-library validate
 
 echo "== catalog"
 bin/plugin component-library catalog --check
+
+echo "== usage"
+bin/plugin component-library usage --json | python3 "$LIB/tests/usage-check.py"
 
 echo "== render"
 php -S "127.0.0.1:${PORT}" system/router.php >"$GRAV_ROOT/logs/cl-test-server.log" 2>&1 &

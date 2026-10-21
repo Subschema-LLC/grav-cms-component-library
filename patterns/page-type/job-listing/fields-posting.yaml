@@ -2,11 +2,13 @@
 form:
   fields:
     header_job_section:
+      cl_pattern: page-type/job-listing
       type: section
       title: Job
       underline: true
 
     header.jobtitle:
+      cl_pattern: page-type/job-listing
       type: text
       label: Job Title
       help: The position's title only, such as "Seasonal Tour Guide". No pay, location or company names here.
@@ -15,6 +17,7 @@ form:
         max: 120
 
     header.jobdescription:
+      cl_pattern: page-type/job-listing
       type: markdown
       label: Description
       help: Duties, qualifications and how to apply. Shown on the page and sent to job search engines.
@@ -22,6 +25,7 @@ form:
         required: true
 
     header.job.employment_type:
+      cl_pattern: page-type/job-listing
       type: select
       label: Employment Type
       multiple: true
@@ -36,21 +40,25 @@ form:
         OTHER: Other
 
     header.job.date_posted:
+      cl_pattern: page-type/job-listing
       type: datetime
       label: Date Posted
       help: Defaults to the page date.
 
     header.job.valid_through:
+      cl_pattern: page-type/job-listing
       type: datetime
       label: Closes On
       help: After this date the posting leaves the job list and the page says the position is closed.
 
     header_job_location_section:
+      cl_pattern: page-type/job-listing
       type: section
       title: Location
       underline: true
 
     header.job.remote:
+      cl_pattern: page-type/job-listing
       type: toggle
       label: Fully Remote
       highlight: 0
@@ -62,23 +70,28 @@ form:
         type: bool
 
     header.job.location.street:
+      cl_pattern: page-type/job-listing
       type: text
       label: Street Address
 
     header.job.location.locality:
+      cl_pattern: page-type/job-listing
       type: text
       label: City or Town
       help: Defaults to the theme's structured-data city.
 
     header.job.location.region:
+      cl_pattern: page-type/job-listing
       type: text
       label: State or Region
 
     header.job.location.postal_code:
+      cl_pattern: page-type/job-listing
       type: text
       label: Postal Code
 
     header.job.location.country:
+      cl_pattern: page-type/job-listing
       type: text
       label: Country Code
       default: US
@@ -86,11 +99,13 @@ form:
         pattern: '^[A-Z]{2}$'
 
     header_job_pay_section:
+      cl_pattern: page-type/job-listing
       type: section
       title: Pay & Applying
       underline: true
 
     header.job.salary.min:
+      cl_pattern: page-type/job-listing
       type: text
       label: Pay From
       validate:
@@ -98,6 +113,7 @@ form:
         min: 0
 
     header.job.salary.max:
+      cl_pattern: page-type/job-listing
       type: text
       label: Pay To
       help: Optional. Leave empty for a single rate.
@@ -106,6 +122,7 @@ form:
         min: 0
 
     header.job.salary.unit:
+      cl_pattern: page-type/job-listing
       type: select
       label: Per
       default: HOUR
@@ -117,6 +134,7 @@ form:
         YEAR: Year
 
     header.job.salary.currency:
+      cl_pattern: page-type/job-listing
       type: text
       label: Currency
       default: USD
@@ -124,6 +142,7 @@ form:
         pattern: '^[A-Z]{3}$'
 
     header.job.apply_url:
+      cl_pattern: page-type/job-listing
       type: text
       label: Apply Link
       help: A page or form where candidates apply, such as /jobs/apply or a full URL.
