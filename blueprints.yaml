@@ -1,7 +1,7 @@
 name: Component Library
 slug: component-library
 type: plugin
-version: 1.0.0
+version: 1.0.1
 description: "Tested, reusable blueprint and Twig patterns for Grav themes, pages and plugins. Each pattern records the real problems it solves, and the catalog is machine-readable for AI agents."
 icon: puzzle-piece
 author:
@@ -38,7 +38,7 @@ form:
     load_css:
       type: toggle
       label: Load the pattern stylesheet
-      help: A small, framework-neutral stylesheet for the cl-* classes. Turn it off when your theme styles the patterns itself.
+      help: "A small, framework-neutral stylesheet that only styles cl-* classes. Turn it off when your theme styles the patterns itself; a theme can also turn it off in its own config with component_library: { load_css: false }."
       highlight: 1
       default: 1
       options:

@@ -56,7 +56,11 @@ class ComponentLibraryPlugin extends Plugin
             return;
         }
 
-        if ($this->config->get('plugins.component-library.load_css', true)) {
+        // A theme that styles the patterns itself can opt out in its own config
+        // (component_library: { load_css: false }), overriding the plugin setting.
+        $themeChoice = $this->config->get('theme.component_library.load_css');
+        $load = $themeChoice !== null ? (bool) $themeChoice : (bool) $this->config->get('plugins.component-library.load_css', true);
+        if ($load) {
             $this->grav['assets']->addCss('plugin://component-library/assets/component-library.css', ['priority' => 5]);
         }
     }

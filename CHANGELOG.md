@@ -1,3 +1,11 @@
+# v1.0.1
+## 10/21/2026
+
+1. [](#bugfix)
+    * The optional stylesheet no longer styles `#map`. On sites with their own map styles it made phone-sized maps taller (a minimum height of 24rem); it now styles only `.cl-*` classes, and the test suite fails on any selector outside them
+2. [](#improved)
+    * A theme can turn the stylesheet off in its own config (`component_library: { load_css: false }`), overriding the plugin setting
+
 # v1.0.0
 ## 10/21/2026
 

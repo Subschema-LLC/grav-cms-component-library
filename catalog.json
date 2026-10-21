@@ -2,7 +2,7 @@
     "name": "Grav CMS Component Library",
     "plugin": {
         "slug": "component-library",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "compatibility": {
             "grav": [
                 "1.7",

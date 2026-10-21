@@ -222,6 +222,19 @@ check("/legacy", count(lg, r'cl-cta-rows__media') == 1, "legacy image toggle res
 check("/legacy", "Legacy keys &lt;b&gt;&amp;&lt;/b&gt; escaping" in lg, "title escaped")
 check("/legacy", "cl-tiles__media" not in lg, "legacy tile image toggle respected")
 
+# The optional stylesheet must only style the library's own classes, because it
+# loads on every page of any site that installs the plugin.
+import os
+css = open(os.path.join(os.path.dirname(__file__), "..", "assets", "component-library.css")).read()
+css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+for sel in re.findall(r"([^{}]+)\{", css):
+    sel = sel.strip()
+    if sel.startswith("@") or not sel:
+        continue
+    for part in sel.split(","):
+        part = part.strip()
+        check("component-library.css", ".cl-" in part, f"selector not scoped to .cl-*: {part}")
+
 print(f"{passes} checks passed, {len(failures)} failed")
 for f in failures:
     print("  FAIL", f)
