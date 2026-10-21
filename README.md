@@ -38,7 +38,8 @@ Every pattern is a folder under `patterns/<level>/<name>/` with a
 `pattern.yaml`, a generated `README.md`, and the files to use.
 
 **1. Import its fields** into a page or theme blueprint. `import@` goes on the
-field that receives them, as a sibling of `type:`:
+field that receives them, as a sibling of `type:`. Several imports on one field
+are placed in reverse order (here CTA rows appear above tiles):
 
 ```yaml
 # user/themes/mytheme/blueprints/default.yaml

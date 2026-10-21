@@ -9,7 +9,7 @@
         {% include 'patterns/theme/datalayer/datalayer.html.twig' %}
         {% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}
     {% endblock %}
-    {% include 'patterns/theme/schema-graph/schema-graph.html.twig' with { page_types: { contact: 'ContactPage', jobs: 'CollectionPage' } } %}
+    {% include 'patterns/theme/schema-graph/schema-graph.html.twig' with { page_types: { contact: 'ContactPage', jobs: 'CollectionPage' }, main_entity: page.template == 'map' ? '#places' : null } %}
     {% block assets deferred %}
         {{ assets.css()|raw }}
         {{ assets.js()|raw }}

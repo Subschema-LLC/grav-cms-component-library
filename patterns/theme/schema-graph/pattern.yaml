@@ -1,6 +1,6 @@
 id: theme/schema-graph
 name: Schema.org graph
-version: 1.1.0
+version: 1.2.0
 level: theme
 touches: [page]
 status: stable
@@ -81,7 +81,8 @@ apply:
     {# in <head> #}
     {% include 'patterns/theme/schema-graph/schema-graph.html.twig' with {
         page_types: { contact: 'ContactPage', blog: 'CollectionPage' },
-        article_templates: ['item', 'blogpost']
+        article_templates: ['item', 'blogpost'],
+        main_entity: page.template == 'map' ? '#places' : null
     } %}
 solves:
   - problem: The JSON-LD partial hard-coded one site's town, region, postal code, coordinates and organization name, so it was wrong on any other site and the address defaults could not be changed without editing Twig.
@@ -99,6 +100,9 @@ solves:
   - problem: Page images in the JSON-LD were relative paths, because media url(true) does not add the host (its argument means "reset").
     fix: url(page.media[file].url, true).
     seen_in: community-guide theme, Schema.org partial
+  - problem: The map page's WebPage pointed at its list of places (mainEntity) only while the list was built inside this partial; moving the list to the map template lost the link.
+    fix: The main_entity parameter sets mainEntity by @id ('#places' is relative to the page URL).
+    seen_in: community-guide theme, moving onto this library
   - problem: The Organization logo URL broke when the logo storage moved.
     fix: Reads theme/site-logo's field, with the legacy picker as fallback.
   - problem: An author override and the author registry disagreed on precedence.

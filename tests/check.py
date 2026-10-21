@@ -175,6 +175,8 @@ check("/map", any(p["url"].endswith("/north-landing") for p in markers) and any(
 check("/map", [p["title"] for p in markers] == sorted([p["title"] for p in markers], key=str.lower), "markers sorted by title")
 il = [d for d in jsonld(m) if d.get("@type") == "ItemList"]
 check("/map", len(il) == 1 and il[0]["numberOfItems"] == len(markers), "ItemList matches the list")
+mg = graph(m) or []
+check("/map", mg and mg[-1].get("mainEntity", {}).get("@id", "").endswith("/map#places") and il and il[0]["@id"] == mg[-1]["mainEntity"]["@id"], "main_entity links the page to its ItemList")
 check("/map", 'data-datalayer-event="map_view"' in m and "mapsjs-core.js" in m, "map events and scripts")
 
 j = pages["/jobs"]

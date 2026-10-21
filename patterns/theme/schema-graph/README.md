@@ -1,7 +1,7 @@
 <!-- Generated from pattern.yaml by `bin/plugin component-library catalog`. Edit pattern.yaml, not this file. -->
 # Schema.org graph
 
-`theme/schema-graph` · v1.1.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
+`theme/schema-graph` · v1.2.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
 
 One linked JSON-LD @graph per page (Organization, WebSite, BreadcrumbList, the page, plus BlogPosting and Place when they apply), with site-wide defaults in the theme and a per-page Schema.org tab.
 
@@ -48,7 +48,8 @@ schema:
 {# in <head> #}
 {% include 'patterns/theme/schema-graph/schema-graph.html.twig' with {
     page_types: { contact: 'ContactPage', blog: 'CollectionPage' },
-    article_templates: ['item', 'blogpost']
+    article_templates: ['item', 'blogpost'],
+    main_entity: page.template == 'map' ? '#places' : null
 } %}
 ```
 
@@ -83,6 +84,7 @@ Scope: `theme`
 | Values were printed into JSON by hand inside a script tag, so a "&lt;/script&gt;" in any field could end the tag early. | The whole graph is built as a Twig hash and printed once with json_encode(321), which includes JSON_HEX_TAG. | Gantry schema particle (fixed in the community-guide rewrite) |
 | The Map page's ItemList listed only the extra markers, not the pages carrying a Map Location, so structured data disagreed with the visible list. | The map page type outputs its own ItemList from the same list it renders (page-type/map-page); this graph links to it by | community-guide theme, map page |
 | Page images in the JSON-LD were relative paths, because media url(true) does not add the host (its argument means "reset"). | url(page.media[file].url, true). | community-guide theme, Schema.org partial |
+| The map page's WebPage pointed at its list of places (mainEntity) only while the list was built inside this partial; moving the list to the map template lost the link. | The main_entity parameter sets mainEntity by @id ('#places' is relative to the page URL). | community-guide theme, moving onto this library |
 | The Organization logo URL broke when the logo storage moved. | Reads theme/site-logo's field, with the legacy picker as fallback. |  |
 | An author override and the author registry disagreed on precedence. | schema.author_name, then the registry entry for page.header.author, then site.author.name. |  |
 

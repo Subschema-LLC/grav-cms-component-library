@@ -60,8 +60,12 @@ This file tells an agent how to choose, apply and verify them.
        type: page/cta-rows/blueprint
        context: 'plugin://component-library/patterns'
    ```
-   Several imports on one field use `import@1`, `import@2`. Imported fields
-   come before the field's own `fields:`.
+   Several imports on one field use `import@1`, `import@2` and are placed in
+   **reverse key order**: the highest number appears first, and all of them
+   before the field's own `fields:`. Number imports from the bottom of the
+   form up. A field in `fields:` with the same name as an imported one
+   overrides its properties in place (label, help, extra options), and
+   `unset@: true` removes it.
 2. **Keep existing header keys.** Sites already store `info_cta_section`,
    `tiles`, `quick_actions`, `map_marker`, `schema.*`. Never rename stored keys
    while applying a pattern; `legacy_keys` lists what the templates still read.

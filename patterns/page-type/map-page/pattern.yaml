@@ -1,6 +1,6 @@
 id: page-type/map-page
 name: Map page
-version: 1.0.0
+version: 1.1.0
 level: page-type
 touches: [page]
 status: stable
@@ -46,6 +46,8 @@ apply:
     #    adjust its extends/blocks to your base template.
     # 4. In the base template's javascripts block (theme/map-here):
     {% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}
+    # 5. Point the page entity at the ItemList (theme/schema-graph):
+    {% include 'patterns/theme/schema-graph/schema-graph.html.twig' with { main_entity: page.template == 'map' ? '#places' : null } %}
 classes:
   markup: [cl-map-page, cl-map-page__map, cl-map-page__places, cl-map-page__heading, cl-map-page__list, cl-map-page__place, cl-map-page__place-text, cl-map-page__place-link, cl-map-page__place-name, cl-map-page__place-summary, cl-map-page__locate]
   slots: [root, map, heading, list, item, button]

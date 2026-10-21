@@ -2,7 +2,7 @@
     "name": "Grav CMS Component Library",
     "plugin": {
         "slug": "component-library",
-        "version": "1.1.0",
+        "version": "1.2.0",
         "compatibility": {
             "grav": [
                 "1.7",
@@ -317,7 +317,7 @@
         {
             "id": "page-type/map-page",
             "name": "Map page",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "level": "page-type",
             "touches": [
                 "page"
@@ -381,7 +381,7 @@
             "include": "patterns/page-type/map-page/map-page.html.twig",
             "apply": {
                 "blueprint": "# 1. Copy page-blueprint.yaml to user/themes/<theme>/blueprints/map.yaml\n# 2. Add page/map-location to the default page blueprint so places can be pinned.\n",
-                "template": "# 3. Copy map.html.twig to user/themes/<theme>/templates/map.html.twig and\n#    adjust its extends/blocks to your base template.\n# 4. In the base template's javascripts block (theme/map-here):\n{% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}\n"
+                "template": "# 3. Copy map.html.twig to user/themes/<theme>/templates/map.html.twig and\n#    adjust its extends/blocks to your base template.\n# 4. In the base template's javascripts block (theme/map-here):\n{% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}\n# 5. Point the page entity at the ItemList (theme/schema-graph):\n{% include 'patterns/theme/schema-graph/schema-graph.html.twig' with { main_entity: page.template == 'map' ? '#places' : null } %}\n"
             },
             "classes": {
                 "markup": [
@@ -2544,7 +2544,7 @@
         {
             "id": "theme/schema-graph",
             "name": "Schema.org graph",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "level": "theme",
             "touches": [
                 "page"
@@ -2649,7 +2649,7 @@
             "include": "patterns/theme/schema-graph/schema-graph.html.twig",
             "apply": {
                 "blueprint": "# theme blueprints.yaml\nschema_section:\n  type: section\n  title: Structured Data\n  underline: true\n  import@:\n    type: theme/schema-graph/blueprint\n    context: 'plugin://component-library/patterns'\n\n# page blueprint: its own tab\nschema:\n  type: tab\n  title: Schema.org\n  import@:\n    type: theme/schema-graph/page\n    context: 'plugin://component-library/patterns'\n",
-                "template": "{# in <head> #}\n{% include 'patterns/theme/schema-graph/schema-graph.html.twig' with {\n    page_types: { contact: 'ContactPage', blog: 'CollectionPage' },\n    article_templates: ['item', 'blogpost']\n} %}\n"
+                "template": "{# in <head> #}\n{% include 'patterns/theme/schema-graph/schema-graph.html.twig' with {\n    page_types: { contact: 'ContactPage', blog: 'CollectionPage' },\n    article_templates: ['item', 'blogpost'],\n    main_entity: page.template == 'map' ? '#places' : null\n} %}\n"
             },
             "classes": null,
             "solves": [
@@ -2677,6 +2677,11 @@
                     "problem": "Page images in the JSON-LD were relative paths, because media url(true) does not add the host (its argument means \"reset\").",
                     "fix": "url(page.media[file].url, true).",
                     "seen_in": "community-guide theme, Schema.org partial"
+                },
+                {
+                    "problem": "The map page's WebPage pointed at its list of places (mainEntity) only while the list was built inside this partial; moving the list to the map template lost the link.",
+                    "fix": "The main_entity parameter sets mainEntity by @id ('#places' is relative to the page URL).",
+                    "seen_in": "community-guide theme, moving onto this library"
                 },
                 {
                     "problem": "The Organization logo URL broke when the logo storage moved.",

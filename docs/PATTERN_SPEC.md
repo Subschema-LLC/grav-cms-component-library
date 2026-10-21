@@ -55,20 +55,24 @@ fragment and a page fragment). `level` is where it starts; `touches` lists the r
 
 1. `import@` sits on the receiving field, as a sibling of `type:`. Never inside
    its `fields:` list (that yields a phantom text field named `fields`).
-2. Use `context: 'plugin://component-library/patterns'` when the plugin is
+2. Several imports on one field (`import@1`, `import@2`, ...) are placed in
+   reverse key order, highest number first, before the field's own
+   `fields:`. Same-named fields in `fields:` override imported properties in
+   place; `unset@: true` removes an imported field.
+3. Use `context: 'plugin://component-library/patterns'` when the plugin is
    installed. When copying a fragment into a theme, move it to
    `theme://blueprints/partials/` and change `context` to `theme://blueprints`.
-3. Header keys keep their established names. A rename needs a `legacy_keys`
+4. Header keys keep their established names. A rename needs a `legacy_keys`
    entry and a template fallback.
-4. Prose fields use `type: markdown` (Admin2 gives it the full editor, and
+5. Prose fields use `type: markdown` (Admin2 gives it the full editor, and
    Editor Pro when installed). `editor` is for code.
-5. Images on a page use `filepicker` (works in both Admins). Site-wide uploads
+6. Images on a page use `filepicker` (works in both Admins). Site-wide uploads
    use `file` with `destination: 'user://assets/<pattern>'`, never `theme://`,
    which a theme update replaces.
-6. Toggles store booleans: `validate: { type: bool }` with `1`/`0` options.
-7. Option lists that come from data (authors, pages) use `data-options@` with a
+7. Toggles store booleans: `validate: { type: bool }` with `1`/`0` options.
+8. Option lists that come from data (authors, pages) use `data-options@` with a
    registered provider, never a hard-coded copy of the data.
-8. Every coordinate, count and length field has `validate` limits.
+9. Every coordinate, count and length field has `validate` limits.
 
 **Templates**
 

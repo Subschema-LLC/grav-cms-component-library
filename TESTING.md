@@ -4,8 +4,8 @@ Every release is tested on real Grav installs, not just linted.
 
 | Grav | PHP | Twig | Result |
 |---|---|---|---|
-| 2.2.11 | 8.3 | 3 (`twig3_compat: false`) | validate, catalog, 430 render checks, 43 API checks pass |
-| 1.7.53 | 8.3 | 1.x | validate, catalog, 430 render checks pass |
+| 2.2.11 | 8.3 | 3 (`twig3_compat: false`) | validate, catalog, 431 render checks, 44 API checks pass |
+| 1.7.53 | 8.3 | 1.x | validate, catalog, 431 render checks pass |
 
 ## What runs
 

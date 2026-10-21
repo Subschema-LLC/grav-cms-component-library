@@ -12,7 +12,7 @@
 | [Footer columns](../patterns/theme/footer-columns/README.md)<br>`theme/footer-columns` | Footer link columns where each column owns its heading and links, plus an optional trusted-HTML embed column, social links and a note line with {year}. | 6 |
 | [Head and body-end scripts](../patterns/theme/head-scripts/README.md)<br>`theme/head-scripts` | Two trusted-HTML theme settings for vendor snippets (analytics, tag managers, chat widgets), rendered in the right place, with a per-page off switch. | 4 |
 | [HERE map with conditional loading](../patterns/theme/map-here/README.md)<br>`theme/map-here` | HERE Maps settings in the theme, a loader that adds the map scripts only on pages that show a map, and a map script that reads its settings from JSON and supports linked markers. | 6 |
-| [Schema.org graph](../patterns/theme/schema-graph/README.md)<br>`theme/schema-graph` | One linked JSON-LD @graph per page (Organization, WebSite, BreadcrumbList, the page, plus BlogPosting and Place when they apply), with site-wide defaults in the theme and a per-page Schema.org tab. | 7 |
+| [Schema.org graph](../patterns/theme/schema-graph/README.md)<br>`theme/schema-graph` | One linked JSON-LD @graph per page (Organization, WebSite, BreadcrumbList, the page, plus BlogPosting and Place when they apply), with site-wide defaults in the theme and a per-page Schema.org tab. | 8 |
 | [Site logo](../patterns/theme/site-logo/README.md)<br>`theme/site-logo` | One upload field for the site logo, stored outside the theme folder, with a home-link partial and a URL helper shared with Schema.org output. | 5 |
 
 ## Page level

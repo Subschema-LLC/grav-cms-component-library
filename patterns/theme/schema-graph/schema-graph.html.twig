@@ -4,7 +4,8 @@
     In the theme's <head>:
         {% include 'patterns/theme/schema-graph/schema-graph.html.twig' with {
             page_types: { contact: 'ContactPage', blog: 'CollectionPage' },   -- template => @type
-            article_templates: ['item', 'blogpost']                            -- templates that get a BlogPosting
+            article_templates: ['item', 'blogpost'],                           -- templates that get a BlogPosting
+            main_entity: '#places'                                             -- optional: the page's main entity, by @id
         } %}
 
     Outputs one <script type="application/ld+json"> with a linked @graph:
@@ -206,6 +207,12 @@
     {% endif %}
     {% if not is_article %}{% set webpage = webpage|merge({ 'mainEntity': { '@id': page_url ~ '#place' } }) %}{% endif %}
     {% set graph = graph|merge([place]) %}
+{% endif %}
+
+{# The page's main entity when the template knows it (for example a map page's
+   ItemList, '#places', output by page-type/map-page). '#...' is relative to the page URL. #}
+{% if main_entity is defined and main_entity %}
+    {% set webpage = webpage|merge({ 'mainEntity': { '@id': main_entity starts with '#' ? page_url ~ main_entity : main_entity } }) %}
 {% endif %}
 
 {# 7. Custom JSON from the page #}

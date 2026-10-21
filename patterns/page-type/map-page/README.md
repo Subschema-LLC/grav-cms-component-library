@@ -1,7 +1,7 @@
 <!-- Generated from pattern.yaml by `bin/plugin component-library catalog`. Edit pattern.yaml, not this file. -->
 # Map page
 
-`page-type/map-page` · v1.0.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
+`page-type/map-page` · v1.1.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
 
 A page type that pins every page with a Map Location plus optional extra pins, lists the same places under the map with "Show on map" buttons, and outputs them as a Schema.org ItemList.
 
@@ -37,6 +37,8 @@ A page type that pins every page with a Map Location plus optional extra pins, l
 #    adjust its extends/blocks to your base template.
 # 4. In the base template's javascripts block (theme/map-here):
 {% include 'patterns/theme/map-here/map-here.html.twig' with { map_templates: ['map'] } %}
+# 5. Point the page entity at the ItemList (theme/schema-graph):
+{% include 'patterns/theme/schema-graph/schema-graph.html.twig' with { main_entity: page.template == 'map' ? '#places' : null } %}
 ```
 
 ## Stored data

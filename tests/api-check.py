@@ -69,6 +69,14 @@ for path, expected in EXPECT.items():
     else:
         passes += 1
     if path == "/blueprints/pages/default":
+        # Grav places several import@ on one field in reverse key order (documented in AGENTS.md).
+        blocks = next((f for f in fetch(path)["fields"][0]["fields"] if f.get("name") == "blocks"), {})
+        order = [f.get("name") for f in blocks.get("fields", []) if f.get("type") == "section"]
+        expected = ["header_cta_rows_section", "header_tiles_section", "header_quick_actions_section", "header_hero_actions_section"]
+        if order == expected:
+            passes += 1
+        else:
+            failures.append(f"{path}: import@ order changed: {order}")
         opts = [o.get("value") for o in (found.get("header.author", {}).get("options") or [])]
         if opts == ["", "jd", "rk"]:
             passes += 1

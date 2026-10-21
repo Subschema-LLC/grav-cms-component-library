@@ -1,3 +1,11 @@
+# v1.2.0
+## 10/21/2026
+
+1. [](#new)
+    * `theme/schema-graph`: `main_entity` parameter points the page entity at another entity by `@id` (for example a map page's `#places` ItemList)
+2. [](#improved)
+    * Documented that several `import@` on one field are placed in reverse key order, and that same-named fields override imported ones in place; the API checks now assert the order
+
 # v1.1.0
 ## 10/21/2026
 
