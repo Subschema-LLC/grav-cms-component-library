@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/Subschema-LLC/grav-cms-component-library/security/advisories/new
+    about: Private report to the maintainers. Please don't open a public issue.
+  - name: General Grav questions
+    url: https://getgrav.org/forum
+    about: Questions about Grav itself, Admin2 or other plugins.

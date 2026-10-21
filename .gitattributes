@@ -1,4 +1,9 @@
+* text=auto eol=lf
+*.jpg binary
+*.png binary
+
 # Keep release archives (GPM) to what a site needs.
 /tests export-ignore
 /.github export-ignore
+/.editorconfig export-ignore
 /CLAUDE.md export-ignore
