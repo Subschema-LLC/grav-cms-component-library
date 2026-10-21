@@ -12,10 +12,12 @@ form:
           title: Section
           fields:
             header.section_heading:
+              cl_pattern: page-type/modular-page
               type: text
               label: Section Heading
               help: Defaults to the module's title.
             header.hide_heading:
+              cl_pattern: page-type/modular-page
               type: toggle
               label: Hide the Heading
               highlight: 0

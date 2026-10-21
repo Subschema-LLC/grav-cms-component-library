@@ -6,6 +6,7 @@
 form:
   fields:
     header.map_enabled:
+      cl_pattern: theme/map-here
       type: toggle
       toggleable: true
       label: Load Map Scripts

@@ -1,3 +1,16 @@
+# v1.3.0
+## 10/21/2026
+
+1. [](#new)
+    * See where components are used in Grav 2's Admin: a line under each component's fields in page and theme forms names it, its version, and whether the theme renders it with its own template
+    * A Components button in the page editor's toolbar shows how many components have content on the page and opens a panel listing every component the page's template offers: filled in or not, which tab, how the theme renders it, and its docs
+    * A Component Library report under Tools → Reports: for every component in use, the page types and theme settings that include its fields, the pages with content in it (linked to their editor), the theme templates that include it and the copies the theme keeps of its templates, plus the template checks on the active theme
+    * `bin/plugin component-library usage` (`--page=/route`, `--json`) prints the same data, on Grav 1.7 too, and `mcp.yaml` adds `component_library_usage` and `component_library_page_components` tools for the Grav MCP server
+    * Settings to turn off the labels, the panel or the report
+2. [](#improved)
+    * Every fragment field carries `cl_pattern: <id>`, so usage is traced through Grav's import@ and extends@; `validate` requires it. Fragments copied into a theme before this release need the tags added to be counted
+    * `tests/run.sh` also checks the usage command, and the API checks cover the Admin2 additions
+
 # v1.2.1
 ## 10/21/2026
 

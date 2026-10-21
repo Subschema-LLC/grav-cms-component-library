@@ -6,11 +6,13 @@
 form:
   fields:
     header_page_heading_section:
+      cl_pattern: page/page-heading
       type: section
       title: Heading & Titles
       underline: true
 
     header.seo_page_title:
+      cl_pattern: page/page-heading
       type: text
       label: SEO Title
       help: The browser-tab and search-result title. Defaults to the page title. Around 60 characters shows in full in search results.
@@ -18,16 +20,19 @@ form:
         max: 120
 
     header.page_name:
+      cl_pattern: page/page-heading
       type: text
       label: Visible Heading (H1)
       help: The large heading on the page. Defaults to the page title.
 
     header.page_name_subtitle:
+      cl_pattern: page/page-heading
       type: text
       label: Subtitle
       help: A short line under the heading. It is not a heading itself, so screen readers do not treat it as a new section.
 
     header.page_byline:
+      cl_pattern: page/page-heading
       type: textarea
       label: Byline
       help: One supporting sentence under the subtitle.

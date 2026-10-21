@@ -1,3 +1,7 @@
 enabled: true
 load_css: true
 icon_base_class: fa-solid
+admin2:
+  field_labels: true
+  page_panel: true
+  report: true

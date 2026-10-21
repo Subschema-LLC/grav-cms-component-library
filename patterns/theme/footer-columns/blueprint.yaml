@@ -10,6 +10,7 @@
 form:
   fields:
     footer_columns:
+      cl_pattern: theme/footer-columns
       type: list
       style: vertical
       label: Footer Columns
@@ -47,12 +48,14 @@ form:
                 _blank: New tab
 
     footer_embed:
+      cl_pattern: theme/footer-columns
       type: textarea
       label: Embed Column (trusted HTML)
       help: Shown as the last column, exactly as pasted, on every page; for example a newsletter sign-up form. Anyone who can edit theme settings can add scripts here.
       rows: 6
 
     footer_note:
+      cl_pattern: theme/footer-columns
       type: text
       label: Footer Note
       help: "The line under the columns. {year} becomes the current year and {site} the site title."
