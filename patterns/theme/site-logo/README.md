@@ -1,7 +1,7 @@
 <!-- Generated from pattern.yaml by `bin/plugin component-library catalog`. Edit pattern.yaml, not this file. -->
 # Site logo
 
-`theme/site-logo` · v1.0.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
+`theme/site-logo` · v1.0.1 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
 
 One upload field for the site logo, stored outside the theme folder, with a home-link partial and a URL helper shared with Schema.org output.
 
@@ -55,7 +55,7 @@ Scope: `theme`
 
 ## Older keys
 
-- `picked_site_logo_image`: Read when site_logo is empty, from theme://assets/images/global/&lt;file&gt;. Upload the logo again with the new field to move it out of the theme folder, then clear the old value.
+- `picked_site_logo_image`: Used first when set and the file exists (it is the editor's choice among the uploads in site_logo), from theme://assets/images/global/&lt;file&gt;; otherwise site_logo is used. To move the logo out of the theme folder, upload it with the new field and clear the old value.
 
 ## Markup classes
 

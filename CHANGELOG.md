@@ -1,3 +1,11 @@
+# v1.2.1
+## 10/21/2026
+
+1. [](#bugfix)
+    * `theme/site-logo` and `theme/schema-graph`: when both `picked_site_logo_image` and `site_logo` are set, the picked logo is used. On sites that keep several uploads in `site_logo`, the picker value is the editor's choice; before, the first upload was shown instead. If the picked file no longer exists, the upload is used
+2. [](#improved)
+    * `theme/schema-graph`: the WebSite node carries the site description, and the page name falls back to the header title before the page title
+
 # v1.2.0
 ## 10/21/2026
 

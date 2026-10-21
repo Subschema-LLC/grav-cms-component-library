@@ -1,7 +1,7 @@
 name: Component Library
 slug: component-library
 type: plugin
-version: 1.2.0
+version: 1.2.1
 description: "Tested, reusable blueprint and Twig patterns for Grav themes, pages and plugins. Each pattern records the real problems it solves, and the catalog is machine-readable for AI agents."
 icon: puzzle-piece
 author:

@@ -148,4 +148,27 @@ page_scripts: '<script>/*PAGE-SCRIPTS*/</script>'
 No tracking, no structured data.
 EOF
 
+# Both logo keys set (logo-test.html.twig copies them into theme config): the
+# legacy picker value is the editor's choice among the uploads and wins.
+page 19.logo logo-test.md - <<'EOF2'
+---
+title: Logo Precedence
+site_logo:
+  user/themes/cl-test/images/uploaded-logo.png: { name: uploaded-logo.png, path: user/themes/cl-test/images/uploaded-logo.png, type: image/png, size: 1 }
+picked_site_logo_image: picked-logo.png
+---
+Both logo values are set.
+EOF2
+
+# The picked file is gone: the upload is used.
+page 20.logo-missing logo-test.md - <<'EOF2'
+---
+title: Picked Logo Missing
+site_logo:
+  user/themes/cl-test/images/uploaded-logo.png: { name: uploaded-logo.png, path: user/themes/cl-test/images/uploaded-logo.png, type: image/png, size: 1 }
+picked_site_logo_image: deleted-logo.png
+---
+The picked logo file does not exist.
+EOF2
+
 echo "Fixture site built in $GRAV_ROOT/user"

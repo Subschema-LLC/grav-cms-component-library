@@ -1,7 +1,7 @@
 <!-- Generated from pattern.yaml by `bin/plugin component-library catalog`. Edit pattern.yaml, not this file. -->
 # Schema.org graph
 
-`theme/schema-graph` · v1.2.0 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
+`theme/schema-graph` · v1.2.1 · stable · Grav 1.7, 2.0 (tested on 2.2.11, 1.7.53)
 
 One linked JSON-LD @graph per page (Organization, WebSite, BreadcrumbList, the page, plus BlogPosting and Place when they apply), with site-wide defaults in the theme and a per-page Schema.org tab.
 

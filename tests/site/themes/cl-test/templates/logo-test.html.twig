@@ -1,0 +1,8 @@
+{#
+    Fixture only. schema-graph reads the logo from theme config, not page
+    front matter, so this template copies both logo keys from the page header
+    into theme config for this request, to test which one wins.
+#}
+{% do grav.config.set('theme.site_logo', page.header.site_logo) %}
+{% do grav.config.set('theme.picked_site_logo_image', page.header.picked_site_logo_image) %}
+{% extends 'default.html.twig' %}

@@ -1,6 +1,6 @@
 id: theme/site-logo
 name: Site logo
-version: 1.0.0
+version: 1.0.1
 level: theme
 status: stable
 summary: One upload field for the site logo, stored outside the theme folder, with a home-link partial and a URL helper shared with Schema.org output.
@@ -22,7 +22,7 @@ data:
     site_logo_width: { type: int }
 legacy_keys:
   - key: picked_site_logo_image
-    handling: Read when site_logo is empty, from theme://assets/images/global/<file>. Upload the logo again with the new field to move it out of the theme folder, then clear the old value.
+    handling: Used first when set and the file exists (it is the editor's choice among the uploads in site_logo), from theme://assets/images/global/<file>; otherwise site_logo is used. To move the logo out of the theme folder, upload it with the new field and clear the old value.
 files:
   blueprint: blueprint.yaml
   template: site-logo.html.twig

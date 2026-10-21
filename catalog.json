@@ -2,7 +2,7 @@
     "name": "Grav CMS Component Library",
     "plugin": {
         "slug": "component-library",
-        "version": "1.2.0",
+        "version": "1.2.1",
         "compatibility": {
             "grav": [
                 "1.7",
@@ -2544,7 +2544,7 @@
         {
             "id": "theme/schema-graph",
             "name": "Schema.org graph",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "level": "theme",
             "touches": [
                 "page"
@@ -2711,7 +2711,7 @@
         {
             "id": "theme/site-logo",
             "name": "Site logo",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "level": "theme",
             "touches": [],
             "status": "stable",
@@ -2756,7 +2756,7 @@
             "legacy_keys": [
                 {
                     "key": "picked_site_logo_image",
-                    "handling": "Read when site_logo is empty, from theme://assets/images/global/<file>. Upload the logo again with the new field to move it out of the theme folder, then clear the old value."
+                    "handling": "Used first when set and the file exists (it is the editor's choice among the uploads in site_logo), from theme://assets/images/global/<file>; otherwise site_logo is used. To move the logo out of the theme folder, upload it with the new field and clear the old value."
                 }
             ],
             "import": {

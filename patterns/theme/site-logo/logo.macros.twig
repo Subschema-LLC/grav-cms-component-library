@@ -3,17 +3,21 @@
     {% import 'patterns/theme/site-logo/logo.macros.twig' as logo %}
 
     src(absolute): the logo URL, or an empty string when none is set.
-      1. site_logo      (file field; value is a map of path => {name, path, type, size})
-      2. picked_site_logo_image  (legacy filepicker value in theme://assets/images/global)
+      1. picked_site_logo_image  (legacy filepicker value in theme://assets/images/global),
+         because on sites that have it, it is the editor's choice among several uploads
+      2. site_logo      (file field; value is a map of path => {name, path, type, size})
 #}
 {% macro src(absolute) -%}
     {%- set value = theme_var('site_logo') -%}
     {%- set file = value is iterable ? value|first : null -%}
     {%- set path = file is iterable ? file.path|default('') : (value is not iterable ? value|default('') : '') -%}
-    {%- if path is not empty -%}
+    {#- A legacy picker value is the editor's explicit choice among uploaded logos, so it wins.
+        url() returns false when that file is gone, and then the upload is used. -#}
+    {%- set picked = theme_var('picked_site_logo_image') ? url('theme://assets/images/global/' ~ theme_var('picked_site_logo_image'), absolute|default(false)) : '' -%}
+    {%- if picked -%}
+        {{- picked|e -}}
+    {%- elseif path is not empty -%}
         {{- url(path, absolute|default(false))|e -}}
-    {%- elseif theme_var('picked_site_logo_image') -%}
-        {{- url('theme://assets/images/global/' ~ theme_var('picked_site_logo_image'), absolute|default(false))|e -}}
     {%- endif -%}
 {%- endmacro %}
 

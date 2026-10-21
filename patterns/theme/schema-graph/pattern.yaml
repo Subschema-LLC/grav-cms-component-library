@@ -1,6 +1,6 @@
 id: theme/schema-graph
 name: Schema.org graph
-version: 1.2.0
+version: 1.2.1
 level: theme
 touches: [page]
 status: stable

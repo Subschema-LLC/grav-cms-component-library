@@ -69,7 +69,7 @@ def common(route, html, status):
 pages = {}
 for route in ["/", "/cta-rows", "/tiles", "/quick-actions", "/page-heading", "/header-image", "/hero-actions",
               "/north-landing", "/boat-launch", "/embeds", "/map", "/jobs", "/jobs/seasonal-tour-guide",
-              "/jobs/closed-position", "/tour", "/landing", "/legacy", "/legacy-tour", "/legacy-jobs", "/quiet"]:
+              "/jobs/closed-position", "/tour", "/landing", "/legacy", "/legacy-tour", "/legacy-jobs", "/quiet", "/logo", "/logo-missing"]:
     status, html = get(route)
     pages[route] = html
     common(route, html, status)
@@ -98,6 +98,7 @@ if g:
     check("/", types[:3] == ["NGO", "WebSite", "BreadcrumbList"], f"graph starts with publisher, site, breadcrumbs: {types}")
     webpage = g[-1]
     check("/", webpage.get("about", {}).get("name") == "The River Valley", "home page about Place")
+    check("/", g[1].get("description") == "Fixture site for the Grav CMS Component Library.", "WebSite carries the site description")
 check("/", "cl-author" in h and "Jane Doe" in h and 'rel="author"' in h, "author card for author: jd")
 check("/", 'aria-label="example.org"' not in h and 'aria-label="Jane Doe on example.org"' in h, "social link label fallback names the host")
 check("/", count(h, r'<h1\b') == 1, "exactly one h1")
@@ -108,6 +109,15 @@ check("/quiet", "/*HEAD-TAG*/" not in q and "/*BODY-END*/" not in q, "head_scrip
 check("/quiet", "application/ld+json" not in q, "schema.enabled false removes structured data")
 check("/quiet", "/*PAGE-SCRIPTS*/" in q, "page_scripts render before </body>")
 check("/quiet", "mapsjs-core.js" not in q, "no map scripts on a page without a map")
+
+lg = pages["/logo"]
+check("/logo", "assets/images/global/picked-logo.png" in lg and "uploaded-logo.png" not in lg, "picked_site_logo_image wins over site_logo")
+lgo = (graph(lg) or [{}])[0].get("logo", {}).get("url", "")
+check("/logo", lgo.startswith("http") and lgo.endswith("/assets/images/global/picked-logo.png"), f"schema logo uses the picked logo, absolute: {lgo}")
+lm = pages["/logo-missing"]
+check("/logo-missing", "uploaded-logo.png" in lm and "deleted-logo.png" not in lm, "a missing picked file falls back to site_logo")
+lmo = (graph(lm) or [{}])[0].get("logo", {}).get("url", "")
+check("/logo-missing", lmo.startswith("http") and lmo.endswith("/images/uploaded-logo.png"), f"schema logo falls back to the upload: {lmo}")
 
 # Page level ------------------------------------------------------------------
 c = pages["/cta-rows"]

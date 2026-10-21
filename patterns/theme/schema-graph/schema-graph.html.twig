@@ -31,7 +31,7 @@
 {% set site_url = (base_url_absolute|default(page_url|split('/')|slice(0, 3)|join('/')))|trim('/', 'right') %}
 {% set page_lang = grav.language.getActive ?: grav.config.get('site.default_lang')|default('en') %}
 
-{% set page_title = schema_config.name|default(page.header.seo_page_title|default(page.title)) %}
+{% set page_title = schema_config.name|default(page.header.seo_page_title|default(page.header.title|default(page.title))) %}
 {% set page_desc = schema_config.description|default(page.header.metadata.description|default(page.summary|striptags|trim|default(site_desc))) %}
 
 {# Primary image: schema override, preview image, then header image. #}
@@ -70,7 +70,10 @@
 {% set logo_file = logo_value is iterable ? logo_value|first : null %}
 {% set logo_path = logo_file is iterable ? logo_file.path|default('') : '' %}
 {% set legacy_logo = grav.config.get('theme.picked_site_logo_image') %}
-{% set logo_url = logo_path is not empty ? url(logo_path, true) : (legacy_logo ? url('theme://assets/images/global/' ~ legacy_logo, true) : '') %}
+{# A legacy picker value is the editor's explicit choice among uploaded logos, so it wins.
+   url() returns false when that file is gone, and then the upload is used. #}
+{% set legacy_url = legacy_logo ? url('theme://assets/images/global/' ~ legacy_logo, true) : '' %}
+{% set logo_url = legacy_url ?: (logo_path is not empty ? url(logo_path, true) : '') %}
 {% if logo_url and org_node['@type'] != 'Person' %}
     {% set org_node = org_node|merge({ 'logo': { '@type': 'ImageObject', 'url': logo_url } }) %}
 {% endif %}
@@ -80,14 +83,16 @@
 {% set graph = graph|merge([org_node]) %}
 
 {# 2. WebSite #}
-{% set graph = graph|merge([{
+{% set website = {
     '@type': 'WebSite',
     '@id': site_url ~ '/#website',
     'url': site_url ~ '/',
     'name': site_title,
     'inLanguage': page_lang,
     'publisher': { '@id': org_id }
-}]) %}
+} %}
+{% if site_desc %}{% set website = website|merge({ 'description': site_desc }) %}{% endif %}
+{% set graph = graph|merge([website]) %}
 
 {# 3. BreadcrumbList: home, routable ancestors, this page #}
 {% set crumbs = [{ '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': site_url ~ '/' }] %}
