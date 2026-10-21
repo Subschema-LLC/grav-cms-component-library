@@ -36,7 +36,7 @@ You need git, PHP 8.3 (with gd, zip, mbstring, curl, xml and intl), Composer,
 Python 3 and curl. No Python packages are needed.
 
 ```bash
-git clone https://github.com/<you>/grav-cms-component-library
+git clone https://github.com/<you>/grav-cms-component-library   # your fork
 cd grav-cms-component-library
 
 # Throwaway Grav installs next to the repo, the same way CI makes them.
@@ -110,6 +110,9 @@ writing one, check whether composing existing patterns already covers it.
 
 ## Pull requests
 
+Open pull requests against `development`, the default branch. `main` holds
+released versions and only receives merges from `development`.
+
 - One change per pull request, with a description of the problem it solves.
   Link the issue if there is one.
 - Say which Grav versions you ran the tests on. For blueprint changes, a
@@ -133,6 +136,6 @@ rest of the library.
 
 1. Update `version` in `blueprints.yaml`, the result table in `TESTING.md` if
    the counts changed, and add a `CHANGELOG.md` entry in Grav's format.
-2. Merge to `main` and wait for CI.
-3. Tag and publish:
+2. Merge `development` into `main` and wait for CI.
+3. Tag `main` and publish:
    `gh release create vX.Y.Z --title vX.Y.Z --notes "<changelog entry>"`.

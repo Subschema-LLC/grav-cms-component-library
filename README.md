@@ -27,10 +27,11 @@ apply patterns the same way.
 As a plugin (recommended), from your Grav root:
 
 ```bash
-git clone https://github.com/Subschema-LLC/grav-cms-component-library user/plugins/component-library
+git clone --branch main https://github.com/Subschema-LLC/grav-cms-component-library user/plugins/component-library
 bin/grav clearcache
 ```
 
+`main` holds released versions; `development` is where changes land first.
 The folder must be named `component-library`. The plugin adds the library to
 Twig's template paths (after your theme, so your theme can override any
 partial), registers the option providers some blueprints use, and loads an
