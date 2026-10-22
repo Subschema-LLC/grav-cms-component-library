@@ -42,6 +42,15 @@ optional stylesheet you can switch off in its settings.
 Every pattern is a folder under `patterns/<level>/<name>/` with a
 `pattern.yaml`, a generated `README.md`, and the files to use.
 
+**0. Find and inspect a pattern** from the command line (or in [docs/CATALOG.md](docs/CATALOG.md)):
+
+```bash
+bin/plugin component-library show                  # list all 26 patterns by level
+bin/plugin component-library show --search=map     # search by keyword
+bin/plugin component-library show page/tiles       # print import@, include, keys & checks (or just: show tiles)
+bin/plugin component-library show tiles --copy     # print copy-mode files & snippets (without the plugin)
+```
+
 **1. Import its fields** into a page or theme blueprint. `import@` goes on the
 field that receives them, as a sibling of `type:`. Several imports on one field
 are placed in reverse order (here CTA rows appear above tiles):
@@ -74,9 +83,10 @@ form:
 {% include 'patterns/page/cta-rows/cta-rows.html.twig' %}
 ```
 
-**3. Check it** with the pattern's `verify` list, and lint your theme:
+**3. Check it** with the pattern's `verify` list, and lint your theme (defaults to the active theme when no path is given):
 
 ```bash
+bin/plugin component-library lint
 bin/plugin component-library lint user/themes/mytheme
 ```
 
@@ -86,7 +96,8 @@ list the steps.
 
 ### Without the plugin
 
-Copy what you need into your theme: fragments to
+Run `bin/plugin component-library show <pattern> --copy` (or read the pattern's
+README) to see the exact files and snippets. Copy fragments to
 `blueprints/partials/<name>.yaml` (then `context: 'theme://blueprints'`,
 `type: partials/<name>`), templates under `templates/patterns/` with the same
 paths, and `patterns/_shared/macros.html.twig`. Patterns that list the plugin
@@ -102,12 +113,14 @@ developers can see what a change will touch:
   version, and says when the theme renders it with its own template.
 - **A Components panel in the page editor.** A toolbar button, with the number
   of components that have content on the page, opens a list of every
-  component the page's template offers: whether this page fills it in, which
-  tab it is on, how the theme renders it, and a link to its docs.
-- **A usage report under Tools → Reports.** Every component in use: the page
-  types and theme settings whose forms include it, the pages with content in
-  it (linked to their editor), the theme templates that include it and any
-  copies the theme keeps of its templates, plus the template checks on the
+  component the page's template offers: its summary, whether this page fills it
+  in (and which fields are filled), which tab it is on, how the theme renders
+  it, and a link to its docs.
+- **A usage report under Tools → Reports.** Every component in use: its
+  summary, the page types and theme settings whose forms include it, the pages
+  with content in it (linked to their editor), the theme templates that include
+  it and any copies the theme keeps of its templates, ready-to-paste `import@`
+  and `include` snippets for unused components, plus the template checks on the
   active theme.
 
 | Labels | Components panel | Usage report |
@@ -124,7 +137,11 @@ bin/plugin component-library usage --json
 ```
 
 The plugin's `mcp.yaml` gives the [Grav MCP server](https://learn.getgrav.org/20/advanced/mcp-server)
-`component_library_usage` and `component_library_page_components` tools.
+four tools:
+- `component_library_patterns`: list or search patterns by level or keyword
+- `component_library_pattern`: inspect one pattern's manifest, `import@` and `include` snippets, keys and checks
+- `component_library_usage`: where every pattern is used across the site
+- `component_library_page_components`: which patterns a page's template offers and which have content on that page
 
 A component counts as used on a page when one of its fields holds a value
 other than its default. Fields are traced through the `cl_pattern` tag every
@@ -143,6 +160,19 @@ where per-page usage appears.
 | Page types | map page, job listing and postings, bookable tour, modular page |
 | System | compatibility flag, Admin2-safe plugin forms, dynamic select options, front-end output guards, Twig in content, template hygiene, environments and secrets |
 
+### Quick finder: common needs
+
+| Goal | Patterns to use |
+|---|---|
+| Landing or content page with cards, call-to-action sections and shortcut links | `page/page-heading`, `page/header-image`, `page/hero-actions`, `page/quick-actions`, `page/tiles`, `page/cta-rows` |
+| Modular page where editors reorder sections | `page-type/modular-page` (built from `page/tiles` and `page/cta-rows`) |
+| Site branding, navigation footer and linked Schema.org JSON-LD | `theme/site-logo`, `theme/footer-columns`, `theme/schema-graph` |
+| Interactive map of places across the site | `theme/map-here` + `page/map-location` on place pages + `page-type/map-page` |
+| Analytics, tag manager or third-party embeds without putting scripts in page Markdown | `theme/datalayer`, `theme/head-scripts`, `page/embed-block` |
+| Blog or article authors managed in one place | `theme/author-registry` |
+| Job board or bookable tour/experience pages with structured data | `page-type/job-listing`, `page-type/bookable-tour` |
+| Upgrading a theme or plugin to Grav 2 / Admin2 safely | `system/compatibility-flag`, `system/template-hygiene`, `system/twig-in-content`, `system/dynamic-options`, `system/admin2-plugin-forms` |
+
 The full list with summaries is in [docs/CATALOG.md](docs/CATALOG.md).
 
 ## For AI agents
@@ -153,8 +183,9 @@ The full list with summaries is in [docs/CATALOG.md](docs/CATALOG.md).
   path, stored data, problems solved and verification steps.
 - [`llms.txt`](llms.txt): an index of raw file links.
 - Works alongside the [Grav MCP server](https://learn.getgrav.org/20/advanced/mcp-server):
-  read a site's blueprints with `get_blueprint`, apply patterns, and confirm
-  the fields resolved.
+  browse and inspect patterns with `component_library_patterns` and
+  `component_library_pattern`, read a site's blueprints with `get_blueprint`,
+  apply patterns, and confirm usage with `component_library_usage`.
 
 ## Contributing
 

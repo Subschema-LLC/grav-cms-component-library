@@ -50,8 +50,9 @@ class ValidateCommand extends ConsoleCommand
         $twig = $grav['twig'];
         $twig->init();
         $env = $twig->twig();
+        $gravVersion = \defined('GRAV_VERSION') ? (string) \constant('GRAV_VERSION') : 'unknown';
 
-        $this->output->writeln("Validating " . \count($patterns) . " patterns with Grav " . GRAV_VERSION . "\n");
+        $this->output->writeln("Validating " . \count($patterns) . " patterns with Grav " . $gravVersion . "\n");
 
         foreach ($patterns as $id => ['dir' => $dir, 'manifest' => $m]) {
             $this->output->writeln("<cyan>{$id}</cyan>");
@@ -161,7 +162,7 @@ class ValidateCommand extends ConsoleCommand
                 $this->fail(basename($file) . ":{$issue['line']} {$issue['rule']}: {$issue['message']}");
             }
         }
-        foreach (array_merge(glob($lib->root() . '/*.php') ?: [], glob($lib->root() . '/classes/*.php') ?: [], glob($lib->root() . '/cli/*.php') ?: []) as $file) {
+        foreach (array_merge(glob($lib->root() . '/*.php') ?: [], glob($lib->root() . '/classes/*.php') ?: [], glob($lib->root() . '/classes/*/*.php') ?: [], glob($lib->root() . '/cli/*.php') ?: []) as $file) {
             $this->phpLint($file);
         }
 

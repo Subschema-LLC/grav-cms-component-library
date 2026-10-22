@@ -23,6 +23,11 @@ bin/plugin component-library validate
 echo "== catalog"
 bin/plugin component-library catalog --check
 
+echo "== show & lint"
+bin/plugin component-library show --level=page --json >/dev/null
+bin/plugin component-library show tiles --copy --json >/dev/null
+bin/plugin component-library lint
+
 echo "== usage"
 bin/plugin component-library usage --json | python3 "$LIB/tests/usage-check.py"
 

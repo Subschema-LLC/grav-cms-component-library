@@ -43,41 +43,7 @@ class CatalogCommand extends ConsoleCommand
         $files = [];
         $entries = [];
         foreach ($patterns as $id => ['dir' => $dir, 'manifest' => $m]) {
-            $rel = "patterns/{$id}";
-            $listed = [];
-            foreach ((array) ($m['files'] ?? []) as $value) {
-                foreach ((array) $value as $f) {
-                    $listed[] = "{$rel}/{$f}";
-                }
-            }
-            $entries[] = [
-                'id' => $id,
-                'name' => $m['name'],
-                'version' => $m['version'],
-                'level' => $m['level'],
-                'touches' => $m['touches'] ?? [],
-                'status' => $m['status'],
-                'summary' => $m['summary'],
-                'use_when' => $m['use_when'] ?? [],
-                'avoid_when' => $m['avoid_when'] ?? [],
-                'compatibility' => $m['compatibility'],
-                'requires' => $m['requires'] ?? new \stdClass(),
-                'data' => $m['data'] ?? null,
-                'legacy_keys' => $m['legacy_keys'] ?? [],
-                'import' => isset($m['files']['blueprint'])
-                    ? ['type' => $id . '/' . preg_replace('/\.yaml$/', '', $m['files']['blueprint']), 'context' => 'plugin://component-library/patterns']
-                    : null,
-                'include' => isset($m['files']['template']) ? "{$rel}/{$m['files']['template']}" : null,
-                'apply' => $m['apply'],
-                'classes' => $m['classes'] ?? null,
-                'solves' => $m['solves'],
-                'verify' => $m['verify'],
-                'path' => $rel,
-                'readme' => "{$rel}/README.md",
-                'manifest' => "{$rel}/pattern.yaml",
-                'files' => $listed,
-                'raw_base' => 'https://raw.githubusercontent.com/' . self::REPO . '/' . self::BRANCH . "/{$rel}/",
-            ];
+            $entries[] = $lib->entry($id, $m);
             $files["{$dir}/README.md"] = $this->readme($id, $m, $patterns);
         }
 

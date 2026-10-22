@@ -49,9 +49,9 @@ class Usage
     }
 
     /**
-     * Every pattern: id, name, version, level, summary and a docs link.
+     * Every pattern: id, name, version, level, summary, docs link and apply snippets.
      *
-     * @return array<string, array{id: string, name: string, version: string, level: string, summary: string, docs: string, has_template: bool}>
+     * @return array<string, array{id: string, name: string, version: string, level: string, summary: string, docs: string, has_template: bool, apply: array}>
      */
     public function index(): array
     {
@@ -67,6 +67,7 @@ class Usage
                     'summary' => (string) ($m['summary'] ?? ''),
                     'docs' => self::DOCS_BASE . $id . '/README.md',
                     'has_template' => (bool) glob($p['dir'] . '/*.twig'),
+                    'apply' => (array) ($m['apply'] ?? []),
                 ];
             }
         }
@@ -170,11 +171,12 @@ class Usage
                     $filled[] = $name;
                 }
             }
-            $meta = $index[$id] ?? ['name' => $id, 'version' => '', 'docs' => self::DOCS_BASE . $id . '/README.md', 'has_template' => true];
+            $meta = $index[$id] ?? ['name' => $id, 'version' => '', 'summary' => '', 'docs' => self::DOCS_BASE . $id . '/README.md', 'has_template' => true];
             $out[] = [
                 'id' => $id,
                 'name' => $meta['name'],
                 'version' => $meta['version'],
+                'summary' => (string) ($meta['summary'] ?? ''),
                 'docs' => $meta['docs'],
                 'has_template' => $meta['has_template'] ?? true,
                 'tab' => $c['tab'],
@@ -323,7 +325,14 @@ class Usage
             if ($inUse) {
                 $used[] = $row;
             } elseif ($row['level'] !== 'system') {
-                $unused[] = ['id' => $row['id'], 'name' => $row['name'], 'docs' => $row['docs']];
+                $unused[] = [
+                    'id' => $row['id'],
+                    'name' => $row['name'],
+                    'level' => $row['level'],
+                    'summary' => $row['summary'],
+                    'docs' => $row['docs'],
+                    'apply' => $row['apply'],
+                ];
             }
         }
 

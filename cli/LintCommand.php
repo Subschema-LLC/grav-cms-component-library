@@ -8,11 +8,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * bin/plugin component-library lint user/themes/mytheme
+ * bin/plugin component-library lint [user/themes/mytheme]
  *
  * Runs the template checks from patterns/system/template-hygiene on every
- * .twig file under a path. Exit code 1 when any error is found (or any
- * warning, with --strict).
+ * .twig file under a path (or the active theme when omitted). Exit code 1
+ * when any error is found (or any warning, with --strict).
  */
 class LintCommand extends ConsoleCommand
 {
@@ -21,7 +21,7 @@ class LintCommand extends ConsoleCommand
         $this
             ->setName('lint')
             ->setDescription('Check Twig templates for the problems documented in system/template-hygiene')
-            ->addArgument('path', InputArgument::REQUIRED, 'A theme or plugin folder, or one template file (relative to the Grav root or absolute)')
+            ->addArgument('path', InputArgument::OPTIONAL, 'A theme or plugin folder, or one template file (defaults to the active theme)')
             ->addOption('strict', null, InputOption::VALUE_NONE, 'Fail on warnings too')
             ->addOption('json', null, InputOption::VALUE_NONE, 'Print the findings as JSON');
     }
@@ -30,12 +30,29 @@ class LintCommand extends ConsoleCommand
     {
         require_once __DIR__ . '/../classes/Library.php';
 
-        $path = (string) $this->input->getArgument('path');
-        if (!file_exists($path) && file_exists(GRAV_ROOT . '/' . $path)) {
-            $path = GRAV_ROOT . '/' . $path;
+        $gravRoot = \defined('GRAV_ROOT') ? (string) \constant('GRAV_ROOT') : (string) getcwd();
+        $path = trim((string) ($this->input->getArgument('path') ?? ''));
+        if ($path === '') {
+            try {
+                $this->initializeThemes();
+                $grav = \Grav\Common\Grav::instance();
+                $found = $grav['locator']->findResource('theme://');
+                if (\is_string($found) && $found !== '') {
+                    $path = $found;
+                } else {
+                    $theme = (string) $grav['config']->get('system.pages.theme', '');
+                    if ($theme !== '') {
+                        $path = $gravRoot . '/user/themes/' . $theme;
+                    }
+                }
+            } catch (\Throwable $e) {
+            }
         }
-        if (!file_exists($path)) {
-            $this->output->writeln("<red>Not found:</red> {$path}");
+        if ($path !== '' && !file_exists($path) && file_exists($gravRoot . '/' . $path)) {
+            $path = $gravRoot . '/' . $path;
+        }
+        if ($path === '' || !file_exists($path)) {
+            $this->output->writeln("<red>Not found:</red> " . ($path !== '' ? $path : 'active theme'));
             return 2;
         }
 

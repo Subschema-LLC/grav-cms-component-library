@@ -11,6 +11,8 @@ use Grav\Common\Yaml;
 class Library
 {
     public const LEVELS = ['theme', 'page', 'page-type', 'system'];
+    public const REPO = 'Subschema-LLC/grav-plugin-component-library';
+    public const BRANCH = 'main';
 
     /** @var string */
     private $root;
@@ -47,6 +49,176 @@ class Library
         ksort($out);
 
         return $out;
+    }
+
+    /**
+     * Build the normalized catalog entry for a pattern id and manifest.
+     */
+    public function entry(string $id, ?array $m = null): array
+    {
+        if ($m === null) {
+            $patterns = $this->patterns();
+            $m = $patterns[$id]['manifest'] ?? [];
+        }
+        $rel = "patterns/{$id}";
+        $listed = [];
+        foreach ((array) ($m['files'] ?? []) as $value) {
+            foreach ((array) $value as $f) {
+                $listed[] = "{$rel}/{$f}";
+            }
+        }
+
+        return [
+            'id' => $id,
+            'name' => $m['name'],
+            'version' => $m['version'],
+            'level' => $m['level'],
+            'touches' => $m['touches'] ?? [],
+            'status' => $m['status'],
+            'summary' => $m['summary'],
+            'use_when' => $m['use_when'] ?? [],
+            'avoid_when' => $m['avoid_when'] ?? [],
+            'compatibility' => $m['compatibility'],
+            'requires' => $m['requires'] ?? new \stdClass(),
+            'data' => $m['data'] ?? null,
+            'legacy_keys' => $m['legacy_keys'] ?? [],
+            'import' => isset($m['files']['blueprint'])
+                ? ['type' => $id . '/' . preg_replace('/\.yaml$/', '', $m['files']['blueprint']), 'context' => 'plugin://component-library/patterns']
+                : null,
+            'include' => isset($m['files']['template']) ? "{$rel}/{$m['files']['template']}" : null,
+            'apply' => $m['apply'],
+            'classes' => $m['classes'] ?? null,
+            'solves' => $m['solves'],
+            'verify' => $m['verify'],
+            'path' => $rel,
+            'readme' => "{$rel}/README.md",
+            'manifest' => "{$rel}/pattern.yaml",
+            'files' => $listed,
+            'raw_base' => 'https://raw.githubusercontent.com/' . self::REPO . '/' . self::BRANCH . "/{$rel}/",
+        ];
+    }
+
+    /**
+     * Find a pattern by its full id (page/tiles), its short folder name (tiles),
+     * or its human title. Returns null when not found or ambiguous.
+     */
+    public function find(string $query): ?array
+    {
+        $query = trim($query, "/ \t\n\r\0\x0B");
+        if ($query === '') {
+            return null;
+        }
+        $patterns = $this->patterns();
+        if (isset($patterns[$query])) {
+            return $this->entry($query, $patterns[$query]['manifest']);
+        }
+        $matches = [];
+        foreach ($patterns as $id => ['manifest' => $m]) {
+            if (basename($id) === $query || strcasecmp((string) ($m['name'] ?? ''), $query) === 0) {
+                $matches[$id] = $m;
+            }
+        }
+        if (\count($matches) === 1) {
+            $id = (string) array_key_first($matches);
+            return $this->entry($id, $matches[$id]);
+        }
+
+        return null;
+    }
+
+    /**
+     * Filter patterns by level and/or case-insensitive search terms matched
+     * against id, name, summary, use_when, data keys and solved problems.
+     *
+     * @return list<array>
+     */
+    public function search(?string $level = null, ?string $query = null): array
+    {
+        $level = $level !== null && trim($level) !== '' ? trim($level) : null;
+        $terms = $query !== null && trim($query) !== '' ? (preg_split('/\s+/', mb_strtolower(trim($query))) ?: []) : [];
+        $out = [];
+        foreach ($this->patterns() as $id => ['manifest' => $m]) {
+            if ($level !== null && ($m['level'] ?? '') !== $level) {
+                continue;
+            }
+            if ($terms) {
+                $haystack = mb_strtolower(implode(' ', [
+                    $id,
+                    (string) ($m['name'] ?? ''),
+                    (string) ($m['summary'] ?? ''),
+                    implode(' ', (array) ($m['use_when'] ?? [])),
+                    implode(' ', array_keys((array) ($m['data']['keys'] ?? []))),
+                    implode(' ', array_map(static fn ($s) => ($s['problem'] ?? '') . ' ' . ($s['fix'] ?? ''), (array) ($m['solves'] ?? []))),
+                ]));
+                foreach ($terms as $term) {
+                    if ($term !== '' && mb_strpos($haystack, $term) === false) {
+                        continue 2;
+                    }
+                }
+            }
+            $out[] = $this->entry($id, $m);
+        }
+
+        return $out;
+    }
+
+    /**
+     * Build copy-mode instructions (when using a pattern without installing the
+     * plugin): which files to copy into a theme and the adjusted apply snippets.
+     *
+     * @return array{copy_files: list<array{from: string, to: string}>, apply: array<string, string>}
+     */
+    public function copyMode(array $entry): array
+    {
+        $id = (string) ($entry['id'] ?? '');
+        $slug = basename($id);
+        $rel = "patterns/{$id}";
+        $copies = [];
+
+        foreach ((array) ($entry['files'] ?? []) as $file) {
+            $name = basename($file);
+            if (substr($name, -5) === '.twig') {
+                $copies[] = ['from' => $file, 'to' => "user/themes/<theme>/templates/{$file}"];
+            } elseif ($name === 'blueprint.yaml' || $name === 'fields.yaml') {
+                $copies[] = ['from' => $file, 'to' => "user/themes/<theme>/blueprints/partials/{$slug}.yaml"];
+            } elseif ($name === 'page.yaml') {
+                $copies[] = ['from' => $file, 'to' => "user/themes/<theme>/blueprints/partials/{$slug}-page.yaml"];
+            } elseif (substr($name, -5) === '.yaml' && strpos($name, 'blueprint') !== false) {
+                $copies[] = ['from' => $file, 'to' => "user/themes/<theme>/blueprints/{$slug}.yaml"];
+            } elseif (substr($name, -3) === '.js' || substr($name, -4) === '.css') {
+                $copies[] = ['from' => $file, 'to' => "user/themes/<theme>/{$file}"];
+            }
+        }
+        $reqPatterns = (array) (($entry['requires'] instanceof \stdClass ? (array) $entry['requires'] : ($entry['requires'] ?? []))['patterns'] ?? []);
+        if (\in_array('_shared/macros', $reqPatterns, true)) {
+            $copies[] = [
+                'from' => 'patterns/_shared/macros.html.twig',
+                'to' => 'user/themes/<theme>/templates/patterns/_shared/macros.html.twig',
+            ];
+        }
+
+        $apply = [];
+        foreach ((array) ($entry['apply'] ?? []) as $kind => $snippet) {
+            $converted = (string) $snippet;
+            if ($kind === 'blueprint') {
+                $converted = (string) preg_replace(
+                    '#type:\s*' . preg_quote($id, '#') . '/(?:blueprint|fields)\b#',
+                    "type: partials/{$slug}",
+                    $converted
+                );
+                $converted = (string) preg_replace(
+                    '#type:\s*' . preg_quote($id, '#') . '/([a-z0-9-]+)#',
+                    "type: partials/{$slug}-$1",
+                    $converted
+                );
+                $converted = str_replace("context: 'plugin://component-library/patterns'", "context: 'theme://blueprints'", $converted);
+            }
+            $converted = str_replace("plugin://component-library/{$rel}/", "theme://{$rel}/", $converted);
+            $converted = str_replace('plugin://component-library/', 'theme://', $converted);
+            $apply[(string) $kind] = $converted;
+        }
+
+        return ['copy_files' => $copies, 'apply' => $apply];
     }
 
     public function schema(): array

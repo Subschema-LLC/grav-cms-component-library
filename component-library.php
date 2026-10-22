@@ -93,6 +93,8 @@ class ComponentLibraryPlugin extends Plugin
     public function onApiRegisterRoutes(Event $event): void
     {
         $controller = \Grav\Plugin\ComponentLibrary\Api\UsageController::class;
+        $event['routes']->get('/component-library/patterns', [$controller, 'patterns']);
+        $event['routes']->get('/component-library/pattern', [$controller, 'pattern']);
         $event['routes']->get('/component-library/page', [$controller, 'page']);
         $event['routes']->get('/component-library/page-badge', [$controller, 'badge']);
         $event['routes']->get('/component-library/usage', [$controller, 'usage']);
