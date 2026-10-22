@@ -20,7 +20,7 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class CatalogCommand extends ConsoleCommand
 {
-    private const REPO = 'Subschema-LLC/grav-cms-component-library';
+    private const REPO = 'Subschema-LLC/grav-plugin-component-library';
     private const BRANCH = 'main';
 
     protected function configure(): void

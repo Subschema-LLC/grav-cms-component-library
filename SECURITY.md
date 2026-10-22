@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Please report security problems privately, not in a public issue:
-open [Report a vulnerability](https://github.com/Subschema-LLC/grav-cms-component-library/security/advisories/new)
+open [Report a vulnerability](https://github.com/Subschema-LLC/grav-plugin-component-library/security/advisories/new)
 on this repository's Security tab. Only the maintainers can see the report.
 
 Include the pattern or file, the Grav version, and the steps or page front

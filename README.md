@@ -1,6 +1,6 @@
 # Grav CMS Component Library
 
-[![Test](https://github.com/Subschema-LLC/grav-cms-component-library/actions/workflows/test.yml/badge.svg)](https://github.com/Subschema-LLC/grav-cms-component-library/actions/workflows/test.yml)
+[![Test](https://github.com/Subschema-LLC/grav-plugin-component-library/actions/workflows/test.yml/badge.svg)](https://github.com/Subschema-LLC/grav-plugin-component-library/actions/workflows/test.yml)
 [![Grav 1.7 | 2.x](https://img.shields.io/badge/Grav-1.7%20%7C%202.x-2b6cb0)](TESTING.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -27,7 +27,7 @@ apply patterns the same way.
 As a plugin (recommended), from your Grav root:
 
 ```bash
-git clone --branch main https://github.com/Subschema-LLC/grav-cms-component-library user/plugins/component-library
+git clone --branch main https://github.com/Subschema-LLC/grav-plugin-component-library user/plugins/component-library
 bin/grav clearcache
 ```
 
