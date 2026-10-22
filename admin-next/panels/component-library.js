@@ -34,6 +34,7 @@
         .pill { flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
         .pill.on { background: color-mix(in srgb, #22c55e 15%, transparent); color: color-mix(in srgb, #16a34a 85%, var(--foreground, #09090b)); }
         .pill.off { background: var(--muted, #f4f4f5); color: var(--muted-foreground, #71717a); }
+        .desc { margin-top: 4px; color: var(--foreground, #09090b); font-size: 12px; line-height: 1.45; }
         .meta { margin-top: 4px; color: var(--muted-foreground, #71717a); font-size: 12px; line-height: 1.5; }
         code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; background: var(--muted, #f4f4f5); padding: 1px 5px; border-radius: 4px; }
         a { color: var(--primary, #2563eb); text-decoration: none; }
@@ -101,6 +102,9 @@
             const parts = [`<code>${esc(c.id)}</code> ${esc(c.version)}`];
             if (c.tab) parts.push(`on the <strong>${esc(c.tab)}</strong> tab`);
             const meta = [parts.join(' · ')];
+            if (c.has_content && (c.filled || []).length) {
+                meta.push(`Filled: ${c.filled.map((f) => `<code>${esc(f.replace(/^header\./, ''))}</code>`).join(', ')}`);
+            }
             const short = (file) => `<code title="${esc(file)}">${esc(file.replace(/^templates\//, '').split('/').slice(-1)[0])}</code>`;
             const custom = (c.own_copies || []).filter((copy) => !copy.identical);
             if (custom.length) {
@@ -112,6 +116,7 @@
             return `<li>
                 <div class="row"><span class="name">${esc(c.name)}</span>
                 <span class="pill ${c.has_content ? 'on' : 'off'}">${c.has_content ? 'Has content' : 'Empty'}</span></div>
+                ${c.summary ? `<div class="desc">${esc(c.summary)}</div>` : ''}
                 <div class="meta">${meta.join('<br>')}</div>
             </li>`;
         }

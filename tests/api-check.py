@@ -130,12 +130,18 @@ try:
     by_id = {c["id"]: c for c in page["components"]}
     check(page["template"] == "default" and len(by_id) == 11, f"/tiles offers 11 components, got {sorted(by_id)}")
     check(by_id.get("page/tiles", {}).get("has_content") is True and by_id["page/tiles"]["tab"] == "Content Blocks", f"page/tiles on /tiles: {by_id.get('page/tiles')}")
+    check(bool(by_id.get("page/tiles", {}).get("summary")), "page component includes summary")
     check(by_id.get("page/cta-rows", {}).get("has_content") is False, "cta-rows is empty on /tiles")
     check(by_id.get("page/header-image", {}).get("has_content") is False, "a header image toggle left at its default is not content")
     check("templates/default.html.twig" in by_id["page/tiles"].get("rendered_by", []), "tiles rendered by the fixture's default template")
     badge = fetch("/component-library/page-badge?route=/tiles&lang=en&type=pages")
     check(badge.get("count") == sum(1 for c in page["components"] if c["has_content"]), f"badge count {badge}")
     check(fetch("/component-library/page-badge?route=/no-such-page").get("count") == 0, "badge is 0 for an unknown page")
+
+    catalog_list = fetch("/component-library/patterns?level=page")
+    check(catalog_list.get("count") == 8 and all(p["level"] == "page" for p in catalog_list.get("patterns", [])), f"patterns endpoint level=page: {catalog_list.get('count')}")
+    tiles_spec = fetch("/component-library/pattern?id=tiles")
+    check(tiles_spec.get("id") == "page/tiles" and "copy_mode" in tiles_spec and "partials/tiles" in tiles_spec["copy_mode"]["apply"].get("blueprint", ""), "pattern endpoint resolves short name and includes copy_mode")
 
     usage = {c["id"]: c for c in fetch("/component-library/usage")["components"]}
     check(any(p["route"] == "/tiles" for p in usage.get("page/tiles", {}).get("pages", [])), "usage lists /tiles under page/tiles")
@@ -177,7 +183,7 @@ try:
         check(status == 200 and "javascript" in ctype and b"customElements.define" in body, f"{path}: {status} {ctype}")
     tools = fetch("/mcp/tools")
     names_mcp = [t.get("name") for t in (tools.get("tools", []) if isinstance(tools, dict) else tools)]
-    check({"component_library_usage", "component_library_page_components"} <= set(names_mcp), f"MCP tools: {names_mcp}")
+    check({"component_library_patterns", "component_library_pattern", "component_library_usage", "component_library_page_components"} <= set(names_mcp), f"MCP tools: {names_mcp}")
 
     # Each feature has a setting that turns it off.
     def patch(body):

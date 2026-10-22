@@ -1,8 +1,38 @@
 # Tools for the Grav MCP server (grav-mcp), served by the API plugin at GET /mcp/tools.
-# They read the same data as the Admin2 panel and report (classes/Usage.php).
+# They read the same catalog and usage data as the CLI and the Admin2 panel and report.
 version: 1
 prefix: component_library
 tools:
+  - name: patterns
+    title: List or search Component Library patterns
+    description: >
+      Browse or search the Component Library patterns available in this install, optionally filtered by level
+      (theme, page, page-type, system) or a keyword query across id, name, summary, use_when, data keys and solved
+      problems. Use this first to pick the right pattern before applying one.
+    method: GET
+    path: /component-library/patterns
+    permission: api.pages.read
+    input:
+      type: object
+      properties:
+        level: { type: string, enum: [theme, page, page-type, system], description: "Optional level filter: theme, page, page-type or system" }
+        search: { type: string, description: "Optional keyword search across id, name, summary, use_when and stored keys" }
+
+  - name: pattern
+    title: Inspect one Component Library pattern
+    description: >
+      Full specification for one Component Library pattern (by full id such as page/tiles or short name such as tiles):
+      when to use or skip it, ready-to-paste blueprint import@ and Twig include snippets (both plugin mode and copy mode),
+      stored data keys, class slots, problems solved and verification steps.
+    method: GET
+    path: /component-library/pattern
+    permission: api.pages.read
+    input:
+      type: object
+      required: [id]
+      properties:
+        id: { type: string, description: "Pattern id (such as page/tiles or theme/schema-graph) or short name (such as tiles)" }
+
   - name: usage
     title: Component Library usage
     description: >

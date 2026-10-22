@@ -36,6 +36,7 @@ tabs = {t["template"]: t["tab"] for t in by_id.get("page/tiles", {}).get("templa
 check(tabs.get("default") == "Content Blocks", f"tiles tab on default: {tabs}")
 check(by_id.get("theme/site-logo", {}).get("theme_settings") is not None, "site-logo fields in theme settings")
 check("templates/partials/base.html.twig" in by_id.get("theme/footer-columns", {}).get("rendered_by", []), "footer rendered by base")
+check(bool(by_id.get("page/tiles", {}).get("summary")), "components include their summary")
 check(all(c["level"] != "system" for c in report["unused"]), "system patterns are not listed as unused")
 
 print(f"{passes} usage checks passed, {len(failures)} failed")

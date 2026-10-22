@@ -7,11 +7,18 @@ This file tells an agent how to choose, apply and verify them.
 
 ## 1. Find the right pattern
 
-1. Read `catalog.json` (or fetch it raw from
-   `https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/catalog.json`).
-   Each entry has `level`, `summary`, `use_when`, `avoid_when`, the exact
-   `import` (`type` + `context`) and `include` path, the `data` it stores, and
-   the `solves` and `verify` lists.
+1. Search or inspect patterns with the CLI, the MCP server, or `catalog.json`:
+   - **CLI**: `bin/plugin component-library show` (filter with `--level=page` or
+     `--search=map`; pass a pattern id or short name such as
+     `bin/plugin component-library show tiles` for its `import@`, `include` and
+     `verify` steps, `--copy` for copy-mode instructions, or `--json`).
+   - **MCP**: call `component_library_patterns` (optional `level` and `search`)
+     and `component_library_pattern` (`id`).
+   - **File / raw URL**: read `catalog.json` (or fetch it raw from
+     `https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/catalog.json`).
+     Each entry has `level`, `summary`, `use_when`, `avoid_when`, the exact
+     `import` (`type` + `context`) and `include` path, the `data` it stores, and
+     the `solves` and `verify` lists.
 2. Match the request against `use_when`, then rule out with `avoid_when`.
    Prefer composing several small patterns over writing a new one.
 3. Read the pattern's `pattern.yaml` (authoritative) and its blueprint and
@@ -104,7 +111,7 @@ This file tells an agent how to choose, apply and verify them.
 Run these from the Grav root after applying anything:
 
 ```bash
-bin/plugin component-library lint user/themes/<theme>   # template rules
+bin/plugin component-library lint                        # active theme (or pass user/themes/<theme>)
 bin/grav clearcache
 ```
 
@@ -130,7 +137,13 @@ tests/run.sh /path/to/grav               # full render suite
 
 ## 5. Working with the Grav MCP server (grav-mcp)
 
-- Read the target site's shape first: `list_page_templates`, `get_blueprint`.
+- Discover and inspect patterns directly from the site:
+  `component_library_patterns` (filter by `level` or `search`) and
+  `component_library_pattern` (`id`, returning both plugin-mode and copy-mode
+  snippets).
+- Read the target site's shape and existing component usage:
+  `list_page_templates`, `get_blueprint`, `component_library_usage`, and
+  `component_library_page_components`.
 - Apply patterns by editing theme files (blueprints, templates); then use
   `get_blueprint` again to confirm the fields resolved.
 - Write page content as front matter values for the pattern's `data.keys`,

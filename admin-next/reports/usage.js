@@ -26,8 +26,12 @@
         td { vertical-align: top; padding: 10px 16px; border-bottom: 1px solid var(--border, #e4e4e7); line-height: 1.5; }
         tr:last-child td { border-bottom: 0; }
         .name { font-weight: 600; }
+        .desc { margin-top: 2px; font-size: 12px; line-height: 1.4; }
         .muted { color: var(--muted-foreground, #71717a); }
         code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; background: var(--muted, #f4f4f5); padding: 1px 5px; border-radius: 4px; }
+        pre { margin: 4px 0 8px; padding: 8px 10px; background: var(--muted, #f4f4f5); border-radius: var(--radius-sm, 4px); overflow-x: auto; font-size: 11px; line-height: 1.45; }
+        pre code { background: transparent; padding: 0; }
+        .unused-item { margin: 6px 0; }
         a { color: var(--primary, #2563eb); text-decoration: none; }
         a:hover { text-decoration: underline; }
         details summary { cursor: pointer; color: var(--primary, #2563eb); }
@@ -117,11 +121,19 @@
             const withPages = items.filter((c) => c.pages && c.pages.length).length;
 
             const rows = items.map((c) => `<tr>
-                <td><div class="name">${esc(c.name)}</div><code>${esc(c.id)}</code> <span class="muted">${esc(c.version)}</span> · <a href="${esc(c.docs)}" target="_blank" rel="noopener noreferrer">Docs ↗</a></td>
+                <td><div class="name">${esc(c.name)}</div><code>${esc(c.id)}</code> <span class="muted">${esc(c.version)}</span> · <a href="${esc(c.docs)}" target="_blank" rel="noopener noreferrer">Docs ↗</a>${c.summary ? `<div class="desc muted">${esc(c.summary)}</div>` : ''}</td>
                 <td>${this.where(c)}</td>
                 <td>${this.pages(c)}</td>
                 <td>${this.theme(c)}</td>
             </tr>`).join('');
+
+            const unusedBlock = unused.map((u) => {
+                const applyEntries = Object.entries(u.apply || {});
+                const howToAdd = applyEntries.length
+                    ? ` · <details style="display:inline"><summary>How to add</summary>${applyEntries.map(([k, v]) => `<div><strong class="muted">${esc(k)}</strong><pre><code>${esc(String(v).trim())}</code></pre></div>`).join('')}</details>`
+                    : '';
+                return `<div class="unused-item"><a href="${esc(u.docs)}" target="_blank" rel="noopener noreferrer"><strong>${esc(u.name)}</strong></a> <code>${esc(u.id)}</code>${u.summary ? ` — <span class="muted">${esc(u.summary)}</span>` : ''}${howToAdd}</div>`;
+            }).join('');
 
             const lintBlock = lint.length
                 ? `<ul class="lint">${lint.map((i) => `<li><span class="${i.level === 'error' ? 'error' : 'warning'}">${esc(i.level)}</span> <code>${esc(i.file)}:${esc(i.line)}</code> ${esc(i.rule)}: ${esc(i.message)}</li>`).join('')}</ul>${r.lint_total > lint.length ? `<p class="muted">Showing ${lint.length} of ${r.lint_total}. Run <code>bin/plugin component-library lint</code> for all.</p>` : ''}`
@@ -135,7 +147,7 @@
                     <span><strong>${esc(r.pages_scanned)}</strong> pages checked</span>
                 </div>
                 ${items.length ? `<table><colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"></colgroup><thead><tr><th>Component</th><th>Fields appear in</th><th>Pages with content</th><th>In the theme</th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="block muted">The active theme doesn\'t use any library components yet.</div>'}
-                ${unused.length ? `<h3>Not used by this theme (${unused.length})</h3><div class="block">${unused.map((u) => `<a href="${esc(u.docs)}" target="_blank" rel="noopener noreferrer">${esc(u.name)}</a> <code>${esc(u.id)}</code>`).join(' · ')}</div>` : ''}
+                ${unused.length ? `<h3>Not used by this theme (${unused.length})</h3><div class="block">${unusedBlock}</div>` : ''}
                 <h3>Template checks</h3><div class="block">${lintBlock}</div>`;
         }
     }
