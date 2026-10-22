@@ -6,11 +6,11 @@ description: "Tested, reusable blueprint and Twig patterns for Grav themes, page
 icon: puzzle-piece
 author:
   name: Subschema LLC
-  url: https://subschema.io
-homepage: https://github.com/Subschema-LLC/grav-cms-component-library
-docs: https://github.com/Subschema-LLC/grav-cms-component-library/blob/main/README.md
-bugs: https://github.com/Subschema-LLC/grav-cms-component-library/issues
-readme: https://github.com/Subschema-LLC/grav-cms-component-library/blob/main/README.md
+  url: https://subschema.co
+homepage: https://github.com/Subschema-LLC/grav-plugin-component-library
+docs: https://github.com/Subschema-LLC/grav-plugin-component-library/blob/main/README.md
+bugs: https://github.com/Subschema-LLC/grav-plugin-component-library/issues
+readme: https://github.com/Subschema-LLC/grav-plugin-component-library/blob/main/README.md
 keywords: blueprints, patterns, components, schema.org, accessibility, admin2, ai
 license: MIT
 

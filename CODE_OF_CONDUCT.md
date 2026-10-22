@@ -36,7 +36,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement through a private report on GitHub: open [Report a vulnerability](https://github.com/Subschema-LLC/grav-cms-component-library/security/advisories/new) on this repository's Security tab and start the title with "Conduct:". Only the maintainers can see it. To flag a single comment, you can also use GitHub's "Report content", which goes to GitHub. All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement through a private report on GitHub: open [Report a vulnerability](https://github.com/Subschema-LLC/grav-plugin-component-library/security/advisories/new) on this repository's Security tab and start the title with "Conduct:". Only the maintainers can see it. To flag a single comment, you can also use GitHub's "Report content", which goes to GitHub. All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the reporter of any incident.
 

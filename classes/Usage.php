@@ -26,7 +26,7 @@ use Grav\Common\Utils;
  */
 class Usage
 {
-    public const DOCS_BASE = 'https://github.com/Subschema-LLC/grav-cms-component-library/blob/main/patterns/';
+    public const DOCS_BASE = 'https://github.com/Subschema-LLC/grav-plugin-component-library/blob/main/patterns/';
 
     /** Field types that only group or decorate other fields. */
     private const LAYOUT = ['tabs', 'tab', 'section', 'fieldset', 'columns', 'column', 'spacer', 'display', 'conditional'];

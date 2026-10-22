@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Subschema-LLC/grav-cms-component-library/schema/pattern.schema.json",
+  "$id": "https://github.com/Subschema-LLC/grav-plugin-component-library/schema/pattern.schema.json",
   "title": "Grav pattern manifest (pattern.yaml)",
   "type": "object",
   "required": [

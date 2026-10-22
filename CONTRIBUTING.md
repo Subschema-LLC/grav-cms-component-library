@@ -36,8 +36,8 @@ You need git, PHP 8.3 (with gd, zip, mbstring, curl, xml and intl), Composer,
 Python 3 and curl. No Python packages are needed.
 
 ```bash
-git clone https://github.com/<you>/grav-cms-component-library   # your fork
-cd grav-cms-component-library
+git clone https://github.com/<you>/grav-plugin-component-library   # your fork
+cd grav-plugin-component-library
 
 # Throwaway Grav installs next to the repo, the same way CI makes them.
 tests/setup-grav.sh ../grav-2 2.2.11 --api   # Grav 2, with the Admin2 API checks

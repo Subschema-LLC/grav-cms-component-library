@@ -8,7 +8,7 @@ This file tells an agent how to choose, apply and verify them.
 ## 1. Find the right pattern
 
 1. Read `catalog.json` (or fetch it raw from
-   `https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/catalog.json`).
+   `https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/catalog.json`).
    Each entry has `level`, `summary`, `use_when`, `avoid_when`, the exact
    `import` (`type` + `context`) and `include` path, the `data` it stores, and
    the `solves` and `verify` lists.
