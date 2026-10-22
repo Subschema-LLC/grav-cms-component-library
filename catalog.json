@@ -10,7 +10,7 @@
             ]
         }
     },
-    "repository": "https://github.com/Subschema-LLC/grav-cms-component-library",
+    "repository": "https://github.com/Subschema-LLC/grav-plugin-component-library",
     "spec": "docs/PATTERN_SPEC.md",
     "agents": "AGENTS.md",
     "pattern_count": 26,
@@ -167,7 +167,7 @@
                 "patterns/page-type/bookable-tour/page-blueprint.yaml",
                 "patterns/page-type/bookable-tour/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page-type/bookable-tour/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page-type/bookable-tour/"
         },
         {
             "id": "page-type/job-listing",
@@ -312,7 +312,7 @@
                 "patterns/page-type/job-listing/page-blueprint-jobs.yaml",
                 "patterns/page-type/job-listing/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page-type/job-listing/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page-type/job-listing/"
         },
         {
             "id": "page-type/map-page",
@@ -447,7 +447,7 @@
                 "patterns/page-type/map-page/page-blueprint.yaml",
                 "patterns/page-type/map-page/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page-type/map-page/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page-type/map-page/"
         },
         {
             "id": "page-type/modular-page",
@@ -553,7 +553,7 @@
                 "patterns/page-type/modular-page/modular.html.twig",
                 "patterns/page-type/modular-page/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page-type/modular-page/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page-type/modular-page/"
         },
         {
             "id": "page/cta-rows",
@@ -691,7 +691,7 @@
                 "patterns/page/cta-rows/cta-rows.html.twig",
                 "patterns/page/cta-rows/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/cta-rows/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page/cta-rows/"
         },
         {
             "id": "page/embed-block",
@@ -812,7 +812,7 @@
                 "patterns/page/embed-block/embed-block.html.twig",
                 "patterns/page/embed-block/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/embed-block/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page/embed-block/"
         },
         {
             "id": "page/header-image",
@@ -909,7 +909,7 @@
                 "patterns/page/header-image/header-image.html.twig",
                 "patterns/page/header-image/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/header-image/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page/header-image/"
         },
         {
             "id": "page/hero-actions",
@@ -1000,7 +1000,7 @@
                 "patterns/page/hero-actions/hero-actions.html.twig",
                 "patterns/page/hero-actions/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/hero-actions/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page/hero-actions/"
         },
         {
             "id": "page/map-location",
@@ -1071,7 +1071,7 @@
                 "patterns/page/map-location/blueprint.yaml",
                 "patterns/page/map-location/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/map-location/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page/map-location/"
         },
         {
             "id": "page/page-heading",
@@ -1175,7 +1175,7 @@
                 "patterns/page/page-heading/title-tag.html.twig",
                 "patterns/page/page-heading/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/page-heading/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page/page-heading/"
         },
         {
             "id": "page/quick-actions",
@@ -1290,7 +1290,7 @@
                 "patterns/page/quick-actions/quick-actions.html.twig",
                 "patterns/page/quick-actions/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/quick-actions/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page/quick-actions/"
         },
         {
             "id": "page/tiles",
@@ -1436,7 +1436,7 @@
                 "patterns/page/tiles/tiles.html.twig",
                 "patterns/page/tiles/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/page/tiles/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/page/tiles/"
         },
         {
             "id": "system/admin2-plugin-forms",
@@ -1512,7 +1512,7 @@
                 "patterns/system/admin2-plugin-forms/Admin2FormsPlugin.php",
                 "patterns/system/admin2-plugin-forms/blueprints-snippet.yaml"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/admin2-plugin-forms/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/system/admin2-plugin-forms/"
         },
         {
             "id": "system/compatibility-flag",
@@ -1570,7 +1570,7 @@
             "files": [
                 "patterns/system/compatibility-flag/blueprints-snippet.yaml"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/compatibility-flag/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/system/compatibility-flag/"
         },
         {
             "id": "system/dynamic-options",
@@ -1642,7 +1642,7 @@
             "files": [
                 "patterns/system/dynamic-options/OptionsProvider.php"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/dynamic-options/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/system/dynamic-options/"
         },
         {
             "id": "system/environments-and-secrets",
@@ -1715,7 +1715,7 @@
                 "patterns/system/environments-and-secrets/environment-example.yaml",
                 "patterns/system/environments-and-secrets/gitignore-snippet.txt"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/environments-and-secrets/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/system/environments-and-secrets/"
         },
         {
             "id": "system/frontend-output-guards",
@@ -1787,7 +1787,7 @@
             "files": [
                 "patterns/system/frontend-output-guards/OutputGuards.php"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/frontend-output-guards/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/system/frontend-output-guards/"
         },
         {
             "id": "system/template-hygiene",
@@ -1885,7 +1885,7 @@
             "files": [
                 "patterns/system/template-hygiene/rules.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/template-hygiene/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/system/template-hygiene/"
         },
         {
             "id": "system/twig-in-content",
@@ -1952,7 +1952,7 @@
                 "patterns/system/twig-in-content/security-snippet.yaml",
                 "patterns/system/twig-in-content/SandboxPolicy.php"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/system/twig-in-content/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/system/twig-in-content/"
         },
         {
             "id": "theme/author-registry",
@@ -2095,7 +2095,7 @@
                 "patterns/theme/author-registry/page.yaml",
                 "patterns/theme/author-registry/example.yaml"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/author-registry/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/theme/author-registry/"
         },
         {
             "id": "theme/datalayer",
@@ -2185,7 +2185,7 @@
                 "patterns/theme/datalayer/datalayer.html.twig",
                 "patterns/theme/datalayer/datalayer.js"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/datalayer/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/theme/datalayer/"
         },
         {
             "id": "theme/footer-columns",
@@ -2323,7 +2323,7 @@
                 "patterns/theme/footer-columns/footer-columns.html.twig",
                 "patterns/theme/footer-columns/example.yaml"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/footer-columns/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/theme/footer-columns/"
         },
         {
             "id": "theme/head-scripts",
@@ -2410,7 +2410,7 @@
                 "patterns/theme/head-scripts/blueprint.yaml",
                 "patterns/theme/head-scripts/head-scripts.html.twig"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/head-scripts/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/theme/head-scripts/"
         },
         {
             "id": "theme/map-here",
@@ -2539,7 +2539,7 @@
                 "patterns/theme/map-here/page.yaml",
                 "patterns/theme/map-here/map-here.js"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/map-here/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/theme/map-here/"
         },
         {
             "id": "theme/schema-graph",
@@ -2706,7 +2706,7 @@
                 "patterns/theme/schema-graph/page.yaml",
                 "patterns/theme/schema-graph/example.md"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/schema-graph/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/theme/schema-graph/"
         },
         {
             "id": "theme/site-logo",
@@ -2820,7 +2820,7 @@
                 "patterns/theme/site-logo/logo.macros.twig",
                 "patterns/theme/site-logo/example.yaml"
             ],
-            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-cms-component-library/main/patterns/theme/site-logo/"
+            "raw_base": "https://raw.githubusercontent.com/Subschema-LLC/grav-plugin-component-library/main/patterns/theme/site-logo/"
         }
     ]
 }
